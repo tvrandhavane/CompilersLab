@@ -1,0 +1,79 @@
+                          cs306 2013-2014: Assignment #1
+                          ------------------------------
+
+What you have been given
+------------------------
+
+You have been given the following files:
+
+- ast.hh and ast.cc which contains incomplete class descriptions
+
+- main.cc  which creates  objects of  classes. Some  of these  have been
+  described in ast.hh but some others have not been described.
+
+- Makefile which includes the commands to create the complete executable
+ (named ast).
+
+- output.txt which is contains the result of executing ast.
+
+
+The file defines classes for Abstract Syntax Trees (ASTs) which are tree
+data structures  representing some programs.  In our case, we  have ASTs
+representing 
+
+- An assignment statement which has an LHS and an RHS. 
+- On the  LHS, we can  only have the name  (although no checks  for this
+  have been implemented right now.)
+- On the RHS we  can have either  
+  . NAMES, or  
+  . NUMBERS, or 
+  . COMPARISON expressions comparing NAMES or NUMBERs, or
+  . BOOLEAN expressions  whose operands  are COMPARISON  expressions and
+    other BOOLEAN expressions.
+
+Please see  the file output.txt  for examples of  assignment statements.
+The statements in the main function create the ASTs for these assignment
+statements.
+
+What you have to do
+-------------------
+
+You  have to  complete the  class description  in ast.hh  and ast.cc  by
+adding  suitable derived  classes  and implementations  of the  required
+functions such that  the executable ast created from  using the Makefile
+produces an output identical to that iin output.txt.
+
+Here is a suggested way of doing this assignment:
+
+- You  should   try  to  relate   the  statements  in  main.cc   to  the
+  corresponding statements in output.txt.
+- As a first  step, please make sure that your  implementation works for
+  assignments 1 and 2.
+- In  the  second   step,  enhance  your  implementation   to  work  for
+  assignments 2, 4, 5, and 6.
+- Finally, get it to work for assignments 7, 8, 9, and 10.
+
+A simple trick to comment out a large  block of code is to include it in
+a #if directive as shown below.
+
+	------------------------
+	#if 0
+	code to be commented out
+	#endif
+	------------------------
+
+This allows nested blocking off of code.
+
+Motivation behind this assignment
+---------------------------------
+
+This assignment is primarily warm up assignment for C++ programming.
+
+We  will be  using these  classes in  the rest  of the  course to  first
+implement an interpreter and then a compiler.
+
+An  older version  of this  series of  assignments can  be found  at the
+following URL: http://www.cse.iitb.ac.in/~uday/cfglp/.
+
+You  will be  given a  revised  code base  and a  different sequence  of
+assignments.
