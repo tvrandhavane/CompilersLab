@@ -1,0 +1,6 @@
+main()
+{
+<bb 2>:
+	return;
+}
+int a;

@@ -1,0 +1,13 @@
+;; Function main (main)
+;; No error - Parsing
+
+main ()
+{
+	int b;
+	int a;
+
+<bb 2>:
+	a = 4;
+	a = b;		;; error
+	return;
+}

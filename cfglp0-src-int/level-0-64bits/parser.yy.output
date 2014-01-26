@@ -1,0 +1,835 @@
+
+Production Rules
+(rule precedences determined from %prec or 1st terminal between parentheses):
+1: program ->  declaration_statement_list procedure_name #0001 procedure_body
+2: #0001 ->  <empty>
+3: program ->  procedure_name #0002 procedure_body
+4: #0002 ->  <empty>
+5: procedure_name (NAME) ->  NAME '(' ')'
+6: procedure_body ('{') ->  '{' declaration_statement_list #0003 basic_block_list '}'
+7: #0003 ->  <empty>
+8: procedure_body ('{') ->  '{' basic_block_list '}'
+9: declaration_statement_list ->  declaration_statement
+10: declaration_statement_list ->  declaration_statement_list declaration_statement
+11: declaration_statement (INTEGER) ->  INTEGER NAME ';'
+12: basic_block_list ->  basic_block_list basic_block
+13: basic_block_list ->  basic_block
+14: basic_block ('<') ->  '<' NAME INTEGER_NUMBER '>' ':' executable_statement_list
+15: executable_statement_list ->  assignment_statement_list
+16: executable_statement_list (RETURN) ->  assignment_statement_list RETURN ';'
+17: executable_statement_list ->  assignment_statement_list if_else_statement
+18: executable_statement_list ->  assignment_statement_list goto_statement
+19: assignment_statement_list ->  <empty>
+20: assignment_statement_list ->  assignment_statement_list assignment_statement
+21: assignment_statement ('=') ->  variable '=' variable ';'
+22: assignment_statement ('=') ->  variable '=' constant ';'
+23: assignment_statement ('=') ->  variable '=' relational_expression ';'
+24: if_else_statement (IF) ->  IF '(' relational_expression ')' goto_statement ELSE goto_statement
+25: goto_statement (GOTO) ->  GOTO '<' NAME INTEGER_NUMBER '>' ';'
+26: relational_expression ('&') ->  relational_expression '&' '&' relational_expression
+27: relational_expression ('|') ->  relational_expression '|' '|' relational_expression
+28: relational_expression ('!') ->  '!' relational_expression
+29: relational_expression ('<') ->  relational_expression '<' '=' relational_expression
+30: relational_expression ('>') ->  relational_expression '>' '=' relational_expression
+31: relational_expression ('<') ->  relational_expression '<' relational_expression
+32: relational_expression ('>') ->  relational_expression '>' relational_expression
+33: relational_expression ('=') ->  relational_expression '=' '=' relational_expression
+34: relational_expression ('!') ->  relational_expression '!' '=' relational_expression
+35: relational_expression ->  variable
+36: relational_expression ->  constant
+37: variable (NAME) ->  NAME
+38: constant (INTEGER_NUMBER) ->  INTEGER_NUMBER
+39: program_$ ->  program
+
+
+Symbolic Terminal tokens:
+       error
+       EOF
+   257: INTEGER_NUMBER
+   258: NAME
+   259: RETURN
+   260: INTEGER
+   261: IF
+   262: ELSE
+   263: GOTO
+   275: conditional_expression
+    40: '('
+    41: ')'
+   123: '{'
+   125: '}'
+    59: ';'
+    60: '<'
+    62: '>'
+    58: ':'
+    61: '='
+    38: '&'
+   124: '|'
+    33: '!'
+
+
+Grammar States: 
+State 0:
+39: program_$ ->  . program 
+  0:   On program to state 1
+  1:   On declaration_statement_list to state 2
+  2:   On procedure_name to state 3
+  3:   On declaration_statement to state 4
+  4:   On NAME to state 5
+  5:   On INTEGER to state 6
+
+
+State 1:
+39: program_$ -> program  . 
+
+
+State 2:
+1: program -> declaration_statement_list  . procedure_name #0001 procedure_body 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On procedure_name to state 7
+  1:   On declaration_statement to state 8
+  2:   On NAME to state 5
+  3:   On INTEGER to state 6
+
+
+State 3:
+3: program -> procedure_name  . #0002 procedure_body 
+  0:   On #0002 to state 9
+  Reduce by 4: #0002 ->  . 
+
+
+State 4:
+9: declaration_statement_list -> declaration_statement  . 
+  Reduce by 9: declaration_statement_list -> declaration_statement  . 
+
+
+State 5:
+5: procedure_name -> NAME  . '(' ')' 
+  0:   On '(' to state 10
+
+
+State 6:
+11: declaration_statement -> INTEGER  . NAME ';' 
+  0:   On NAME to state 11
+
+
+State 7:
+1: program -> declaration_statement_list procedure_name  . #0001 procedure_body 
+  0:   On #0001 to state 12
+  Reduce by 2: #0001 ->  . 
+
+
+State 8:
+10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+  Reduce by 10: declaration_statement_list -> declaration_statement_list declaration_statement  . 
+
+
+State 9:
+3: program -> procedure_name #0002  . procedure_body 
+  0:   On procedure_body to state 13
+  1:   On '{' to state 14
+
+
+State 10:
+5: procedure_name -> NAME '('  . ')' 
+  0:   On ')' to state 15
+
+
+State 11:
+11: declaration_statement -> INTEGER NAME  . ';' 
+  0:   On ';' to state 16
+
+
+State 12:
+1: program -> declaration_statement_list procedure_name #0001  . procedure_body 
+  0:   On procedure_body to state 17
+  1:   On '{' to state 14
+
+
+State 13:
+3: program -> procedure_name #0002 procedure_body  . 
+  Reduce by 3: program -> procedure_name #0002 procedure_body  . 
+
+
+State 14:
+6: procedure_body -> '{'  . declaration_statement_list #0003 basic_block_list '}' 
+8: procedure_body -> '{'  . basic_block_list '}' 
+  0:   On declaration_statement_list to state 18
+  1:   On basic_block_list to state 19
+  2:   On declaration_statement to state 4
+  3:   On basic_block to state 20
+  4:   On INTEGER to state 6
+  5:   On '<' to state 21
+
+
+State 15:
+5: procedure_name -> NAME '(' ')'  . 
+  Reduce by 5: procedure_name -> NAME '(' ')'  . 
+
+
+State 16:
+11: declaration_statement -> INTEGER NAME ';'  . 
+  Reduce by 11: declaration_statement -> INTEGER NAME ';'  . 
+
+
+State 17:
+1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+  Reduce by 1: program -> declaration_statement_list procedure_name #0001 procedure_body  . 
+
+
+State 18:
+6: procedure_body -> '{' declaration_statement_list  . #0003 basic_block_list '}' 
+10: declaration_statement_list -> declaration_statement_list  . declaration_statement 
+  0:   On #0003 to state 22
+  1:   On declaration_statement to state 8
+  2:   On INTEGER to state 6
+  Reduce by 7: #0003 ->  . 
+
+
+State 19:
+8: procedure_body -> '{' basic_block_list  . '}' 
+12: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 23
+  1:   On basic_block to state 24
+  2:   On '<' to state 21
+
+
+State 20:
+13: basic_block_list -> basic_block  . 
+  Reduce by 13: basic_block_list -> basic_block  . 
+
+
+State 21:
+14: basic_block -> '<'  . NAME INTEGER_NUMBER '>' ':' executable_statement_list 
+  0:   On NAME to state 25
+
+
+State 22:
+6: procedure_body -> '{' declaration_statement_list #0003  . basic_block_list '}' 
+  0:   On basic_block_list to state 26
+  1:   On basic_block to state 20
+  2:   On '<' to state 21
+
+
+State 23:
+8: procedure_body -> '{' basic_block_list '}'  . 
+  Reduce by 8: procedure_body -> '{' basic_block_list '}'  . 
+
+
+State 24:
+12: basic_block_list -> basic_block_list basic_block  . 
+  Reduce by 12: basic_block_list -> basic_block_list basic_block  . 
+
+
+State 25:
+14: basic_block -> '<' NAME  . INTEGER_NUMBER '>' ':' executable_statement_list 
+  0:   On INTEGER_NUMBER to state 27
+
+
+State 26:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list  . '}' 
+12: basic_block_list -> basic_block_list  . basic_block 
+  0:   On '}' to state 28
+  1:   On basic_block to state 24
+  2:   On '<' to state 21
+
+
+State 27:
+14: basic_block -> '<' NAME INTEGER_NUMBER  . '>' ':' executable_statement_list 
+  0:   On '>' to state 29
+
+
+State 28:
+6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+  Reduce by 6: procedure_body -> '{' declaration_statement_list #0003 basic_block_list '}'  . 
+
+
+State 29:
+14: basic_block -> '<' NAME INTEGER_NUMBER '>'  . ':' executable_statement_list 
+  0:   On ':' to state 30
+
+
+State 30:
+14: basic_block -> '<' NAME INTEGER_NUMBER '>' ':'  . executable_statement_list 
+  0:   On executable_statement_list to state 31
+  1:   On assignment_statement_list to state 32
+  Reduce by 19: assignment_statement_list ->  . 
+
+
+State 31:
+14: basic_block -> '<' NAME INTEGER_NUMBER '>' ':' executable_statement_list  . 
+  Reduce by 14: basic_block -> '<' NAME INTEGER_NUMBER '>' ':' executable_statement_list  . 
+
+
+State 32:
+15: executable_statement_list -> assignment_statement_list  . 
+16: executable_statement_list -> assignment_statement_list  . RETURN ';' 
+17: executable_statement_list -> assignment_statement_list  . if_else_statement 
+18: executable_statement_list -> assignment_statement_list  . goto_statement 
+20: assignment_statement_list -> assignment_statement_list  . assignment_statement 
+  0:   On RETURN to state 33
+  1:   On if_else_statement to state 34
+  2:   On goto_statement to state 35
+  3:   On assignment_statement to state 36
+  4:   On IF to state 37
+  5:   On GOTO to state 38
+  6:   On variable to state 39
+  7:   On NAME to state 40
+  Reduce by 15: executable_statement_list -> assignment_statement_list  . 
+
+
+State 33:
+16: executable_statement_list -> assignment_statement_list RETURN  . ';' 
+  0:   On ';' to state 41
+
+
+State 34:
+17: executable_statement_list -> assignment_statement_list if_else_statement  . 
+  Reduce by 17: executable_statement_list -> assignment_statement_list if_else_statement  . 
+
+
+State 35:
+18: executable_statement_list -> assignment_statement_list goto_statement  . 
+  Reduce by 18: executable_statement_list -> assignment_statement_list goto_statement  . 
+
+
+State 36:
+20: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+  Reduce by 20: assignment_statement_list -> assignment_statement_list assignment_statement  . 
+
+
+State 37:
+24: if_else_statement -> IF  . '(' relational_expression ')' goto_statement ELSE goto_statement 
+  0:   On '(' to state 42
+
+
+State 38:
+25: goto_statement -> GOTO  . '<' NAME INTEGER_NUMBER '>' ';' 
+  0:   On '<' to state 43
+
+
+State 39:
+21: assignment_statement -> variable  . '=' variable ';' 
+22: assignment_statement -> variable  . '=' constant ';' 
+23: assignment_statement -> variable  . '=' relational_expression ';' 
+  0:   On '=' to state 44
+
+
+State 40:
+37: variable -> NAME  . 
+  Reduce by 37: variable -> NAME  . 
+
+
+State 41:
+16: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+  Reduce by 16: executable_statement_list -> assignment_statement_list RETURN ';'  . 
+
+
+State 42:
+24: if_else_statement -> IF '('  . relational_expression ')' goto_statement ELSE goto_statement 
+  0:   On relational_expression to state 45
+  1:   On '!' to state 46
+  2:   On variable to state 47
+  3:   On constant to state 48
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 49
+
+
+State 43:
+25: goto_statement -> GOTO '<'  . NAME INTEGER_NUMBER '>' ';' 
+  0:   On NAME to state 50
+
+
+State 44:
+21: assignment_statement -> variable '='  . variable ';' 
+22: assignment_statement -> variable '='  . constant ';' 
+23: assignment_statement -> variable '='  . relational_expression ';' 
+  0:   On variable to state 51
+  1:   On constant to state 52
+  2:   On relational_expression to state 53
+  3:   On NAME to state 40
+  4:   On INTEGER_NUMBER to state 49
+  5:   On '!' to state 46
+
+
+State 45:
+24: if_else_statement -> IF '(' relational_expression  . ')' goto_statement ELSE goto_statement 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On ')' to state 54
+  1:   On '&' to state 55
+  2:   On '|' to state 56
+  3:   On '<' to state 57
+  4:   On '>' to state 58
+  5:   On '=' to state 59
+  6:   On '!' to state 60
+
+
+State 46:
+28: relational_expression -> '!'  . relational_expression 
+  0:   On relational_expression to state 61
+  1:   On '!' to state 46
+  2:   On variable to state 47
+  3:   On constant to state 48
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 49
+
+
+State 47:
+35: relational_expression -> variable  . 
+  Reduce by 35: relational_expression -> variable  . 
+
+
+State 48:
+36: relational_expression -> constant  . 
+  Reduce by 36: relational_expression -> constant  . 
+
+
+State 49:
+38: constant -> INTEGER_NUMBER  . 
+  Reduce by 38: constant -> INTEGER_NUMBER  . 
+
+
+State 50:
+25: goto_statement -> GOTO '<' NAME  . INTEGER_NUMBER '>' ';' 
+  0:   On INTEGER_NUMBER to state 62
+
+
+State 51:
+21: assignment_statement -> variable '=' variable  . ';' 
+35: relational_expression -> variable  . 
+  0 (AUTO REMOVED by S/R resolution):   On ';' to state 63
+  Reduce by 35: relational_expression -> variable  . 
+
+
+State 52:
+22: assignment_statement -> variable '=' constant  . ';' 
+36: relational_expression -> constant  . 
+  0 (AUTO REMOVED by S/R resolution):   On ';' to state 64
+  Reduce by 36: relational_expression -> constant  . 
+
+
+State 53:
+23: assignment_statement -> variable '=' relational_expression  . ';' 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On ';' to state 65
+  1:   On '&' to state 55
+  2:   On '|' to state 56
+  3:   On '<' to state 57
+  4:   On '>' to state 58
+  5:   On '=' to state 59
+  6:   On '!' to state 60
+
+
+State 54:
+24: if_else_statement -> IF '(' relational_expression ')'  . goto_statement ELSE goto_statement 
+  0:   On goto_statement to state 66
+  1:   On GOTO to state 38
+
+
+State 55:
+26: relational_expression -> relational_expression '&'  . '&' relational_expression 
+  0:   On '&' to state 67
+
+
+State 56:
+27: relational_expression -> relational_expression '|'  . '|' relational_expression 
+  0:   On '|' to state 68
+
+
+State 57:
+29: relational_expression -> relational_expression '<'  . '=' relational_expression 
+31: relational_expression -> relational_expression '<'  . relational_expression 
+  0:   On '=' to state 69
+  1:   On relational_expression to state 70
+  2:   On '!' to state 46
+  3:   On variable to state 47
+  4:   On constant to state 48
+  5:   On NAME to state 40
+  6:   On INTEGER_NUMBER to state 49
+
+
+State 58:
+30: relational_expression -> relational_expression '>'  . '=' relational_expression 
+32: relational_expression -> relational_expression '>'  . relational_expression 
+  0:   On '=' to state 71
+  1:   On relational_expression to state 72
+  2:   On '!' to state 46
+  3:   On variable to state 47
+  4:   On constant to state 48
+  5:   On NAME to state 40
+  6:   On INTEGER_NUMBER to state 49
+
+
+State 59:
+33: relational_expression -> relational_expression '='  . '=' relational_expression 
+  0:   On '=' to state 73
+
+
+State 60:
+34: relational_expression -> relational_expression '!'  . '=' relational_expression 
+  0:   On '=' to state 74
+
+
+State 61:
+28: relational_expression -> '!' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 28: relational_expression -> '!' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 28)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 28)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 28)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 28)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 28)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 28)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 28)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 28)
+
+
+State 62:
+25: goto_statement -> GOTO '<' NAME INTEGER_NUMBER  . '>' ';' 
+  0:   On '>' to state 75
+
+
+State 63:
+21: assignment_statement -> variable '=' variable ';'  . 
+  Reduce by 21: assignment_statement -> variable '=' variable ';'  . 
+
+
+State 64:
+22: assignment_statement -> variable '=' constant ';'  . 
+  Reduce by 22: assignment_statement -> variable '=' constant ';'  . 
+
+
+State 65:
+23: assignment_statement -> variable '=' relational_expression ';'  . 
+  Reduce by 23: assignment_statement -> variable '=' relational_expression ';'  . 
+
+
+State 66:
+24: if_else_statement -> IF '(' relational_expression ')' goto_statement  . ELSE goto_statement 
+  0:   On ELSE to state 76
+
+
+State 67:
+26: relational_expression -> relational_expression '&' '&'  . relational_expression 
+  0:   On relational_expression to state 77
+  1:   On '!' to state 46
+  2:   On variable to state 47
+  3:   On constant to state 48
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 49
+
+
+State 68:
+27: relational_expression -> relational_expression '|' '|'  . relational_expression 
+  0:   On relational_expression to state 78
+  1:   On '!' to state 46
+  2:   On variable to state 47
+  3:   On constant to state 48
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 49
+
+
+State 69:
+29: relational_expression -> relational_expression '<' '='  . relational_expression 
+  0:   On relational_expression to state 79
+  1:   On '!' to state 46
+  2:   On variable to state 47
+  3:   On constant to state 48
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 49
+
+
+State 70:
+31: relational_expression -> relational_expression '<' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 31: relational_expression -> relational_expression '<' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 31)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 31)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 31)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 31)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 31)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 31)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 31)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 31)
+
+
+State 71:
+30: relational_expression -> relational_expression '>' '='  . relational_expression 
+  0:   On relational_expression to state 80
+  1:   On '!' to state 46
+  2:   On variable to state 47
+  3:   On constant to state 48
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 49
+
+
+State 72:
+32: relational_expression -> relational_expression '>' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 32: relational_expression -> relational_expression '>' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 32)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 32)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 32)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 32)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 32)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 32)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 32)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 32)
+
+
+State 73:
+33: relational_expression -> relational_expression '=' '='  . relational_expression 
+  0:   On relational_expression to state 81
+  1:   On '!' to state 46
+  2:   On variable to state 47
+  3:   On constant to state 48
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 49
+
+
+State 74:
+34: relational_expression -> relational_expression '!' '='  . relational_expression 
+  0:   On relational_expression to state 82
+  1:   On '!' to state 46
+  2:   On variable to state 47
+  3:   On constant to state 48
+  4:   On NAME to state 40
+  5:   On INTEGER_NUMBER to state 49
+
+
+State 75:
+25: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>'  . ';' 
+  0:   On ';' to state 83
+
+
+State 76:
+24: if_else_statement -> IF '(' relational_expression ')' goto_statement ELSE  . goto_statement 
+  0:   On goto_statement to state 84
+  1:   On GOTO to state 38
+
+
+State 77:
+26: relational_expression -> relational_expression '&' '&' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 26: relational_expression -> relational_expression '&' '&' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 26)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 26)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 26)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 26)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 26)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 26)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 26)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 26)
+
+
+State 78:
+27: relational_expression -> relational_expression '|' '|' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 27: relational_expression -> relational_expression '|' '|' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 27)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 27)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 27)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 27)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 27)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 27)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 27)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 27)
+
+
+State 79:
+29: relational_expression -> relational_expression '<' '=' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 29: relational_expression -> relational_expression '<' '=' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 29)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 29)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 29)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 29)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 29)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 29)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 29)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 29)
+
+
+State 80:
+30: relational_expression -> relational_expression '>' '=' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 30: relational_expression -> relational_expression '>' '=' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 30)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 30)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 30)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 30)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 30)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 30)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 30)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 30)
+
+
+State 81:
+33: relational_expression -> relational_expression '=' '=' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 33: relational_expression -> relational_expression '=' '=' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 33)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 33)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 33)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 33)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 33)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 33)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 33)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 33)
+
+
+State 82:
+34: relational_expression -> relational_expression '!' '=' relational_expression  . 
+26: relational_expression -> relational_expression  . '&' '&' relational_expression 
+27: relational_expression -> relational_expression  . '|' '|' relational_expression 
+29: relational_expression -> relational_expression  . '<' '=' relational_expression 
+30: relational_expression -> relational_expression  . '>' '=' relational_expression 
+31: relational_expression -> relational_expression  . '<' relational_expression 
+32: relational_expression -> relational_expression  . '>' relational_expression 
+33: relational_expression -> relational_expression  . '=' '=' relational_expression 
+34: relational_expression -> relational_expression  . '!' '=' relational_expression 
+  0:   On '&' to state 55
+  1:   On '|' to state 56
+  2:   On '<' to state 57
+  3:   On '>' to state 58
+  4:   On '=' to state 59
+  5:   On '!' to state 60
+  Reduce by 34: relational_expression -> relational_expression '!' '=' relational_expression  . 
+Solved SR CONFLICT on '&': shift to state 55, removed '&' from LA-set of rule 34)
+Solved SR CONFLICT on '|': shift to state 56, removed '|' from LA-set of rule 34)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 34)
+Solved SR CONFLICT on '<': shift to state 57, removed '<' from LA-set of rule 34)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 34)
+Solved SR CONFLICT on '>': shift to state 58, removed '>' from LA-set of rule 34)
+Solved SR CONFLICT on '=': shift to state 59, removed '=' from LA-set of rule 34)
+Solved SR CONFLICT on '!': shift to state 60, removed '!' from LA-set of rule 34)
+
+
+State 83:
+25: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
+  Reduce by 25: goto_statement -> GOTO '<' NAME INTEGER_NUMBER '>' ';'  . 
+
+
+State 84:
+24: if_else_statement -> IF '(' relational_expression ')' goto_statement ELSE goto_statement  . 
+  Reduce by 24: if_else_statement -> IF '(' relational_expression ')' goto_statement ELSE goto_statement  . 
+
+
+
