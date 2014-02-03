@@ -1,0 +1,52 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 3)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 10)
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 2)
+         Asgn:
+            LHS (Name : d)
+            RHS (Num : 1)
+         Asgn:
+            LHS (Name : e)
+            RHS (Num : 4)
+         Asgn:
+            LHS (Name : f)
+            RHS (Num : 8)
+         Asgn:
+            LHS (Name : g)
+            RHS (Num : 11)
+         If_Else statement:
+            Condition: GT
+               LHS (Name : b)
+               RHS (Name : c)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 3
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (
+            Condition: GT
+               LHS (Name : d)
+               RHS (Name : e))
+         Goto statement:
+            Successor: 5
+      Basic_Block 4
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (
+            Condition: GE
+               LHS (Name : f)
+               RHS (Name : g))
+      Basic_Block 5
+         Asgn:
+            LHS (Name : a)
+            RHS (Name : iftmp0)
+         Return <NOTHING>

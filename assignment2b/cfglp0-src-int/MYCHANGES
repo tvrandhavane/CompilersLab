@@ -1,0 +1,37 @@
+
+Tanmay Randhavane	110050010
+Alok yadav			11005043
+
+My Changes:
+
+In scanner.ll:
+1.	We have added new tokens for <, >, >=, <=, ==, != , &&, ||.
+2.	Added token to identify starting of a basic block (for example, <bb 5>).
+	This token returns the id number of the basic block.
+
+In parser.yy:
+1. 	Uncommented all of C code.
+
+2. 	Modified the grammar of basic_block to accomodate the token created for basic block.
+
+3. 	Added action routine for goto_statement, if-else statement and relational expression
+
+4.	Added precedence and priority for the relational operators.
+
+In ast.hh:
+1.	Added the declaration for Relational_Expr_Ast, If_Else_Ast, Goto_Ast
+
+2.	Added enumerator for Relational operators.
+
+In ast.cc:
+1.	Added the class for Relational_Expr_Ast, If_Else_Ast, Goto_Ast
+
+2.	Modified Assignment_Ast class to make the RHS of type Relational_Expr_Ast.
+
+In basic-block.cc:
+1.	Added a variable successor to store the id of the successor basic block. Needed for if-else statements.
+
+2.	The successor variable is modified in the evaluate function, it contains the value of the successor from the last statement of the block. If invalid, it contains -1.
+
+In procedure.cc:
+1.	Modified the get_next_bb function to give the appropriate successor basic block according to the condition of if-else clause.

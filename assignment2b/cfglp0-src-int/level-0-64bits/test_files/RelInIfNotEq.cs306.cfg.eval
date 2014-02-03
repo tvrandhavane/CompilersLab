@@ -1,0 +1,111 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         iftmp0 : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 3)
+         a : 3
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 5)
+         b : 5
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 4)
+         c : 4
+
+
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Name : b)
+            True Successor: 3
+            False Successor: 5
+         Condition False : Goto (BB 5)
+
+      Basic Block: 5
+
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 0)
+         iftmp0 : 0
+
+
+      Basic Block: 6
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Name : iftmp0)
+         c : 0
+
+
+         If_Else statement:
+            Condition: EQ
+               LHS (
+            Condition: GE
+               LHS (
+            Condition: GT
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (Name : a))
+               RHS (Num : 0)
+            True Successor: 7
+            False Successor: 8
+         Condition True : Goto (BB 7)
+
+      Basic Block: 7
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 4)
+         a : 4
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (
+            Condition: GE
+               LHS (
+            Condition: GT
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (Name : c))
+         b : 1
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (
+            Condition: NE
+               LHS (
+            Condition: LT
+               LHS (Name : b)
+               RHS (Name : a))
+               RHS (Name : c))
+         c : 1
+
+
+      Basic Block: 8
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : 4
+         b : 1
+         c : 1
+         iftmp0 : 0
+   Global Variables (after evaluating):
