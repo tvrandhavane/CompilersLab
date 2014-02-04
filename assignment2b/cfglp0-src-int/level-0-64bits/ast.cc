@@ -420,7 +420,7 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
 		if (lhsResult.is_variable_defined() == false)
 			report_error("Variable should be defined to be on rhs", NOLINE);
-		Eval_Result & rhsResult = lhs->evaluate(eval_env, file_buffer);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
 		if (rhsResult.is_variable_defined() == false)
 			report_error("Variable should be defined to be on rhs", NOLINE);
 
