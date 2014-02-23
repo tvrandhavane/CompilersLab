@@ -1,9 +1,0 @@
-;; Function main (main)
-
-int b;
-main ()
-{
-<bb 2>:
-	a = b;
-	return;
-}
