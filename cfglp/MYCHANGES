@@ -1,0 +1,81 @@
+
+Tanmay Randhavane	110050010
+Alok yadav			110050043
+
+My Changes:
+
+In scanner.ll:
+We have added new token for if, else, goto.
+and added a meta char '!', '&', '|'
+
+In parser.yy:
+1. Commented out all of C code.
+
+2. Added grammar for if_else_statement - 
+	if_else_statement -> 
+	IF '(' relational_expression ')'
+		goto_statement
+	ELSE
+		goto_statement
+
+3. Added grammar for goto_statement - 
+	goto_statement -> 	
+	GOTO '<' NAME INTEGER_NUMBER '>' ';'
+
+5. Modified the grammar of executable_statement_list -
+	executable_statement_list ->
+	assignment_statement_list
+	|
+	assignment_statement_list RETURN ';'
+	|
+	assignment_statement_list if_else_statement
+	|
+	assignment_statement_list goto_statement
+	;
+
+4. Modified the grammar of assignment_statement -
+	assignment_statement:
+	variable '=' and_expression ';'
+
+3. Added grammar for and_expression, or_expression, not_expression,
+	relational_expression, variable_or_constant
+
+	or_expression:
+	not_expression
+	|
+	not_expression '|''|' or_expression
+	;
+
+	and_expression ->
+	or_expression
+	|
+	or_expression '&''&' and_expression
+	;
+
+	not_expression ->
+	relational_expression
+	|
+	'!' relational_expression
+	;
+
+	relational_expression ->
+	relational_expression '<''=' variable_or_constant
+	|
+	relational_expression '>''=' variable_or_constant
+	|
+	relational_expression '<' variable_or_constant
+	|
+	relational_expression '>' variable_or_constant
+	|
+	relational_expression '=''=' variable_or_constant
+	|
+	relational_expression '!''=' variable_or_constant
+	|
+	variable_or_constant
+	;
+
+	variable_or_constant:
+	variable
+	|
+	constant
+	;

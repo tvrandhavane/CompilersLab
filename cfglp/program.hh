@@ -46,7 +46,7 @@ public:
 	~Program();
 	void delete_all();
 
-	void set_procedure_map(Procedure * proc, int line);
+	void set_procedure_map(Procedure & proc);
 	void set_global_table(Symbol_Table & new_global_table);
 
 	Symbol_Table_Entry & get_symbol_table_entry(string variable);

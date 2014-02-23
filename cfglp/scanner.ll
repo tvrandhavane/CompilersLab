@@ -36,12 +36,27 @@ return		{
 			return Parser::RETURN; 
 		}
 
-[<>:{}();=]	{
+if		{
+			store_token_name("IF");
+			return Parser::IF; 
+		}
+
+else		{
+			store_token_name("ELSE");
+			return Parser::ELSE; 
+		}
+
+goto	{
+			store_token_name("GOTO");
+			return Parser::GOTO; 
+		}
+
+[<>:{}();=!|&]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
 
-[-]?[[:digit:]]+ 	{ 
+[-]?[[:digit:]_]+ 	{ 
 				store_token_name("NUM");
 
 				ParserBase::STYPE__ * val = getSval();

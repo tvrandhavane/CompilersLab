@@ -38,7 +38,7 @@ HEADERS = $(HEADERS_CORE) $(HEADERS_GEN)
 CPP = g++
 BISONCPP = bisonc++
 FLEXCPP = flexc++
-TGT = cfglp64
+TGT = cfglp
 
 CFLAGS = -g 
 
@@ -55,66 +55,5 @@ parser.cc parserbase.h: parser.yy parser.ih parser.h
 	$(BISONCPP) --verbose parser.yy
 
 clean :
-	rm -f *.o cfglp64 cfgpp64 scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output plugin*.so
-	rm -f cscope.out tags a.out
-	rm Makefile*
-	rm -rf test_files test_files_output
-
-###########################################################################
-
-check:
-	@mkdir -p test_files
-	@cp -fr ../test_files/* test_files/
-	
-	@mkdir -p test_files_output;
-	@cp -f ../test_files_output/* test_files_output/;
-	
-	@cp ../../../Documentation/sources-interpreter/level-0-64bits/plugin64.so .
-	@cp ../../../Documentation/sources-interpreter/level-0-64bits/cfgpp64 .
-	@cp ../../../Preprocessor/Level-0/make-64-bits/Makefile.cfg .
-	
-	@make --no-print-directory -f Makefile.cfglp check_no_print_dir
-
-check_no_print_dir:
-	@for file in $(shell find -iname '*.c' | cut -f3 -d"/"); do \
-		make -f Makefile.cfg FILE=$$file; \
-	done
-	
-	@# create .toks .ast .eval files	
-	@for file in `ls test_files/*.cs306.cfg`; do \
-		./cfglp64 $$file -tokens; \
-		mv $$file.toks $$file.toks.new; \
-		./cfglp64 $$file -ast; \
-		mv $$file.ast $$file.ast.new; \
-		./cfglp64 $$file -eval; \
-		mv $$file.eval $$file.eval.new; \
-	done
-	
-	@# compare .toks .ast .eval files
-	@for cfglpfile in $(shell find -iname '*.cs306.cfg' | cut -f3 -d"/"); do \
-		cmp -s test_files/$$cfglpfile.toks.new test_files_output/$$cfglpfile.toks.old; \
-		RETVAL=$$?; \
-		if [ $$RETVAL -eq 0 ]; then \
-			echo -n; \
-		else \
-			echo failed $$cfglpfile - toks; \
-		fi; \
-		cmp -s test_files/$$cfglpfile.ast.new test_files_output/$$cfglpfile.ast.old; \
-		RETVAL=$$?; \
-		if [ $$RETVAL -eq 0 ]; then \
-			echo -n; \
-		else \
-			echo failed $$cfglpfile - ast; \
-		fi; \
-		cmp -s test_files/$$cfglpfile.eval.new test_files_output/$$cfglpfile.eval.old; \
-		RETVAL=$$?; \
-		if [ $$RETVAL -eq 0 ]; then \
-			echo -n; \
-		else \
-			echo failed $$cfglpfile - eval; \
-		fi; \
-	done
-	
-	@rm -f test_files/*.toks test_files/*.toks.new
-	@rm -f test_files/*.eval test_files/*.eval.new
-	@rm -f test_files/*.ast test_files/*.ast.new
+	rm -rf *.o cfglp scannerbase.h parserbase.h scanner.cc parser.cc parser.yy.output
+	rm -rf cscope.out tags a.out

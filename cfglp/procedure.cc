@@ -54,7 +54,7 @@ string Procedure::get_proc_name()
 	return name;
 }
 
-void Procedure::set_basic_block_list(list<Basic_Block *> & bb_list)
+void Procedure::set_basic_block_list(list<Basic_Block *> bb_list)
 {
 	basic_block_list = bb_list;
 }

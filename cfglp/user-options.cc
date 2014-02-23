@@ -6,17 +6,17 @@
 
            About:
 
-           Implemented by Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
-           Khedker (http://www.cse.iitb.ac.in/~uday)  for the courses
-           cs302+cs306: Language  Processors (theory and lab)  at IIT
+           Implemented   by  Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
+           Khedker    (http://www.cse.iitb.ac.in/~uday)  for the courses
+           cs302+cs306: Language  Processors  (theory and  lab)  at  IIT
            Bombay.
 
-           Release  date Jan  15, 2013.  Copyrights reserved  by Uday
-           Khedker. This implemenation has been made available purely
+           Release  date  Jan  15, 2013.  Copyrights  reserved  by  Uday
+           Khedker. This  implemenation  has been made  available purely
            for academic purposes without any warranty of any kind.
 
-           A  doxygen   generated  documentation  can  be   found  at
-           http://www.cse.iitb.ac.in/~uday/cfglp
+           Documentation (functionality, manual, and design) and related
+           tools are  available at http://www.cse.iitb.ac.in/~uday/cfglp
 
 
 ***********************************************************************************************/
@@ -140,19 +140,12 @@ string User_Options::get_file_name()
 	return source_file;
 }
 
-void User_Options::remove_files()
-{
-	remove(tokens_file_name.c_str());
-	remove(ast_file_name.c_str());
-	remove(output_file_name.c_str());
-}
-
 string User_Options::process_user_command_options(int argc, char * argv[])
 {
 	string input_file_name;
 
 	bool user_input_file_entered = false;
-	string user_input_file_name;
+	string user_input_file_name, tokens_file_name, ast_file_name, output_file_name;
 	char * user_input_file_c_string = NULL;
 
 	const string usage = "\n     Usage: cfglp [options] [file]\n\

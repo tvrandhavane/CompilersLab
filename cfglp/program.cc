@@ -58,12 +58,9 @@ void Program::set_global_table(Symbol_Table & new_global_table)
 	global_symbol_table.set_table_scope(global);
 }
 
-void Program::set_procedure_map(Procedure * proc, int line)
+void Program::set_procedure_map(Procedure & proc)
 {
-	if (proc == NULL)
-		report_error("procedure cannot be null", line);
-
-	procedure_map[proc->get_proc_name()] = proc;
+	procedure_map[proc.get_proc_name()] = &proc;
 }
 
 bool Program::variable_in_symbol_list_check(string variable)
@@ -106,7 +103,9 @@ void Program::print_ast()
 		report_error("No main function found in the program", NOLINE);
 
 	else
+	{
 		main->print_ast(ast_buffer);
+	}
 }
 
 Eval_Result & Program::evaluate()

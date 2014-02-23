@@ -98,7 +98,7 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 {
 	file_buffer << AST_SPACE << "Asgn:\n";
 
-	file_buffer << AST_NODE_SPACE << "LHS (";
+	file_buffer << AST_NODE_SPACE"LHS (";
 	lhs->print_ast(file_buffer);
 	file_buffer << ")\n";
 
