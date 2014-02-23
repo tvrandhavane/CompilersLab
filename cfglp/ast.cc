@@ -54,6 +54,11 @@ void Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 	report_internal_error("Should not reach, Ast : print_value");
 }
 
+int Ast::get_successor()
+{
+	report_internal_error("Should not reach, Ast : get_successor");
+}
+
 Eval_Result & Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
 	report_internal_error("Should not reach, Ast : get_value_of_evaluation");
@@ -70,6 +75,7 @@ Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs)
 {
 	lhs = temp_lhs;
 	rhs = temp_rhs;
+	successor = -1;
 }
 
 Assignment_Ast::~Assignment_Ast()
@@ -85,11 +91,12 @@ Data_Type Assignment_Ast::get_data_type()
 
 bool Assignment_Ast::check_ast(int line)
 {
-	if (lhs->get_data_type() == rhs->get_data_type())
+	/*if (lhs->get_data_type() == rhs->get_data_type())
 	{
 		node_data_type = lhs->get_data_type();
 		return true;
-	}
+	}*/
+	return true;
 
 	report_error("Assignment statement data type not compatible", line);
 }
@@ -98,13 +105,17 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 {
 	file_buffer << AST_SPACE << "Asgn:\n";
 
-	file_buffer << AST_NODE_SPACE"LHS (";
+	file_buffer << AST_NODE_SPACE << "LHS (";
 	lhs->print_ast(file_buffer);
 	file_buffer << ")\n";
 
 	file_buffer << AST_NODE_SPACE << "RHS (";
 	rhs->print_ast(file_buffer);
 	file_buffer << ")\n";
+}
+
+int Assignment_Ast::get_successor(){
+	return successor;
 }
 
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -117,19 +128,382 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 	lhs->set_value_of_evaluation(eval_env, result);
 
 	// Print the result
+	file_buffer << "\n";
+	file_buffer << AST_SPACE << "Asgn:\n";
 
-	print_ast(file_buffer);
+	file_buffer << AST_NODE_SPACE << "LHS (";
+	lhs->print_ast(file_buffer);
+	file_buffer << ")\n";
+
+	file_buffer << AST_NODE_SPACE << "RHS (";
+	rhs->print_ast(file_buffer);
+	file_buffer << ")";
 
 	lhs->print_value(eval_env, file_buffer);
 
 	return result;
 }
 /////////////////////////////////////////////////////////////////
+Goto_Ast::Goto_Ast(int temp_bb)
+{
+	bb = temp_bb;
+	successor = temp_bb;
+}
 
+Goto_Ast::~Goto_Ast()
+{
+}
+
+Data_Type Goto_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Goto_Ast::check_ast(int line)
+{
+	if (bb > 1)
+	{
+		return true;
+	}
+
+	report_error("Basic block should be greater than one.", line);
+}
+
+void Goto_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer << AST_SPACE << "Goto statement:\n";
+
+	file_buffer << AST_NODE_SPACE << "Successor: " << bb;
+	file_buffer << "\n";
+}
+
+int Goto_Ast::get_successor(){
+	return successor;
+}
+
+Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	// Print the result
+	file_buffer << "\n";
+	print_ast(file_buffer);
+	Eval_Result & result = *new Eval_Result_Value_Int();
+	result.set_value(bb);
+	file_buffer << AST_SPACE << "GOTO (BB " << successor << ")\n";
+	successor = bb;
+	return result;
+}
+/////////////////////////////////////////////////////////////////
+If_Else_Ast::If_Else_Ast(Ast * temp_gotoTrue, Ast * temp_condition, Ast * temp_gotoFalse)
+{
+	gotoTrue = temp_gotoTrue;
+	condition = temp_condition;
+	gotoFalse = temp_gotoFalse;
+	successor = -3;
+}
+
+If_Else_Ast::~If_Else_Ast()
+{
+	delete gotoTrue;
+	delete gotoFalse;
+	delete condition;
+}
+
+Data_Type If_Else_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool If_Else_Ast::check_ast(int line)
+{
+	if ((gotoTrue->get_successor() > 1) && (gotoFalse->get_successor() > 1))
+	{
+		return true;
+	}
+
+	report_error("Basic block should be greater than one.", line);
+}
+
+void If_Else_Ast::print_ast(ostream & file_buffer)
+{
+	file_buffer << AST_SPACE << "If_Else statement:";
+	condition->print_ast(file_buffer);
+	file_buffer << "\n";
+	file_buffer << AST_NODE_SPACE << "True Successor: " << gotoTrue->get_successor();
+	file_buffer << "\n";
+	file_buffer << AST_NODE_SPACE << "False Successor: " << gotoFalse ->get_successor();
+	file_buffer << "\n";
+}
+
+int If_Else_Ast::get_successor(){
+	return successor;
+}
+
+Eval_Result & If_Else_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	// Print the result
+	Eval_Result & conditionResult = condition->evaluate(eval_env, file_buffer);
+	int value = conditionResult.get_value();
+	Eval_Result & result = *new Eval_Result_Value_Int();
+	file_buffer << "\n";
+	print_ast(file_buffer);
+	if(value == 1){
+		file_buffer << AST_SPACE << "Condition True : Goto (BB " << gotoTrue->get_successor() << ")\n";
+		successor = gotoTrue->get_successor();
+	}
+	else{
+		file_buffer << AST_SPACE << "Condition False : Goto (BB " << gotoFalse->get_successor() << ")\n";
+		successor = gotoFalse->get_successor();
+	}
+	result.set_value(successor);
+	return result;
+}
+/////////////////////////////////////////////////////////////////
+Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, relational_operators temp_oper, Ast * temp_rhs)
+{
+	lhs = temp_lhs;
+	rhs = temp_rhs;
+	oper = temp_oper;
+	successor = -1;
+}
+
+Relational_Expr_Ast::~Relational_Expr_Ast()
+{
+	delete lhs;
+	delete rhs;
+}
+
+Data_Type Relational_Expr_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Relational_Expr_Ast::check_ast(int line)
+{
+	if (lhs->get_data_type() == rhs->get_data_type())
+	{
+		node_data_type = lhs->get_data_type();
+		return true;
+	}
+
+	report_error("Relational expression data type not compatible", line);
+}
+
+void Relational_Expr_Ast::print_ast(ostream & file_buffer)
+{
+	if (oper == VAR){
+		lhs->print_ast(file_buffer);
+	}
+	else{
+		file_buffer << "\n";
+		file_buffer << AST_NODE_SPACE << "Condition: ";
+		if (oper == LT) {
+			file_buffer << "LT\n";	
+		}
+		else if (oper == LE) {
+			file_buffer << "LE\n";
+		}
+		else if (oper == GT) {
+			file_buffer << "GT\n";	
+		}
+		else if (oper == GE){
+			file_buffer << "GE\n";	
+		}
+		else if (oper == EQ){
+			file_buffer << "EQ\n";	
+		}
+		else if (oper == NE){
+			file_buffer << "NE\n";	
+		}
+		else if (oper == AND){
+			file_buffer << "AND\n";
+		}
+		else if (oper == OR){
+			file_buffer << "OR\n";	
+		}
+		else if (oper == NOT){
+			file_buffer << "NOT\n";
+		}
+
+		file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "LHS (";
+		lhs->print_ast(file_buffer);
+		file_buffer << ")\n";
+	
+		if (oper != NOT){
+			file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "RHS (";
+			rhs->print_ast(file_buffer);
+			file_buffer << ")";
+		}
+	}
+}
+
+int Relational_Expr_Ast::get_successor(){
+	return successor;
+}
+
+Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
+{
+	if(oper == VAR){
+		Eval_Result & result = lhs->evaluate(eval_env, file_buffer);
+		if (result.is_variable_defined() == false)
+			report_error("Variable should be defined to be on lhs of condition", NOLINE);
+		return result;
+	}
+	else if(oper == GT){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on lhs of condition", NOLINE);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		if (rhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on lhs of condition", NOLINE);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if(lhsResult.get_value() > rhsResult.get_value()){
+			result.set_value(1);
+		}
+		else{
+			result.set_value(0);
+		}
+		return result;
+	}
+	else if(oper == LT){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		if (rhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if(lhsResult.get_value() < rhsResult.get_value()){
+			result.set_value(1);
+		}
+		else{
+			result.set_value(0);
+		}
+		return result;
+	}
+	else if(oper == GE){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		if (rhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if(lhsResult.get_value() >= rhsResult.get_value()){
+			result.set_value(1);
+		}
+		else{
+			result.set_value(0);
+		}
+		return result;
+	}
+	else if(oper == LE){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		if (rhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if(lhsResult.get_value() <= rhsResult.get_value()){
+			result.set_value(1);
+		}
+		else{
+			result.set_value(0);
+		}
+		return result;
+	}
+	else if(oper == EQ){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		if (rhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if(lhsResult.get_value() == rhsResult.get_value()){
+			result.set_value(1);
+		}
+		else{
+			result.set_value(0);
+		}
+		return result;
+	}
+	else if(oper == NE){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		if (rhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if(lhsResult.get_value() != rhsResult.get_value()){
+			result.set_value(1);
+		}
+		else{
+			result.set_value(0);
+		}
+		return result;
+	}
+	else if(oper == AND){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		if (rhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if((lhsResult.get_value()) && (rhsResult.get_value())){
+			result.set_value(1);
+		}
+		else{
+			result.set_value(0);
+		}
+		return result;
+	}
+	else if(oper == OR){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		if (rhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if((lhsResult.get_value()) || (rhsResult.get_value())){
+			result.set_value(1);
+		}
+		else{
+			result.set_value(0);
+		}
+		return result;
+	}
+	else if(oper == NOT){
+		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+		if (lhsResult.is_variable_defined() == false)
+			report_error("Variable should be defined to be on rhs", NOLINE);
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		if(lhsResult.get_value()){
+			result.set_value(0);
+		}
+		else{
+			result.set_value(1);
+		}
+		return result;
+	}
+}
+/////////////////////////////////////////////////////////////////
 Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry)
 {
 	variable_name = name;
 	variable_symbol_entry = var_entry;
+	successor = -1;
 }
 
 Name_Ast::~Name_Ast()
@@ -178,6 +552,10 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 	file_buffer << "\n";
 }
 
+int Name_Ast::get_successor(){
+	return successor;
+}
+
 Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
 	if (eval_env.does_variable_exist(variable_name))
@@ -217,6 +595,7 @@ Number_Ast<DATA_TYPE>::Number_Ast(DATA_TYPE number, Data_Type constant_data_type
 {
 	constant = number;
 	node_data_type = constant_data_type;
+	successor = -1;
 }
 
 template <class DATA_TYPE>
@@ -236,6 +615,11 @@ void Number_Ast<DATA_TYPE>::print_ast(ostream & file_buffer)
 }
 
 template <class DATA_TYPE>
+int Number_Ast<DATA_TYPE>::get_successor(){
+	return successor;
+}
+
+template <class DATA_TYPE>
 Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	if (node_data_type == int_data_type)
@@ -250,10 +634,16 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 ///////////////////////////////////////////////////////////////////////////////
 
 Return_Ast::Return_Ast()
-{}
+{
+	successor = -2;
+}
 
 Return_Ast::~Return_Ast()
 {}
+
+int Return_Ast::get_successor(){
+	return successor;
+}
 
 void Return_Ast::print_ast(ostream & file_buffer)
 {
@@ -262,6 +652,8 @@ void Return_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
+	file_buffer << "\n";
+	print_ast(file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	return result;
 }

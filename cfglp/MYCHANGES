@@ -5,77 +5,39 @@ Alok yadav			110050043
 My Changes:
 
 In scanner.ll:
-We have added new token for if, else, goto.
-and added a meta char '!', '&', '|'
+1.	We have added new tokens for <, >, >=, <=, ==, != , &&, ||.
+2.	Added token to identify starting of a basic block (for example, <bb 5>).
+	This token returns the id number of the basic block.
 
 In parser.yy:
-1. Commented out all of C code.
+1. 	Uncommented all of C code.
 
-2. Added grammar for if_else_statement - 
-	if_else_statement -> 
-	IF '(' relational_expression ')'
-		goto_statement
-	ELSE
-		goto_statement
+2. 	Modified the grammar of basic_block to accomodate the token created for basic block.
 
-3. Added grammar for goto_statement - 
-	goto_statement -> 	
-	GOTO '<' NAME INTEGER_NUMBER '>' ';'
+3. 	Added action routine for goto_statement, if-else statement and relational expression
 
-5. Modified the grammar of executable_statement_list -
-	executable_statement_list ->
-	assignment_statement_list
-	|
-	assignment_statement_list RETURN ';'
-	|
-	assignment_statement_list if_else_statement
-	|
-	assignment_statement_list goto_statement
-	;
+4.	Added precedence and priority for the relational operators.
 
-4. Modified the grammar of assignment_statement -
-	assignment_statement:
-	variable '=' and_expression ';'
+5.	Removed the check for return statement in every procedure.
 
-3. Added grammar for and_expression, or_expression, not_expression,
-	relational_expression, variable_or_constant
+In ast.hh:
+1.	Added the declaration for Relational_Expr_Ast, If_Else_Ast, Goto_Ast
 
-	or_expression:
-	not_expression
-	|
-	not_expression '|''|' or_expression
-	;
+2.	Added enumerator for Relational operators.
 
-	and_expression ->
-	or_expression
-	|
-	or_expression '&''&' and_expression
-	;
+In ast.cc:
+1.	Added the class for Relational_Expr_Ast, If_Else_Ast, Goto_Ast
 
-	not_expression ->
-	relational_expression
-	|
-	'!' relational_expression
-	;
+2.	Modified Assignment_Ast class to make the RHS of type Relational_Expr_Ast.
 
-	relational_expression ->
-	relational_expression '<''=' variable_or_constant
-	|
-	relational_expression '>''=' variable_or_constant
-	|
-	relational_expression '<' variable_or_constant
-	|
-	relational_expression '>' variable_or_constant
-	|
-	relational_expression '=''=' variable_or_constant
-	|
-	relational_expression '!''=' variable_or_constant
-	|
-	variable_or_constant
-	;
+3.	Added a variable successor, which carries a value which contains the id of the next basic block in case of if-else and goto ast, contains -3 in case of return, contains -1 in all other cases.
 
-	variable_or_constant:
-	variable
-	|
-	constant
-	;
+In basic-block.cc:
+1.	Added a variable successor to store the id of the successor basic block. 
+
+2.	The successor variable is modified in the evaluate function, it contains the value of the successor from the last statement of the block. If invalid, it contains -1.
+
+3. 	Added a variable isSuccessor which contains 1 if the current basic block has a successor, otherwise 0. If it is 0 then it is an error.
+
+In procedure.cc:
+1.	Modified the get_next_bb function to give the appropriate successor basic block according to the successor variable in the basic_block.

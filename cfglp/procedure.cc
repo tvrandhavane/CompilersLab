@@ -82,7 +82,7 @@ Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
 
 void Procedure::print_ast(ostream & file_buffer)
 {
-	file_buffer << PROC_SPACE << "Procedure: main" << "\n";
+	file_buffer << PROC_SPACE << "Procedure: main" << "\n\n";
 
 	list<Basic_Block *>::iterator i;
 	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
@@ -101,18 +101,35 @@ Basic_Block * Procedure::get_next_bb(Basic_Block & current_bb)
 	bool flag = false;
 
 	list<Basic_Block *>::iterator i;
-	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
-	{
-		if((*i)->get_bb_number() == current_bb.get_bb_number())
+	if(current_bb.get_successor() == -1){
+		for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
 		{
-			flag = true;
-			continue;
+			if((*i)->get_bb_number() == current_bb.get_bb_number())
+			{
+				flag = true;
+				continue;
+			}
+			if (flag)
+				return (*i);
 		}
-		if (flag)
-			return (*i);
+	}
+	else{
+		for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
+		{
+			if((*i)->get_bb_number() == current_bb.get_successor())
+			{
+				return (*i);
+			}
+		}
+	}
+	if(current_bb.get_successor() == -2){
+		return NULL;
+	}
+	else{
+		report_internal_error("Atleast one of true, false, direct successors should be set");
 	}
 	
-	return NULL;
+	
 }
 
 Eval_Result & Procedure::evaluate(ostream & file_buffer)

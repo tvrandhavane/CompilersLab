@@ -38,6 +38,8 @@ Basic_Block::Basic_Block(int basic_block_number, list<Ast *> & ast_list)
 {
 	id_number = basic_block_number;
 	statement_list = ast_list;
+	successor = -1;
+	isSuccessor = 0;
 }
 
 Basic_Block::~Basic_Block()
@@ -51,13 +53,22 @@ int Basic_Block::get_bb_number()
 {
 	return id_number;
 }
+
+int Basic_Block::get_successor(){
+	return successor;
+}
+
 void Basic_Block::print_bb(ostream & file_buffer)
 {
 	file_buffer << BB_SPACE << "Basic_Block " << id_number << "\n";
 
 	list<Ast *>::iterator i;
-	for(i = statement_list.begin(); i != statement_list.end(); i++)
+	for(i = statement_list.begin(); i != statement_list.end(); i++){
 		(*i)->print_ast(file_buffer);
+	}
+	if(isSuccessor == 0){
+		report_internal_error("Atleast one of true, false, direct successors should be set");
+	}
 }
 
 Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file_buffer)
@@ -73,6 +84,7 @@ Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file
 			report_error ("Ast pointer seems to be NULL", NOLINE);
 
 		result = &((*i)->evaluate(eval_env, file_buffer)); 
+		successor = (*i)->get_successor();
 	}
 
 	return *result;

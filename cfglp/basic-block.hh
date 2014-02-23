@@ -38,15 +38,18 @@ class Basic_Block
 {
 	int id_number;
 	list<Ast *> statement_list;
+  int successor;
+
 
 public:
+  int isSuccessor;
 	Basic_Block(int basic_block_number, list<Ast *> & ast_list);
 	~Basic_Block();
 
 	int get_bb_number();
 
 	void print_bb(ostream & file_buffer);
-
+  int get_successor();
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 };
 

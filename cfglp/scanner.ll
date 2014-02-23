@@ -51,9 +51,66 @@ goto	{
 			return Parser::GOTO; 
 		}
 
-[<>:{}();=!|&]	{
+">="	{
+			store_token_name("GE");
+			return Parser::ge; 
+		}
+
+"<="	{
+			store_token_name("LE");
+			return Parser::le; 
+		}
+[>] 	{
+			store_token_name("GT");
+			return Parser::gt; 
+		}
+[<]		{
+			store_token_name("LT");
+			return Parser::lt; 
+		}
+"=="	{
+			store_token_name("EQ");
+			return Parser::eq; 	
+		}
+"&&"	{
+			store_token_name("AND");
+			return Parser::andTok; 	
+		}
+"||"	{
+			store_token_name("OR");
+			return Parser::orTok; 	
+		}
+"!="	{
+			store_token_name("NE");
+			return Parser::ne; 
+		}
+[!]	{
+			store_token_name("NT");
+			return Parser::nt; 	
+		}
+
+[=] 	{
+			store_token_name("ASSIGN_OP");
+			return Parser::ASSIGN_OP; 			
+		}
+
+[:{}();]	{
 			store_token_name("META CHAR");
 			return matched()[0];
+		}
+
+[<][b][b][ ][[:digit:]_]+[>] {
+			store_token_name("BASIC BLOCK");
+			ParserBase::STYPE__ * val = getSval();
+			char *c = (char *)malloc(25);
+			strcpy(c, matched().c_str());
+			char *token = (char *)malloc(25);
+			int k;
+			for(k = 4; c[k] != '>'; k++){
+				token[k - 4] = c[k];
+			}
+			val->integer_value = atoi(token);
+			return Parser::BASIC_BLOCK;
 		}
 
 [-]?[[:digit:]_]+ 	{ 
