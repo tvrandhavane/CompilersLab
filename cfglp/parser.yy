@@ -26,7 +26,7 @@
 %filenames parser
 %parsefun-source parser.cc
 
-%union 
+%union
 {
 	int integer_value;
 	float float_value;
@@ -49,7 +49,7 @@
 %left ADD_OP SUB_OP
 %left ne eq
 %left lt le gt ge
-%token nt andTok orTok 
+%token nt andTok orTok
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
 %type <basic_block_list> basic_block_list
@@ -78,40 +78,27 @@
 program:
 	declaration_statement_list procedure_name
 	{
-
-		
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
-		
 	}
 	procedure_body
 	{
-		
 		program_object.set_procedure_map(*current_procedure);
 
 		if ($1)
 			$1->global_list_in_proc_map_check(get_line_number());
 
 		delete $1;
-		
-		 
-		
 	}
 |
 	procedure_name
 	{
-			 
 		return_statement_used_flag = true;				// No return statement in the current procedure till now
-		 
-		
 	}
+
 	procedure_body
 	{
-		 
 		program_object.set_procedure_map(*current_procedure);
-
-		 
-		
 	}
 ;
 
@@ -600,69 +587,38 @@ arithmetic_expression:
 	SUB_OP variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($2, UMINUS, NULL);
-	}	
+	}
 |
 	'(' FLOAT ')' arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
-	}	
+	}
 |
 	'(' INTEGER ')' arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL);
-	}	
+	}
 |
-	variable_or_constant ADD_OP arithmetic_expression
+	arithmetic_expression ADD_OP variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($1, PLUS, $3);
 	}
 |
-	variable_or_constant SUB_OP arithmetic_expression
+	arithmetic_expression SUB_OP variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($1, MINUS, $3);
 	}
 |
-	variable_or_constant MULT_OP arithmetic_expression
+	arithmetic_expression MULT_OP variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($1, MULT, $3);
 	}
 |
-	variable_or_constant DIV_OP arithmetic_expression
+	arithmetic_expression DIV_OP variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($1, DIV, $3);
 	}
 |
-	variable_or_constant ADD_OP variable_or_constant
-	{
-		 
-		$$ = new Arithmetic_Expr_Ast($1, PLUS, $3);
-		
-		 
-	}
-|
-	variable_or_constant SUB_OP variable_or_constant
-	{
-		 
-		$$ = new Arithmetic_Expr_Ast($1, MINUS, $3);
-				 
-	}
-|
-	variable_or_constant MULT_OP variable_or_constant
-	{
-		 
-		$$ = new Arithmetic_Expr_Ast($1, MULT, $3);
-		
-		 
-	}
-|
-	variable_or_constant DIV_OP variable_or_constant
-	{
-		 
-		$$ = new Arithmetic_Expr_Ast($1, DIV, $3);
-		
-		 
-	}
-|	
 	variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($1, VAR, NULL);
@@ -676,26 +632,20 @@ arithmetic_expression:
 variable_or_constant:
 	variable
 	{
-		 
 		$$ = $1;
-			
-		 
 	}
 |
 	constant
 	{
-		 
 		$$ = $1;
-		
-		 
 	}
-|		
+|
 	'('arithmetic_expression')'
 	{
 		$$ = $2;
 	}
-|	
-	'('relational_expression')'	
+|
+	'('relational_expression')'
 	{
 		$$ = $2;
 	}

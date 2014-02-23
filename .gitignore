@@ -4,6 +4,9 @@
 *.o
 *.out
 
+# cfg files
+*.cfg
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
