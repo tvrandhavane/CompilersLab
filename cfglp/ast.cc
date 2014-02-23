@@ -562,9 +562,9 @@ void Arithmetic_Expr_Ast::print_ast(ostream & file_buffer)
 
 		file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "LHS (";
 		lhs->print_ast(file_buffer);
-		file_buffer << ")\n";
+		file_buffer << ")";
 		if (oper != I_NUM && oper != F_NUM && oper != UMINUS){
-			file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "RHS (";
+			file_buffer << "\n" << AST_SMALL_SPACE << AST_NODE_SPACE << "RHS (";
 			rhs->print_ast(file_buffer);
 			file_buffer << ")";
 		}
