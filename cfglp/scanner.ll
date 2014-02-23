@@ -30,11 +30,18 @@ int		{
 			store_token_name("INTEGER");
 			return Parser::INTEGER; 
 		}
+float	{
+			store_token_name("FLOAT");
+			return Parser::FLOAT;
+		}
 
 return		{ 
 			store_token_name("RETURN");
 			return Parser::RETURN; 
 		}
+
+
+
 
 if		{
 			store_token_name("IF");
@@ -98,6 +105,22 @@ goto	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}
+[+]	{
+		store_token_name("ARITHOP");
+		return Parser::ADD_OP;
+	}
+[-]	{
+		store_token_name("ARITHOP");
+		return Parser::SUB_OP;
+	}
+[*]	{
+		store_token_name("ARITHOP");
+		return Parser::MULT_OP;
+	}
+[/]	{
+		store_token_name("ARITHOP");
+		return Parser::DIV_OP;
+	}
 
 [<][b][b][ ][[:digit:]_]+[>] {
 			store_token_name("BASIC BLOCK");
@@ -122,6 +145,16 @@ goto	{
 				return Parser::INTEGER_NUMBER; 
 			}
 
+[-]?[[:digit:]_]+[.][[:digit:]_]+ {
+				
+				store_token_name("FNUM");
+
+				ParserBase::STYPE__ * val = getSval();
+				val->integer_value = atof(matched().c_str());
+
+				return Parser::FLOAT_NUMBER; 
+
+			}
 [[:alpha:]_][[:alpha:][:digit:]_]* {
 					store_token_name("NAME");
 
