@@ -296,28 +296,28 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 		file_buffer << "\n";
 		file_buffer << AST_NODE_SPACE << "Condition: ";
 		if (oper == LT) {
-			file_buffer << "LT\n";	
+			file_buffer << "LT\n";
 		}
 		else if (oper == LE) {
 			file_buffer << "LE\n";
 		}
 		else if (oper == GT) {
-			file_buffer << "GT\n";	
+			file_buffer << "GT\n";
 		}
 		else if (oper == GE){
-			file_buffer << "GE\n";	
+			file_buffer << "GE\n";
 		}
 		else if (oper == EQ){
-			file_buffer << "EQ\n";	
+			file_buffer << "EQ\n";
 		}
 		else if (oper == NE){
-			file_buffer << "NE\n";	
+			file_buffer << "NE\n";
 		}
 		else if (oper == AND){
 			file_buffer << "AND\n";
 		}
 		else if (oper == OR){
-			file_buffer << "OR\n";	
+			file_buffer << "OR\n";
 		}
 		else if (oper == NOT){
 			file_buffer << "NOT\n";
@@ -326,7 +326,6 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 		file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "LHS (";
 		lhs->print_ast(file_buffer);
 		file_buffer << ")\n";
-	
 		if (oper != NOT){
 			file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "RHS (";
 			rhs->print_ast(file_buffer);
@@ -539,32 +538,31 @@ bool Arithmetic_Expr_Ast::check_ast(int line)
 void Arithmetic_Expr_Ast::print_ast(ostream & file_buffer)
 {
 
-	if (oper == VAR){
+	if (oper == VAR || oper == F_NUM || oper == I_NUM){
 		lhs->print_ast(file_buffer);
 	}
 	else{
 		file_buffer << "\n";
 		file_buffer << AST_NODE_SPACE << "Arith: ";
 		if (oper == PLUS) {
-			file_buffer << "PLUS\n";	
+			file_buffer << "PLUS\n";
 		}
 		else if (oper == MINUS) {
 			file_buffer << "MINUS\n";
 		}
 		else if (oper == MULT) {
-			file_buffer << "MULT\n";	
+			file_buffer << "MULT\n";
 		}
 		else if (oper == DIV){
-			file_buffer << "DIV\n";	
+			file_buffer << "DIV\n";
 		}
 		else if (oper == UMINUS){
-			file_buffer << "UMINUS\n";	
+			file_buffer << "UMINUS\n";
 		}
 
 		file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "LHS (";
 		lhs->print_ast(file_buffer);
 		file_buffer << ")\n";
-	
 		if (oper != I_NUM && oper != F_NUM && oper != UMINUS){
 			file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "RHS (";
 			rhs->print_ast(file_buffer);

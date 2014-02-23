@@ -45,8 +45,8 @@
 %token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
 %token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT
-%left MULT_OP DIV_OP
 %left ADD_OP SUB_OP
+%left MULT_OP DIV_OP
 %left ne eq
 %left lt le gt ge
 %token nt andTok orTok
@@ -65,6 +65,7 @@
 %type <ast> or_expression
 %type <ast> not_expression
 %type <ast> variable_or_constant
+%type <ast> variable_or_constant_typecast
 %type <ast> variable
 %type <ast> constant
 
@@ -531,44 +532,51 @@ relational_expression:
 ;
 
 arithmetic_expression:
-	SUB_OP variable_or_constant
+	SUB_OP variable_or_constant_typecast
 	{
 		$$ = new Arithmetic_Expr_Ast($2, UMINUS, NULL);
 	}
 |
-	'(' FLOAT ')' arithmetic_expression
-	{
-		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
-	}
-|
-	'(' INTEGER ')' arithmetic_expression
-	{
-		$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL);
-	}
-|
-	arithmetic_expression ADD_OP variable_or_constant
+	arithmetic_expression ADD_OP arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($1, PLUS, $3);
 	}
 |
-	arithmetic_expression SUB_OP variable_or_constant
+	arithmetic_expression SUB_OP arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($1, MINUS, $3);
 	}
 |
-	arithmetic_expression MULT_OP variable_or_constant
+	arithmetic_expression MULT_OP arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($1, MULT, $3);
 	}
 |
-	arithmetic_expression DIV_OP variable_or_constant
+	arithmetic_expression DIV_OP arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($1, DIV, $3);
 	}
 |
-	variable_or_constant
+	variable_or_constant_typecast
 	{
 		$$ = new Arithmetic_Expr_Ast($1, VAR, NULL);
+	}
+;
+
+variable_or_constant_typecast:
+	'(' FLOAT ')' variable_or_constant
+	{
+		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
+	}
+|
+	'(' INTEGER ')' variable_or_constant
+	{
+		$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL);
+	}
+|
+	variable_or_constant
+	{
+		$$ = $1;
 	}
 ;
 
@@ -594,12 +602,9 @@ variable_or_constant:
 	}
 ;
 
-	
-
 variable:
 	NAME
 	{
-		 
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))

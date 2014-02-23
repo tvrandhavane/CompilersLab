@@ -147,7 +147,6 @@ goto	{
 
 				ParserBase::STYPE__ * val = getSval();
 				val->float_value = atof(matched().c_str());
-				printf("%f\n",val->float_value);
 				return Parser::FLOAT_NUMBER;
 
 			}
