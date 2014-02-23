@@ -31,4 +31,4 @@ zhelpers.hpp
 doc/*
 priv/*
 .*
-*.json`
+*.json
