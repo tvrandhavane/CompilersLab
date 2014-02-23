@@ -30,5 +30,5 @@ zhelpers.hpp
 #########################
 doc/*
 priv/*
-.git/
+.*
 *.json`
