@@ -21,8 +21,9 @@
 
 ***********************************************************************************************/
 
-#include<iostream>
-#include<fstream>
+#include <iostream>
+#include <iomanip>
+#include <fstream>
 
 using namespace std;
 
@@ -717,7 +718,10 @@ Data_Type Number_Ast<DATA_TYPE>::get_data_type()
 template <class DATA_TYPE>
 void Number_Ast<DATA_TYPE>::print_ast(ostream & file_buffer)
 {
-	file_buffer << "Num : " << constant;
+	if(node_data_type == int_data_type)
+		file_buffer << "Num : " << constant;
+	else
+		file_buffer << "Num : " << fixed << setprecision(2) << constant;
 }
 
 template <class DATA_TYPE>

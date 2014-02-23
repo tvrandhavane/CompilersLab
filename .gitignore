@@ -5,7 +5,7 @@
 *.out
 
 # cfg files
-*.cfg
+test_files/*.cfg
 
 # Compiled Dynamic libraries
 *.so

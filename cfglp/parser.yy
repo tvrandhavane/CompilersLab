@@ -218,13 +218,10 @@ declaration_statement_list:
 declaration_statement:
 	INTEGER NAME ';'
 	{
-		 
 		$$ = new Symbol_Table_Entry(*$2, int_data_type);
 
 		delete $2;
 
-		 
-		
 	}
 |
 	FLOAT NAME ';'
@@ -269,25 +266,18 @@ basic_block_list:
 
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
-
-		 
-		
 	}
-	
 ;
 
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
 	{
-		
 		if ($1 < 2)
 		{
 			int line = get_line_number();
 			printf("%d \n", $1);
 			report_error("Illegal basic block lable", line);
 		}
-		
-
 		if ($3 != NULL){
 			$$ = new Basic_Block($1, *$3);
 			if($3->back()->get_successor() != -1){
@@ -300,8 +290,7 @@ basic_block:
 			$$ = new Basic_Block($1, *ast_list);
 		}
 
-		delete $3;		
-		
+		delete $3;
 	}
 ;
 
@@ -468,18 +457,12 @@ or_expression:
 and_expression:
 	or_expression
 	{
-		 
 		$$ = $1;
-		
-		 
 	}
 |
 	or_expression andTok and_expression
 	{
-			 
 		$$ = new Relational_Expr_Ast($1, AND, $3);
-		
-		 
 	}
 ;
 
@@ -487,98 +470,62 @@ relational_expression:
 
 	arithmetic_expression le relational_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, LE, $3);
-		
-		 
-	}	
+	}
 |
 	arithmetic_expression ge relational_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, GE, $3);
-		
-		 
 	}
 |
 	arithmetic_expression lt relational_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, LT, $3);
-		
-		 
 	}
 |
 	arithmetic_expression gt relational_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, GT, $3);
-		
-		 
 	}
 |
 	arithmetic_expression eq relational_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, EQ, $3);
-		
-		 
 	}
 |
 	arithmetic_expression ne relational_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		
-		 
 	}
 |
 	arithmetic_expression le arithmetic_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		
-		 
 	}
 |
 	arithmetic_expression ge arithmetic_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		
-		 
 	}
 |
 	arithmetic_expression gt arithmetic_expression
 	{
-		 
-		$$ = new Relational_Expr_Ast($1, NE, $3);
-		
-		 
+		$$ = new Relational_Expr_Ast($1, GT, $3);
 	}
 |
 	arithmetic_expression lt arithmetic_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		
-		 
 	}
 |
 	arithmetic_expression eq arithmetic_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		
-		 
 	}
 |
 	arithmetic_expression ne arithmetic_expression
 	{
-		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		
-		 
 	}
 
 ;
@@ -625,10 +572,6 @@ arithmetic_expression:
 	}
 ;
 
-
-
-
-
 variable_or_constant:
 	variable
 	{
@@ -674,18 +617,13 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
-		
-		 
 	}
 ;
 
 constant:
 	INTEGER_NUMBER
 	{
-		
 		$$ = new Number_Ast<int>($1, int_data_type);
-		
-		 
 	}
 |	FLOAT_NUMBER
 	{

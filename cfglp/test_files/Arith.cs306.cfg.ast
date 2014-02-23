@@ -1,23 +1,14 @@
-Program:
-   Procedure: main
+main()
+{
+   int g;
+   int f;
+   int a;
 
-      Basic_Block 2
-         Asgn:
-            LHS (Name : a)
-            RHS (Num : 3)
-         Asgn:
-            LHS (Name : f)
-            RHS (Num : 2)
-         Asgn:
-            LHS (Name : g)
-            RHS (Num : 8)
-         Asgn:
-            LHS (Name : a)
-            RHS (
-            Arith: MINUS
-               LHS (
-            Arith: PLUS
-               LHS (Name : a)
-               RHS (Name : f))
-               RHS (Name : g))
-         Return <NOTHING>
+<bb 2>:
+   a = 3;
+   f = 2;
+   g = 8;
+   a = a + f - g;
+   return;
+
+}

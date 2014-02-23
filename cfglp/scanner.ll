@@ -28,77 +28,74 @@
 
 int		{
 			store_token_name("INTEGER");
-			return Parser::INTEGER; 
+			return Parser::INTEGER;
 		}
 float	{
 			store_token_name("FLOAT");
 			return Parser::FLOAT;
 		}
 
-return		{ 
+return	{
 			store_token_name("RETURN");
-			return Parser::RETURN; 
+			return Parser::RETURN;
 		}
-
-
-
 
 if		{
 			store_token_name("IF");
-			return Parser::IF; 
+			return Parser::IF;
 		}
 
 else		{
 			store_token_name("ELSE");
-			return Parser::ELSE; 
+			return Parser::ELSE;
 		}
 
 goto	{
 			store_token_name("GOTO");
-			return Parser::GOTO; 
+			return Parser::GOTO;
 		}
 
 ">="	{
 			store_token_name("GE");
-			return Parser::ge; 
+			return Parser::ge;
 		}
 
 "<="	{
 			store_token_name("LE");
-			return Parser::le; 
+			return Parser::le;
 		}
 [>] 	{
 			store_token_name("GT");
-			return Parser::gt; 
+			return Parser::gt;
 		}
 [<]		{
 			store_token_name("LT");
-			return Parser::lt; 
+			return Parser::lt;
 		}
 "=="	{
 			store_token_name("EQ");
-			return Parser::eq; 	
+			return Parser::eq;
 		}
 "&&"	{
 			store_token_name("AND");
-			return Parser::andTok; 	
+			return Parser::andTok;
 		}
 "||"	{
 			store_token_name("OR");
-			return Parser::orTok; 	
+			return Parser::orTok;
 		}
 "!="	{
 			store_token_name("NE");
-			return Parser::ne; 
+			return Parser::ne;
 		}
 [!]	{
 			store_token_name("NT");
-			return Parser::nt; 	
+			return Parser::nt;
 		}
 
 [=] 	{
 			store_token_name("ASSIGN_OP");
-			return Parser::ASSIGN_OP; 			
+			return Parser::ASSIGN_OP;
 		}
 
 [:{}();]	{
@@ -136,23 +133,22 @@ goto	{
 			return Parser::BASIC_BLOCK;
 		}
 
-[-]?[[:digit:]_]+ 	{ 
+[-]?[[:digit:]_]+ 	{
 				store_token_name("NUM");
 
 				ParserBase::STYPE__ * val = getSval();
 				val->integer_value = atoi(matched().c_str());
 
-				return Parser::INTEGER_NUMBER; 
+				return Parser::INTEGER_NUMBER;
 			}
 
 [-]?[[:digit:]_]+[.][[:digit:]_]+ {
-				
 				store_token_name("FNUM");
 
 				ParserBase::STYPE__ * val = getSval();
-				val->integer_value = atof(matched().c_str());
-
-				return Parser::FLOAT_NUMBER; 
+				val->float_value = atof(matched().c_str());
+				printf("%f\n",val->float_value);
+				return Parser::FLOAT_NUMBER;
 
 			}
 [[:alpha:]_][[:alpha:][:digit:]_]* {
@@ -161,13 +157,13 @@ goto	{
 					ParserBase::STYPE__ * val = getSval();
 					val->string_value = new std::string(matched());
 
-					return Parser::NAME; 
+					return Parser::NAME;
 				}
 
-\n		{ 
+\n		{
 			if (command_options.is_show_tokens_selected())
 				ignore_token();
-		}    
+		}
 
 ";;".*  	|
 [ \t]		{
@@ -175,11 +171,10 @@ goto	{
 				ignore_token();
 		}
 
-.		{ 
+.		{
 			string error_message;
 			error_message =  "Illegal character `" + matched();
 			error_message += "' on line " + lineNr();
-			
 			int line_number = lineNr();
 			report_error(error_message, line_number);
 		}
