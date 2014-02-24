@@ -44,7 +44,7 @@
 %token <float_value> FLOAT_NUMBER
 %token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
-%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT
+%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT DOUBLE
 %left ne eq
 %left lt le gt ge
 %left ADD_OP SUB_OP
@@ -226,6 +226,14 @@ declaration_statement:
 	}
 |
 	FLOAT NAME ';'
+	{
+
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
+	}
+|
+	DOUBLE NAME ';'
 	{
 
 		$$ = new Symbol_Table_Entry(*$2, float_data_type);
@@ -582,6 +590,13 @@ variable_or_constant_typecast:
 		$$->check_ast(line);
 	}
 |
+	'(' DOUBLE ')' variable_or_constant
+	{
+		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
+		int line = get_line_number();
+		$$->check_ast(line);
+	}
+|
 	'(' INTEGER ')' variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL);
@@ -589,6 +604,7 @@ variable_or_constant_typecast:
 		$$->check_ast(line);
 	}
 |
+
 	variable_or_constant
 	{
 		$$ = $1;

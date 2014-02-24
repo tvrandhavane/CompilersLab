@@ -1,0 +1,35 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 3)
+         a : 3
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Name : a)
+         b : 3.00
+
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Name : b)
+         a : 3
+
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : 3
+         b : 3.00
+   Global Variables (after evaluating):
