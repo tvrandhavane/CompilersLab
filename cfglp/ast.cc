@@ -103,6 +103,7 @@ bool Assignment_Ast::check_ast(int line)
 
 void Assignment_Ast::print_ast(ostream & file_buffer)
 {
+
 	file_buffer << AST_SPACE << "Asgn:\n";
 
 	file_buffer << AST_NODE_SPACE << "LHS (";
@@ -111,6 +112,7 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 
 	file_buffer << AST_NODE_SPACE << "RHS (";
 	rhs->print_ast(file_buffer);
+
 	file_buffer << ")\n";
 }
 
@@ -290,10 +292,6 @@ bool Relational_Expr_Ast::check_ast(int line)
 
 void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 {
-	if (oper == VAR){
-		lhs->print_ast(file_buffer);
-	}
-	else{
 		file_buffer << "\n";
 		file_buffer << AST_NODE_SPACE << "Condition: ";
 		if (oper == LT) {
@@ -333,7 +331,6 @@ void Relational_Expr_Ast::print_ast(ostream & file_buffer)
 			rhs->print_ast(file_buffer);
 			file_buffer << ")";
 		}
-	}
 }
 
 int Relational_Expr_Ast::get_successor(){
@@ -342,13 +339,7 @@ int Relational_Expr_Ast::get_successor(){
 
 Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	if(oper == VAR){
-		Eval_Result & result = lhs->evaluate(eval_env, file_buffer);
-		if (result.is_variable_defined() == false)
-			report_error("Variable should be defined to be on lhs of condition", NOLINE);
-		return result;
-	}
-	else if(oper == GT){
+	if(oper == GT){
 		Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
 		if (lhsResult.is_variable_defined() == false)
 			report_error("Variable should be defined to be on lhs of condition", NOLINE);
@@ -498,6 +489,120 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 		return result;
 	}
 }
+//////////////////////////////////////////////////////////////////////////////////////
+Arithmetic_Expr_Ast::Arithmetic_Expr_Ast(Ast * temp_lhs, arithmetic_operators temp_oper, Ast * temp_rhs){
+
+	lhs = temp_lhs;
+	rhs = temp_rhs;
+	oper = temp_oper;
+
+	successor = -1;
+
+
+}
+
+Arithmetic_Expr_Ast::~Arithmetic_Expr_Ast()
+{
+	delete lhs;
+	delete rhs;
+}
+
+Data_Type Arithmetic_Expr_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Arithmetic_Expr_Ast::check_ast(int line)
+{
+	if(rhs != NULL)
+		if (lhs->get_data_type() == rhs->get_data_type())
+		{
+			node_data_type = lhs->get_data_type();
+			return true;
+		}
+	else{
+		if(oper == UMINUS){
+			node_data_type = lhs->get_data_type();
+		}
+		else if(oper == I_NUM){
+			node_data_type = int_data_type;
+		}
+		else if(oper == F_NUM){
+			node_data_type = float_data_type;
+		}
+	}
+
+	report_error("Arithmetic expression data type not compatible", line);
+}
+
+void Arithmetic_Expr_Ast::print_ast(ostream & file_buffer)
+{
+
+	if (oper == VAR){
+		lhs->print_ast(file_buffer);
+	}
+	else{
+		file_buffer << "\n";
+		file_buffer << AST_NODE_SPACE << "Arith: ";
+		if (oper == PLUS) {
+			file_buffer << "PLUS\n";	
+		}
+		else if (oper == MINUS) {
+			file_buffer << "MINUS\n";
+		}
+		else if (oper == MULT) {
+			file_buffer << "MULT\n";	
+		}
+		else if (oper == DIV){
+			file_buffer << "DIV\n";	
+		}
+		else if (oper == UMINUS){
+			file_buffer << "UMINUS\n";	
+		}
+
+		file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "LHS (";
+		lhs->print_ast(file_buffer);
+		file_buffer << ")\n";
+	
+		if (oper != I_NUM && oper != F_NUM && oper != UMINUS){
+			file_buffer << AST_SMALL_SPACE << AST_NODE_SPACE << "RHS (";
+			rhs->print_ast(file_buffer);
+			file_buffer << ")";
+		}
+	}
+}
+
+int Arithmetic_Expr_Ast::get_successor(){
+	return successor;
+}
+
+Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+	Eval_Result & Result = lhs->evaluate(eval_env, file_buffer);
+
+	return Result;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
 /////////////////////////////////////////////////////////////////
 Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry)
 {
@@ -516,6 +621,7 @@ Data_Type Name_Ast::get_data_type()
 
 void Name_Ast::print_ast(ostream & file_buffer)
 {
+	//printf("arith_ast  ");
 	file_buffer << "Name : " << variable_name;
 }
 
@@ -629,6 +735,14 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 		return result;
 	}
+	if(node_data_type == float_data_type){
+
+		Eval_Result & result = *new Eval_Result_Value_Float();
+		result.set_value(constant);
+
+		return result;
+
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -659,3 +773,5 @@ Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_
 }
 
 template class Number_Ast<int>;
+
+template class Number_Ast<float>;

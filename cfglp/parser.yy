@@ -1,5 +1,5 @@
 
-/*********************************************************************************************
+/********************************************************************************************
 
                                 cfglp : A CFG Language Processor
                                 --------------------------------
@@ -29,6 +29,7 @@
 %union 
 {
 	int integer_value;
+	float float_value;
 	std::string * string_value;
 	list<Ast *> * ast_list;
 	Ast * ast;
@@ -40,14 +41,32 @@
 };
 
 %token <integer_value> INTEGER_NUMBER
+%token <float_value> FLOAT_NUMBER
 %token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
-%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT FLOAT_NUMBER
+%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT
 %left MULT_OP DIV_OP
 %left ADD_OP SUB_OP
 %left ne eq
 %left lt le gt ge
 %token nt andTok orTok 
+%type <symbol_table> declaration_statement_list
+%type <symbol_entry> declaration_statement
+%type <basic_block_list> basic_block_list
+%type <basic_block> basic_block
+%type <ast_list> executable_statement_list
+%type <ast_list> assignment_statement_list
+%type <ast> if_else_statement
+%type <ast> goto_statement
+%type <ast> assignment_statement
+%type <ast> relational_expression
+%type <ast> arithmetic_expression
+%type <ast> and_expression
+%type <ast> or_expression
+%type <ast> not_expression
+%type <ast> variable_or_constant
+%type <ast> variable
+%type <ast> constant
 
 
 
@@ -60,38 +79,38 @@ program:
 	declaration_statement_list procedure_name
 	{
 
-		/*
+		
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
-		*/
+		
 	}
 	procedure_body
 	{
-		/*
+		
 		program_object.set_procedure_map(*current_procedure);
 
 		if ($1)
 			$1->global_list_in_proc_map_check(get_line_number());
 
 		delete $1;
-		*/
+		
 		 
 		
 	}
 |
 	procedure_name
 	{
-		/*	 
+			 
 		return_statement_used_flag = true;				// No return statement in the current procedure till now
-		 */
+		 
 		
 	}
 	procedure_body
 	{
-		 /*
+		 
 		program_object.set_procedure_map(*current_procedure);
 
-		 */
+		 
 		
 	}
 ;
@@ -99,25 +118,25 @@ program:
 procedure_name:
 	NAME '(' ')'
 	{
-		 /*
+		 
 		current_procedure = new Procedure(void_data_type, *$1);	 
-		*/
+		
 	}
 ;
 
 procedure_body:
 	'{' declaration_statement_list
 	{
-		 /*
+		 
 		current_procedure->set_local_list(*$2);
 		delete $2;
 
-		 */
+		 
 		
 	}
 	basic_block_list '}'
 	{
-		 /*
+		 
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
@@ -130,12 +149,12 @@ procedure_body:
 		delete $4;
 
 		 
-		*/
+		
 	}
 |
 	'{' basic_block_list '}'
 	{
-		 /*
+		 
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
@@ -147,14 +166,14 @@ procedure_body:
 		delete $2;
 
 		 
-		*/
+		
 	}
 ;
 
 declaration_statement_list:
 	declaration_statement
 	{
-		 /*
+		 
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
@@ -169,7 +188,7 @@ declaration_statement_list:
 		$$->push_symbol($1);
 
 		 
-		*/
+		
 	}
 |
 	declaration_statement_list declaration_statement
@@ -177,7 +196,7 @@ declaration_statement_list:
 		 
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
-		/*
+		
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($2->get_variable_name(), line);
 
@@ -205,32 +224,35 @@ declaration_statement_list:
 		$$->push_symbol($2);
 
 		 
-		*/
+		
 	}
 ;
 
 declaration_statement:
 	INTEGER NAME ';'
 	{
-		 /*
+		 
 		$$ = new Symbol_Table_Entry(*$2, int_data_type);
 
 		delete $2;
 
-		 */
+		 
 		
 	}
 |
 	FLOAT NAME ';'
 	{
 
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
 	}
 ;
 
 basic_block_list:
 	basic_block_list basic_block
 	{
-		 /*
+		 
 		if (!$2)
 		{
 			int line = get_line_number();
@@ -246,12 +268,12 @@ basic_block_list:
 		$$->push_back($2);
 		
 				 
-		*/
+		
 	}
 |
 	basic_block
 	{
-		 /*
+		 
 		if (!$1)
 		{
 			int line = get_line_number();
@@ -262,7 +284,7 @@ basic_block_list:
 		$$->push_back($1);
 
 		 
-		*/
+		
 	}
 	
 ;
@@ -270,7 +292,7 @@ basic_block_list:
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
 	{
-		/*
+		
 		if ($1 < 2)
 		{
 			int line = get_line_number();
@@ -292,22 +314,22 @@ basic_block:
 		}
 
 		delete $3;		
-		*/
+		
 	}
 ;
 
 executable_statement_list:
 	assignment_statement_list
 	{
-		 /*
+		 
 		$$ = $1;
 		 
-		*/
+		
 	}
 |
 	assignment_statement_list RETURN ';'
 	{
-		 /*
+		 
 		Ast * ret = new Return_Ast();
 
 		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
@@ -320,12 +342,12 @@ executable_statement_list:
 
 		$$->push_back(ret);
 		
-		 */
+		 
 	}
 |
 	assignment_statement_list if_else_statement
 	{
-		 /*
+		 
 		if ($1 != NULL)
 			$$ = $1;
 
@@ -334,12 +356,12 @@ executable_statement_list:
 
 		$$->push_back($2);
 
-		 */
+		 
 	}
 |
 	assignment_statement_list goto_statement
 	{
-		 /*
+		 
 		if ($1 != NULL)
 			$$ = $1;
 
@@ -347,21 +369,21 @@ executable_statement_list:
 			$$ = new list<Ast *>;
 
 		$$->push_back($2);
-		 */
+		 
 	}
 ;
 
 assignment_statement_list:
 	{
-		 /*
+		 
 		$$ = NULL;
-		 */
+		 
 		
 	}
 |
 	assignment_statement_list assignment_statement
 	{
-		 /*
+		 
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
 
@@ -370,19 +392,19 @@ assignment_statement_list:
 
 		$$->push_back($2);
 		 
-		*/
+		
 	}
 ;
 
 assignment_statement:
 	variable ASSIGN_OP and_expression ';'
 	{
-		 /*
+		 
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 		 
 	}
 ;
@@ -393,9 +415,9 @@ if_else_statement:
 	ELSE
 		goto_statement
 	{
-		/*	 
+			 
 		$$ = new If_Else_Ast($5, $3, $7);
-		*/
+		
 		 
 	}
 ;
@@ -403,54 +425,55 @@ if_else_statement:
 goto_statement:
 	GOTO BASIC_BLOCK ';'
 	{
-		/*if ($2 < 2)
+		if ($2 < 2)
 		{
 			int line = get_line_number();
 			//report_error("Illegal basic block lable", line);
-		}*/
-		/*
+		}
+		
 		$$ = new Goto_Ast($2);
-		*/
+		
 		 
 	}
 ;
 
-not_expression:
+not_expression:	
+	arithmetic_expression
+	{
+		$$ = $1;
+	}
+|
 	relational_expression
 	{
-		 /*
+		 
 		$$ = $1;
-		*/
+		
 		 
 	}
 |
 	nt relational_expression
 	{
-		 /*
+		 
 		$$ = new Relational_Expr_Ast($2, NOT, NULL);
-		*/	
+			
 		 
 	}
-| 	
-	arithmetic_expression
-	{
-	
-	}
+
 ;
 or_expression:
 	not_expression
 	{	
-		 /*
+		 
 		$$ = $1;
-		*/
+		
 		 
 	}
 |
 	not_expression orTok or_expression
 	{
-		 /*
+		 
 		$$ = new Relational_Expr_Ast($1, OR, $3);
-		*/
+		
 		 
 	}
 ;
@@ -458,17 +481,17 @@ or_expression:
 and_expression:
 	or_expression
 	{
-		 /*
+		 
 		$$ = $1;
-		*/
+		
 		 
 	}
 |
 	or_expression andTok and_expression
 	{
-		/*	 
+			 
 		$$ = new Relational_Expr_Ast($1, AND, $3);
-		*/
+		
 		 
 	}
 ;
@@ -477,162 +500,172 @@ relational_expression:
 
 	arithmetic_expression le relational_expression
 	{
-		 /*
+		 
 		$$ = new Relational_Expr_Ast($1, LE, $3);
-		*/
+		
 		 
 	}	
 |
 	arithmetic_expression ge relational_expression
 	{
-		 /*
+		 
 		$$ = new Relational_Expr_Ast($1, GE, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression lt relational_expression
 	{
-		 /*
+		 
 		$$ = new Relational_Expr_Ast($1, LT, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression gt relational_expression
 	{
-		 /*
+		 
 		$$ = new Relational_Expr_Ast($1, GT, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression eq relational_expression
 	{
-		 /*
+		 
 		$$ = new Relational_Expr_Ast($1, EQ, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression ne relational_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression le arithmetic_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression ge arithmetic_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression gt arithmetic_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression lt arithmetic_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression eq arithmetic_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 		 
 	}
 |
 	arithmetic_expression ne arithmetic_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 		 
 	}
 
 ;
 
 arithmetic_expression:
-	SUB_OP arithmetic_expression
+	SUB_OP variable_or_constant
 	{
+		$$ = new Arithmetic_Expr_Ast($2, UMINUS, NULL);
+	}	
+|
+	'(' FLOAT ')' arithmetic_expression
+	{
+		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
+	}	
+|
+	'(' INTEGER ')' arithmetic_expression
+	{
+		$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL);
 	}	
 |
 	variable_or_constant ADD_OP arithmetic_expression
 	{
-
+		$$ = new Arithmetic_Expr_Ast($1, PLUS, $3);
 	}
 |
 	variable_or_constant SUB_OP arithmetic_expression
 	{
-
+		$$ = new Arithmetic_Expr_Ast($1, MINUS, $3);
 	}
 |
 	variable_or_constant MULT_OP arithmetic_expression
 	{
-
+		$$ = new Arithmetic_Expr_Ast($1, MULT, $3);
 	}
 |
 	variable_or_constant DIV_OP arithmetic_expression
 	{
-
+		$$ = new Arithmetic_Expr_Ast($1, DIV, $3);
 	}
 |
 	variable_or_constant ADD_OP variable_or_constant
 	{
-		/* 
-		$$ = new Relational_Expr_Ast($1, VAR, NULL);
-		*/
+		 
+		$$ = new Arithmetic_Expr_Ast($1, PLUS, $3);
+		
 		 
 	}
 |
 	variable_or_constant SUB_OP variable_or_constant
 	{
-		/* 
-		$$ = new Relational_Expr_Ast($1, VAR, NULL);
-		*/
 		 
+		$$ = new Arithmetic_Expr_Ast($1, MINUS, $3);
+				 
 	}
 |
 	variable_or_constant MULT_OP variable_or_constant
 	{
-		/* 
-		$$ = new Relational_Expr_Ast($1, VAR, NULL);
-		*/
+		 
+		$$ = new Arithmetic_Expr_Ast($1, MULT, $3);
+		
 		 
 	}
 |
 	variable_or_constant DIV_OP variable_or_constant
 	{
-		/* 
-		$$ = new Relational_Expr_Ast($1, VAR, NULL);
-		*/
+		 
+		$$ = new Arithmetic_Expr_Ast($1, DIV, $3);
+		
 		 
 	}
 |	
 	variable_or_constant
 	{
-
+		$$ = new Arithmetic_Expr_Ast($1, VAR, NULL);
 	}
 ;
 
@@ -643,36 +676,37 @@ arithmetic_expression:
 variable_or_constant:
 	variable
 	{
-		 /*
+		 
 		$$ = $1;
-		*/	
+			
 		 
 	}
 |
 	constant
 	{
-		 /*
+		 
 		$$ = $1;
-		*/
+		
 		 
 	}
 |		
 	'('arithmetic_expression')'
 	{
-	
+		$$ = $2;
 	}
 |	
 	'('relational_expression')'	
 	{
-	
+		$$ = $2;
 	}
 ;
+
 	
 
 variable:
 	NAME
 	{
-		 /*
+		 
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
@@ -690,7 +724,7 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
-		*/
+		
 		 
 	}
 ;
@@ -698,13 +732,13 @@ variable:
 constant:
 	INTEGER_NUMBER
 	{
-		 /*
+		
 		$$ = new Number_Ast<int>($1, int_data_type);
-		*/
+		
 		 
 	}
 |	FLOAT_NUMBER
 	{
-	
+		$$ = new Number_Ast<float>($1, float_data_type);
 	}
 ;
