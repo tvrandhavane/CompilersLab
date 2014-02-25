@@ -129,7 +129,6 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 		report_error("Variable should be defined to be on rhs", NOLINE);
 
 	lhs->set_value_of_evaluation(eval_env, result);
-
 	// Print the result
 	file_buffer << "\n";
 	file_buffer << AST_SPACE << "Asgn:\n";
@@ -266,6 +265,7 @@ Relational_Expr_Ast::Relational_Expr_Ast(Ast * temp_lhs, relational_operators te
 	lhs = temp_lhs;
 	rhs = temp_rhs;
 	oper = temp_oper;
+	node_data_type = int_data_type;
 	successor = -1;
 }
 
@@ -495,7 +495,6 @@ Arithmetic_Expr_Ast::Arithmetic_Expr_Ast(Ast * temp_lhs, arithmetic_operators te
 	lhs = temp_lhs;
 	rhs = temp_rhs;
 	oper = temp_oper;
-
 	successor = -1;
 
 
@@ -514,12 +513,14 @@ Data_Type Arithmetic_Expr_Ast::get_data_type()
 
 bool Arithmetic_Expr_Ast::check_ast(int line)
 {
-	if(rhs != NULL)
+
+	if(rhs != NULL){
 		if (lhs->get_data_type() == rhs->get_data_type())
 		{
 			node_data_type = lhs->get_data_type();
 			return true;
 		}
+	}
 	else{
 		if(oper == UMINUS){
 			node_data_type = lhs->get_data_type();
@@ -530,6 +531,10 @@ bool Arithmetic_Expr_Ast::check_ast(int line)
 		else if(oper == F_NUM){
 			node_data_type = float_data_type;
 		}
+		else if(oper == VAR){
+			node_data_type = lhs->get_data_type();
+		}
+		return true;
 	}
 
 	report_error("Arithmetic expression data type not compatible", line);
@@ -576,9 +581,86 @@ int Arithmetic_Expr_Ast::get_successor(){
 }
 
 Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
-	Eval_Result & Result = lhs->evaluate(eval_env, file_buffer);
+	
 
-	return Result;
+	Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+	//if(lhs->get_data_type() == int_data_type)
+		//printf("vale:: %d\n",lhs->get_data_type());
+	if(rhs != NULL){
+		//printf("vale:: %d\n",lhs->get_data_type());
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);	
+				
+		if(lhs->get_data_type() == int_data_type && rhs->get_data_type() == int_data_type){
+
+			Eval_Result & result = *new Eval_Result_Value_Int();
+			if(oper == PLUS){
+
+				result.set_value((int) (lhsResult.get_value() + rhsResult.get_value()) );
+			}
+			if(oper == MINUS){
+				result.set_value((int) (lhsResult.get_value() - rhsResult.get_value()) );
+			}
+			if(oper == DIV){
+				result.set_value((int) (lhsResult.get_value() / rhsResult.get_value()) );
+			}
+			if(oper == MULT){
+				result.set_value((int) (lhsResult.get_value() * rhsResult.get_value()) );
+			}
+			return result;
+		}
+		else if(lhs->get_data_type() == float_data_type && rhs->get_data_type() == float_data_type){
+
+			Eval_Result & result = *new Eval_Result_Value_Float();
+			if(oper == PLUS){
+				result.set_value((float) (lhsResult.get_value() + rhsResult.get_value()) );
+			}
+			if(oper == MINUS){
+				result.set_value((float) (lhsResult.get_value() - rhsResult.get_value()) );
+			}
+			if(oper == DIV){
+				result.set_value((float) (lhsResult.get_value() / rhsResult.get_value()) );
+			}
+			if(oper == MULT){
+				result.set_value((float) (lhsResult.get_value() * rhsResult.get_value()) );
+			}
+			return result;
+		}
+	}
+	else{
+		if(lhs->get_data_type() == int_data_type){
+			
+			Eval_Result & result = *new Eval_Result_Value_Int();
+			if(oper ==  UMINUS){
+				result.set_value((int) -1*lhsResult.get_value());
+			}
+			if(oper == VAR){
+				result.set_value((int) lhsResult.get_value());
+			}
+			if(oper == F_NUM){
+				result.set_value((int) lhsResult.get_value());
+			}
+			if(oper == I_NUM){
+				result.set_value((int) lhsResult.get_value());
+			}
+			return result;
+		}
+	else{
+			Eval_Result & result = *new Eval_Result_Value_Float();
+			if(oper ==  UMINUS){
+				result.set_value((float) -1*lhsResult.get_value());
+			}
+			if(oper == VAR){
+				result.set_value((float) lhsResult.get_value());
+			}
+			if(oper == F_NUM){
+				result.set_value((float) lhsResult.get_value());
+			}
+			if(oper == I_NUM){
+				result.set_value((float) lhsResult.get_value());
+			}
+			return result;
+		}
+	}
 }
 
 
@@ -637,7 +719,9 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 	else if (eval_env.is_variable_defined(variable_name) && loc_var_val != NULL)
 	{
 		if (loc_var_val->get_result_enum() == int_result)
-			file_buffer << loc_var_val->get_value() << "\n";
+			file_buffer << (int) loc_var_val->get_value() << "\n";
+		else if(loc_var_val->get_result_enum() == float_result)
+				file_buffer << loc_var_val->get_value() << "\n";
 		else
 			report_internal_error("Result type can only be int and float");
 	}
@@ -646,6 +730,12 @@ void Name_Ast::print_value(Local_Environment & eval_env, ostream & file_buffer)
 	{
 		if (glob_var_val->get_result_enum() == int_result)
 		{
+			if (glob_var_val == NULL)
+				file_buffer << "0\n";
+			else
+				file_buffer << (int) glob_var_val->get_value() << "\n";
+		}
+		else if(glob_var_val->get_result_enum() == float_result){
 			if (glob_var_val == NULL)
 				file_buffer << "0\n";
 			else
@@ -679,13 +769,25 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 	if (result.get_result_enum() == int_result)
 	{
 		i = new Eval_Result_Value_Int();
-	 	i->set_value(result.get_value());
-	}
+	 	i->set_value((int)result.get_value());
+	
 
-	if (eval_env.does_variable_exist(variable_name))
-		eval_env.put_variable_value(*i, variable_name);
-	else
-		interpreter_global_table.put_variable_value(*i, variable_name);
+		if (eval_env.does_variable_exist(variable_name))
+			eval_env.put_variable_value(*i, variable_name);
+		else
+			interpreter_global_table.put_variable_value(*i, variable_name);
+	}
+	else if(result.get_result_enum() == float_result){
+		i = new Eval_Result_Value_Float();
+	 	i->set_value(result.get_value());
+	
+
+		if (eval_env.does_variable_exist(variable_name))
+			eval_env.put_variable_value(*i, variable_name);
+		else
+			interpreter_global_table.put_variable_value(*i, variable_name);
+
+	}
 }
 
 Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)

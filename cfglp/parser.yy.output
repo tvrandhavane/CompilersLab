@@ -1,4 +1,4 @@
-
+[[parser.yy (info)] Line 653: 
 Production Rules
 (rule precedences determined from %prec or 1st terminal between parentheses):
 1: program ->  declaration_statement_list procedure_name #0001 procedure_body
@@ -32,12 +32,12 @@ Production Rules
 29: or_expression (orTok) ->  not_expression orTok or_expression
 30: and_expression ->  or_expression
 31: and_expression (andTok) ->  or_expression andTok and_expression
-32: relational_expression (le) ->  arithmetic_expression le relational_expression
-33: relational_expression (ge) ->  arithmetic_expression ge relational_expression
-34: relational_expression (lt) ->  arithmetic_expression lt relational_expression
-35: relational_expression (gt) ->  arithmetic_expression gt relational_expression
-36: relational_expression (eq) ->  arithmetic_expression eq relational_expression
-37: relational_expression (ne) ->  arithmetic_expression ne relational_expression
+32: relational_expression (eq) ->  relational_expression eq arithmetic_expression
+33: relational_expression (ne) ->  relational_expression ne arithmetic_expression
+34: relational_expression (le) ->  relational_expression le arithmetic_expression
+35: relational_expression (ge) ->  relational_expression ge arithmetic_expression
+36: relational_expression (lt) ->  relational_expression lt arithmetic_expression
+37: relational_expression (gt) ->  relational_expression gt arithmetic_expression
 38: relational_expression (le) ->  arithmetic_expression le arithmetic_expression
 39: relational_expression (ge) ->  arithmetic_expression ge arithmetic_expression
 40: relational_expression (gt) ->  arithmetic_expression gt arithmetic_expression
@@ -62,7 +62,7 @@ Production Rules
 59: constant (FLOAT_NUMBER) ->  FLOAT_NUMBER
 60: program_$ ->  program
 
-
+[[parser.yy (info)] 
 Symbolic Terminal tokens:
        error
        EOF
@@ -77,16 +77,16 @@ Symbolic Terminal tokens:
    265: GOTO
    266: ASSIGN_OP
    267: FLOAT
-   268: ADD_OP
-   269: SUB_OP
-   270: MULT_OP
-   271: DIV_OP
-   272: ne
-   273: eq
-   274: lt
-   275: le
-   276: gt
-   277: ge
+   268: ne
+   269: eq
+   270: lt
+   271: le
+   272: gt
+   273: ge
+   274: ADD_OP
+   275: SUB_OP
+   276: MULT_OP
+   277: DIV_OP
    278: nt
    279: andTok
    280: orTok
@@ -97,9 +97,9 @@ Symbolic Terminal tokens:
     59: ';'
     58: ':'
 
-
+[[parser.yy (info)] 
 Grammar States: 
-State 0:
+[[parser.yy (info)] State 0:
 60: program_$ ->  . program 
   0:   On program to state 1
   1:   On declaration_statement_list to state 2
@@ -398,16 +398,22 @@ State 44:
 
 State 45:
 23: if_else_statement -> IF '(' relational_expression  . ')' goto_statement ELSE goto_statement 
+32: relational_expression -> relational_expression  . eq arithmetic_expression 
+33: relational_expression -> relational_expression  . ne arithmetic_expression 
+34: relational_expression -> relational_expression  . le arithmetic_expression 
+35: relational_expression -> relational_expression  . ge arithmetic_expression 
+36: relational_expression -> relational_expression  . lt arithmetic_expression 
+37: relational_expression -> relational_expression  . gt arithmetic_expression 
   0:   On ')' to state 62
+  1:   On eq to state 63
+  2:   On ne to state 64
+  3:   On le to state 65
+  4:   On ge to state 66
+  5:   On lt to state 67
+  6:   On gt to state 68
 
 
 State 46:
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
 38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
 39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
 40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
@@ -418,21 +424,21 @@ State 46:
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0:   On le to state 63
-  1:   On ge to state 64
-  2:   On lt to state 65
-  3:   On gt to state 66
-  4:   On eq to state 67
-  5:   On ne to state 68
-  6:   On ADD_OP to state 69
-  7:   On SUB_OP to state 70
-  8:   On MULT_OP to state 71
-  9:   On DIV_OP to state 72
+  0:   On le to state 69
+  1:   On ge to state 70
+  2:   On gt to state 71
+  3:   On lt to state 72
+  4:   On eq to state 73
+  5:   On ne to state 74
+  6:   On ADD_OP to state 75
+  7:   On SUB_OP to state 76
+  8:   On MULT_OP to state 77
+  9:   On DIV_OP to state 78
 
 
 State 47:
 44: arithmetic_expression -> SUB_OP  . variable_or_constant_typecast 
-  0:   On variable_or_constant_typecast to state 73
+  0:   On variable_or_constant_typecast to state 79
   1:   On '(' to state 49
   2:   On variable_or_constant to state 50
   3:   On variable to state 51
@@ -452,10 +458,10 @@ State 49:
 51: variable_or_constant_typecast -> '('  . INTEGER ')' variable_or_constant 
 55: variable_or_constant -> '('  . arithmetic_expression ')' 
 56: variable_or_constant -> '('  . relational_expression ')' 
-  0:   On FLOAT to state 74
-  1:   On INTEGER to state 75
-  2:   On arithmetic_expression to state 76
-  3:   On relational_expression to state 77
+  0:   On FLOAT to state 80
+  1:   On INTEGER to state 81
+  2:   On arithmetic_expression to state 82
+  3:   On relational_expression to state 83
   4:   On SUB_OP to state 47
   5:   On variable_or_constant_typecast to state 48
   6:   On '(' to state 49
@@ -499,20 +505,20 @@ State 55:
 
 State 56:
 22: assignment_statement -> variable ASSIGN_OP and_expression  . ';' 
-  0:   On ';' to state 78
+  0:   On ';' to state 84
 
 
 State 57:
 30: and_expression -> or_expression  . 
 31: and_expression -> or_expression  . andTok and_expression 
-  0:   On andTok to state 79
+  0:   On andTok to state 85
   Reduce by 30: and_expression -> or_expression  . 
 
 
 State 58:
 28: or_expression -> not_expression  . 
 29: or_expression -> not_expression  . orTok or_expression 
-  0:   On orTok to state 80
+  0:   On orTok to state 86
   Reduce by 28: or_expression -> not_expression  . 
 
 
@@ -522,39 +528,45 @@ State 59:
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
 38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
 39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
 40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
 41: relational_expression -> arithmetic_expression  . lt arithmetic_expression 
 42: relational_expression -> arithmetic_expression  . eq arithmetic_expression 
 43: relational_expression -> arithmetic_expression  . ne arithmetic_expression 
-  0:   On ADD_OP to state 69
-  1:   On SUB_OP to state 70
-  2:   On MULT_OP to state 71
-  3:   On DIV_OP to state 72
-  4:   On le to state 63
-  5:   On ge to state 64
-  6:   On lt to state 65
-  7:   On gt to state 66
-  8:   On eq to state 67
-  9:   On ne to state 68
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  4:   On le to state 69
+  5:   On ge to state 70
+  6:   On gt to state 71
+  7:   On lt to state 72
+  8:   On eq to state 73
+  9:   On ne to state 74
   Reduce by 25: not_expression -> arithmetic_expression  . 
 
 
 State 60:
 26: not_expression -> relational_expression  . 
+32: relational_expression -> relational_expression  . eq arithmetic_expression 
+33: relational_expression -> relational_expression  . ne arithmetic_expression 
+34: relational_expression -> relational_expression  . le arithmetic_expression 
+35: relational_expression -> relational_expression  . ge arithmetic_expression 
+36: relational_expression -> relational_expression  . lt arithmetic_expression 
+37: relational_expression -> relational_expression  . gt arithmetic_expression 
+  0:   On eq to state 63
+  1:   On ne to state 64
+  2:   On le to state 65
+  3:   On ge to state 66
+  4:   On lt to state 67
+  5:   On gt to state 68
   Reduce by 26: not_expression -> relational_expression  . 
 
 
 State 61:
 27: not_expression -> nt  . relational_expression 
-  0:   On relational_expression to state 81
+  0:   On relational_expression to state 87
   1:   On arithmetic_expression to state 46
   2:   On SUB_OP to state 47
   3:   On variable_or_constant_typecast to state 48
@@ -569,108 +581,96 @@ State 61:
 
 State 62:
 23: if_else_statement -> IF '(' relational_expression ')'  . goto_statement ELSE goto_statement 
-  0:   On goto_statement to state 82
+  0:   On goto_statement to state 88
   1:   On GOTO to state 38
 
 
 State 63:
-32: relational_expression -> arithmetic_expression le  . relational_expression 
-38: relational_expression -> arithmetic_expression le  . arithmetic_expression 
-  0:   On relational_expression to state 83
-  1:   On arithmetic_expression to state 84
-  2:   On SUB_OP to state 47
-  3:   On variable_or_constant_typecast to state 48
-  4:   On '(' to state 49
-  5:   On variable_or_constant to state 50
-  6:   On variable to state 51
-  7:   On constant to state 52
-  8:   On NAME to state 40
-  9:   On INTEGER_NUMBER to state 53
-  10:   On FLOAT_NUMBER to state 54
+32: relational_expression -> relational_expression eq  . arithmetic_expression 
+  0:   On arithmetic_expression to state 89
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
 
 
 State 64:
-33: relational_expression -> arithmetic_expression ge  . relational_expression 
-39: relational_expression -> arithmetic_expression ge  . arithmetic_expression 
-  0:   On relational_expression to state 85
-  1:   On arithmetic_expression to state 86
-  2:   On SUB_OP to state 47
-  3:   On variable_or_constant_typecast to state 48
-  4:   On '(' to state 49
-  5:   On variable_or_constant to state 50
-  6:   On variable to state 51
-  7:   On constant to state 52
-  8:   On NAME to state 40
-  9:   On INTEGER_NUMBER to state 53
-  10:   On FLOAT_NUMBER to state 54
+33: relational_expression -> relational_expression ne  . arithmetic_expression 
+  0:   On arithmetic_expression to state 90
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
 
 
 State 65:
-34: relational_expression -> arithmetic_expression lt  . relational_expression 
-41: relational_expression -> arithmetic_expression lt  . arithmetic_expression 
-  0:   On relational_expression to state 87
-  1:   On arithmetic_expression to state 88
-  2:   On SUB_OP to state 47
-  3:   On variable_or_constant_typecast to state 48
-  4:   On '(' to state 49
-  5:   On variable_or_constant to state 50
-  6:   On variable to state 51
-  7:   On constant to state 52
-  8:   On NAME to state 40
-  9:   On INTEGER_NUMBER to state 53
-  10:   On FLOAT_NUMBER to state 54
+34: relational_expression -> relational_expression le  . arithmetic_expression 
+  0:   On arithmetic_expression to state 91
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
 
 
 State 66:
-35: relational_expression -> arithmetic_expression gt  . relational_expression 
-40: relational_expression -> arithmetic_expression gt  . arithmetic_expression 
-  0:   On relational_expression to state 89
-  1:   On arithmetic_expression to state 90
-  2:   On SUB_OP to state 47
-  3:   On variable_or_constant_typecast to state 48
-  4:   On '(' to state 49
-  5:   On variable_or_constant to state 50
-  6:   On variable to state 51
-  7:   On constant to state 52
-  8:   On NAME to state 40
-  9:   On INTEGER_NUMBER to state 53
-  10:   On FLOAT_NUMBER to state 54
+35: relational_expression -> relational_expression ge  . arithmetic_expression 
+  0:   On arithmetic_expression to state 92
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
 
 
 State 67:
-36: relational_expression -> arithmetic_expression eq  . relational_expression 
-42: relational_expression -> arithmetic_expression eq  . arithmetic_expression 
-  0:   On relational_expression to state 91
-  1:   On arithmetic_expression to state 92
-  2:   On SUB_OP to state 47
-  3:   On variable_or_constant_typecast to state 48
-  4:   On '(' to state 49
-  5:   On variable_or_constant to state 50
-  6:   On variable to state 51
-  7:   On constant to state 52
-  8:   On NAME to state 40
-  9:   On INTEGER_NUMBER to state 53
-  10:   On FLOAT_NUMBER to state 54
+36: relational_expression -> relational_expression lt  . arithmetic_expression 
+  0:   On arithmetic_expression to state 93
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
 
 
 State 68:
-37: relational_expression -> arithmetic_expression ne  . relational_expression 
-43: relational_expression -> arithmetic_expression ne  . arithmetic_expression 
-  0:   On relational_expression to state 93
-  1:   On arithmetic_expression to state 94
-  2:   On SUB_OP to state 47
-  3:   On variable_or_constant_typecast to state 48
-  4:   On '(' to state 49
-  5:   On variable_or_constant to state 50
-  6:   On variable to state 51
-  7:   On constant to state 52
-  8:   On NAME to state 40
-  9:   On INTEGER_NUMBER to state 53
-  10:   On FLOAT_NUMBER to state 54
+37: relational_expression -> relational_expression gt  . arithmetic_expression 
+  0:   On arithmetic_expression to state 94
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
 
 
 State 69:
-45: arithmetic_expression -> arithmetic_expression ADD_OP  . arithmetic_expression 
+38: relational_expression -> arithmetic_expression le  . arithmetic_expression 
   0:   On arithmetic_expression to state 95
   1:   On SUB_OP to state 47
   2:   On variable_or_constant_typecast to state 48
@@ -684,7 +684,7 @@ State 69:
 
 
 State 70:
-46: arithmetic_expression -> arithmetic_expression SUB_OP  . arithmetic_expression 
+39: relational_expression -> arithmetic_expression ge  . arithmetic_expression 
   0:   On arithmetic_expression to state 96
   1:   On SUB_OP to state 47
   2:   On variable_or_constant_typecast to state 48
@@ -698,7 +698,7 @@ State 70:
 
 
 State 71:
-47: arithmetic_expression -> arithmetic_expression MULT_OP  . arithmetic_expression 
+40: relational_expression -> arithmetic_expression gt  . arithmetic_expression 
   0:   On arithmetic_expression to state 97
   1:   On SUB_OP to state 47
   2:   On variable_or_constant_typecast to state 48
@@ -712,7 +712,7 @@ State 71:
 
 
 State 72:
-48: arithmetic_expression -> arithmetic_expression DIV_OP  . arithmetic_expression 
+41: relational_expression -> arithmetic_expression lt  . arithmetic_expression 
   0:   On arithmetic_expression to state 98
   1:   On SUB_OP to state 47
   2:   On variable_or_constant_typecast to state 48
@@ -726,64 +726,154 @@ State 72:
 
 
 State 73:
+42: relational_expression -> arithmetic_expression eq  . arithmetic_expression 
+  0:   On arithmetic_expression to state 99
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
+
+
+State 74:
+43: relational_expression -> arithmetic_expression ne  . arithmetic_expression 
+  0:   On arithmetic_expression to state 100
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
+
+
+State 75:
+45: arithmetic_expression -> arithmetic_expression ADD_OP  . arithmetic_expression 
+  0:   On arithmetic_expression to state 101
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
+
+
+State 76:
+46: arithmetic_expression -> arithmetic_expression SUB_OP  . arithmetic_expression 
+  0:   On arithmetic_expression to state 102
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
+
+
+State 77:
+47: arithmetic_expression -> arithmetic_expression MULT_OP  . arithmetic_expression 
+  0:   On arithmetic_expression to state 103
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
+
+
+State 78:
+48: arithmetic_expression -> arithmetic_expression DIV_OP  . arithmetic_expression 
+  0:   On arithmetic_expression to state 104
+  1:   On SUB_OP to state 47
+  2:   On variable_or_constant_typecast to state 48
+  3:   On '(' to state 49
+  4:   On variable_or_constant to state 50
+  5:   On variable to state 51
+  6:   On constant to state 52
+  7:   On NAME to state 40
+  8:   On INTEGER_NUMBER to state 53
+  9:   On FLOAT_NUMBER to state 54
+
+
+State 79:
 44: arithmetic_expression -> SUB_OP variable_or_constant_typecast  . 
   Reduce by 44: arithmetic_expression -> SUB_OP variable_or_constant_typecast  . 
 
 
-State 74:
+State 80:
 50: variable_or_constant_typecast -> '(' FLOAT  . ')' variable_or_constant 
-  0:   On ')' to state 99
+  0:   On ')' to state 105
 
 
-State 75:
+State 81:
 51: variable_or_constant_typecast -> '(' INTEGER  . ')' variable_or_constant 
-  0:   On ')' to state 100
+  0:   On ')' to state 106
 
 
-State 76:
+State 82:
 55: variable_or_constant -> '(' arithmetic_expression  . ')' 
 45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
 38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
 39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
 40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
 41: relational_expression -> arithmetic_expression  . lt arithmetic_expression 
 42: relational_expression -> arithmetic_expression  . eq arithmetic_expression 
 43: relational_expression -> arithmetic_expression  . ne arithmetic_expression 
-  0:   On ')' to state 101
-  1:   On ADD_OP to state 69
-  2:   On SUB_OP to state 70
-  3:   On MULT_OP to state 71
-  4:   On DIV_OP to state 72
-  5:   On le to state 63
-  6:   On ge to state 64
-  7:   On lt to state 65
-  8:   On gt to state 66
-  9:   On eq to state 67
-  10:   On ne to state 68
+  0:   On ')' to state 107
+  1:   On ADD_OP to state 75
+  2:   On SUB_OP to state 76
+  3:   On MULT_OP to state 77
+  4:   On DIV_OP to state 78
+  5:   On le to state 69
+  6:   On ge to state 70
+  7:   On gt to state 71
+  8:   On lt to state 72
+  9:   On eq to state 73
+  10:   On ne to state 74
 
 
-State 77:
+State 83:
 56: variable_or_constant -> '(' relational_expression  . ')' 
-  0:   On ')' to state 102
+32: relational_expression -> relational_expression  . eq arithmetic_expression 
+33: relational_expression -> relational_expression  . ne arithmetic_expression 
+34: relational_expression -> relational_expression  . le arithmetic_expression 
+35: relational_expression -> relational_expression  . ge arithmetic_expression 
+36: relational_expression -> relational_expression  . lt arithmetic_expression 
+37: relational_expression -> relational_expression  . gt arithmetic_expression 
+  0:   On ')' to state 108
+  1:   On eq to state 63
+  2:   On ne to state 64
+  3:   On le to state 65
+  4:   On ge to state 66
+  5:   On lt to state 67
+  6:   On gt to state 68
 
 
-State 78:
+State 84:
 22: assignment_statement -> variable ASSIGN_OP and_expression ';'  . 
   Reduce by 22: assignment_statement -> variable ASSIGN_OP and_expression ';'  . 
 
 
-State 79:
+State 85:
 31: and_expression -> or_expression andTok  . and_expression 
-  0:   On and_expression to state 103
+  0:   On and_expression to state 109
   1:   On or_expression to state 57
   2:   On not_expression to state 58
   3:   On arithmetic_expression to state 59
@@ -800,9 +890,9 @@ State 79:
   14:   On FLOAT_NUMBER to state 54
 
 
-State 80:
+State 86:
 29: or_expression -> not_expression orTok  . or_expression 
-  0:   On or_expression to state 104
+  0:   On or_expression to state 110
   1:   On not_expression to state 58
   2:   On arithmetic_expression to state 59
   3:   On relational_expression to state 60
@@ -818,342 +908,294 @@ State 80:
   13:   On FLOAT_NUMBER to state 54
 
 
-State 81:
+State 87:
 27: not_expression -> nt relational_expression  . 
+32: relational_expression -> relational_expression  . eq arithmetic_expression 
+33: relational_expression -> relational_expression  . ne arithmetic_expression 
+34: relational_expression -> relational_expression  . le arithmetic_expression 
+35: relational_expression -> relational_expression  . ge arithmetic_expression 
+36: relational_expression -> relational_expression  . lt arithmetic_expression 
+37: relational_expression -> relational_expression  . gt arithmetic_expression 
+  0:   On eq to state 63
+  1:   On ne to state 64
+  2:   On le to state 65
+  3:   On ge to state 66
+  4:   On lt to state 67
+  5:   On gt to state 68
   Reduce by 27: not_expression -> nt relational_expression  . 
 
 
-State 82:
-23: if_else_statement -> IF '(' relational_expression ')' goto_statement  . ELSE goto_statement 
-  0:   On ELSE to state 105
-
-
-State 83:
-32: relational_expression -> arithmetic_expression le relational_expression  . 
-  Reduce by 32: relational_expression -> arithmetic_expression le relational_expression  . 
-
-
-State 84:
-38: relational_expression -> arithmetic_expression le arithmetic_expression  . 
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
-38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
-39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
-40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
-41: relational_expression -> arithmetic_expression  . lt arithmetic_expression 
-42: relational_expression -> arithmetic_expression  . eq arithmetic_expression 
-43: relational_expression -> arithmetic_expression  . ne arithmetic_expression 
-45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
-46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
-47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
-48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0:   On le to state 63
-  1:   On ge to state 64
-  2:   On lt to state 65
-  3:   On gt to state 66
-  4:   On eq to state 67
-  5:   On ne to state 68
-  6:   On ADD_OP to state 69
-  7:   On SUB_OP to state 70
-  8:   On MULT_OP to state 71
-  9:   On DIV_OP to state 72
-  Reduce by 38: relational_expression -> arithmetic_expression le arithmetic_expression  . 
-
-
-State 85:
-33: relational_expression -> arithmetic_expression ge relational_expression  . 
-  Reduce by 33: relational_expression -> arithmetic_expression ge relational_expression  . 
-
-
-State 86:
-39: relational_expression -> arithmetic_expression ge arithmetic_expression  . 
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
-38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
-39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
-40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
-41: relational_expression -> arithmetic_expression  . lt arithmetic_expression 
-42: relational_expression -> arithmetic_expression  . eq arithmetic_expression 
-43: relational_expression -> arithmetic_expression  . ne arithmetic_expression 
-45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
-46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
-47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
-48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0:   On le to state 63
-  1:   On ge to state 64
-  2:   On lt to state 65
-  3:   On gt to state 66
-  4:   On eq to state 67
-  5:   On ne to state 68
-  6:   On ADD_OP to state 69
-  7:   On SUB_OP to state 70
-  8:   On MULT_OP to state 71
-  9:   On DIV_OP to state 72
-  Reduce by 39: relational_expression -> arithmetic_expression ge arithmetic_expression  . 
-
-
-State 87:
-34: relational_expression -> arithmetic_expression lt relational_expression  . 
-  Reduce by 34: relational_expression -> arithmetic_expression lt relational_expression  . 
-
-
 State 88:
-41: relational_expression -> arithmetic_expression lt arithmetic_expression  . 
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
-38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
-39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
-40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
-41: relational_expression -> arithmetic_expression  . lt arithmetic_expression 
-42: relational_expression -> arithmetic_expression  . eq arithmetic_expression 
-43: relational_expression -> arithmetic_expression  . ne arithmetic_expression 
-45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
-46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
-47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
-48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0:   On le to state 63
-  1:   On ge to state 64
-  2:   On lt to state 65
-  3:   On gt to state 66
-  4:   On eq to state 67
-  5:   On ne to state 68
-  6:   On ADD_OP to state 69
-  7:   On SUB_OP to state 70
-  8:   On MULT_OP to state 71
-  9:   On DIV_OP to state 72
-  Reduce by 41: relational_expression -> arithmetic_expression lt arithmetic_expression  . 
+23: if_else_statement -> IF '(' relational_expression ')' goto_statement  . ELSE goto_statement 
+  0:   On ELSE to state 111
 
 
 State 89:
-35: relational_expression -> arithmetic_expression gt relational_expression  . 
-  Reduce by 35: relational_expression -> arithmetic_expression gt relational_expression  . 
+32: relational_expression -> relational_expression eq arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 32: relational_expression -> relational_expression eq arithmetic_expression  . 
 
 
 State 90:
-40: relational_expression -> arithmetic_expression gt arithmetic_expression  . 
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
-38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
-39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
-40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
-41: relational_expression -> arithmetic_expression  . lt arithmetic_expression 
-42: relational_expression -> arithmetic_expression  . eq arithmetic_expression 
-43: relational_expression -> arithmetic_expression  . ne arithmetic_expression 
+33: relational_expression -> relational_expression ne arithmetic_expression  . 
 45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0:   On le to state 63
-  1:   On ge to state 64
-  2:   On lt to state 65
-  3:   On gt to state 66
-  4:   On eq to state 67
-  5:   On ne to state 68
-  6:   On ADD_OP to state 69
-  7:   On SUB_OP to state 70
-  8:   On MULT_OP to state 71
-  9:   On DIV_OP to state 72
-  Reduce by 40: relational_expression -> arithmetic_expression gt arithmetic_expression  . 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 33: relational_expression -> relational_expression ne arithmetic_expression  . 
 
 
 State 91:
-36: relational_expression -> arithmetic_expression eq relational_expression  . 
-  Reduce by 36: relational_expression -> arithmetic_expression eq relational_expression  . 
+34: relational_expression -> relational_expression le arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 34: relational_expression -> relational_expression le arithmetic_expression  . 
 
 
 State 92:
-42: relational_expression -> arithmetic_expression eq arithmetic_expression  . 
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
-38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
-39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
-40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
-41: relational_expression -> arithmetic_expression  . lt arithmetic_expression 
-42: relational_expression -> arithmetic_expression  . eq arithmetic_expression 
-43: relational_expression -> arithmetic_expression  . ne arithmetic_expression 
+35: relational_expression -> relational_expression ge arithmetic_expression  . 
 45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0:   On le to state 63
-  1:   On ge to state 64
-  2:   On lt to state 65
-  3:   On gt to state 66
-  4:   On eq to state 67
-  5:   On ne to state 68
-  6:   On ADD_OP to state 69
-  7:   On SUB_OP to state 70
-  8:   On MULT_OP to state 71
-  9:   On DIV_OP to state 72
-  Reduce by 42: relational_expression -> arithmetic_expression eq arithmetic_expression  . 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 35: relational_expression -> relational_expression ge arithmetic_expression  . 
 
 
 State 93:
-37: relational_expression -> arithmetic_expression ne relational_expression  . 
-  Reduce by 37: relational_expression -> arithmetic_expression ne relational_expression  . 
-
-
-State 94:
-43: relational_expression -> arithmetic_expression ne arithmetic_expression  . 
-32: relational_expression -> arithmetic_expression  . le relational_expression 
-33: relational_expression -> arithmetic_expression  . ge relational_expression 
-34: relational_expression -> arithmetic_expression  . lt relational_expression 
-35: relational_expression -> arithmetic_expression  . gt relational_expression 
-36: relational_expression -> arithmetic_expression  . eq relational_expression 
-37: relational_expression -> arithmetic_expression  . ne relational_expression 
-38: relational_expression -> arithmetic_expression  . le arithmetic_expression 
-39: relational_expression -> arithmetic_expression  . ge arithmetic_expression 
-40: relational_expression -> arithmetic_expression  . gt arithmetic_expression 
-41: relational_expression -> arithmetic_expression  . lt arithmetic_expression 
-42: relational_expression -> arithmetic_expression  . eq arithmetic_expression 
-43: relational_expression -> arithmetic_expression  . ne arithmetic_expression 
+36: relational_expression -> relational_expression lt arithmetic_expression  . 
 45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0:   On le to state 63
-  1:   On ge to state 64
-  2:   On lt to state 65
-  3:   On gt to state 66
-  4:   On eq to state 67
-  5:   On ne to state 68
-  6:   On ADD_OP to state 69
-  7:   On SUB_OP to state 70
-  8:   On MULT_OP to state 71
-  9:   On DIV_OP to state 72
-  Reduce by 43: relational_expression -> arithmetic_expression ne arithmetic_expression  . 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 36: relational_expression -> relational_expression lt arithmetic_expression  . 
+
+
+State 94:
+37: relational_expression -> relational_expression gt arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 37: relational_expression -> relational_expression gt arithmetic_expression  . 
 
 
 State 95:
+38: relational_expression -> arithmetic_expression le arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 38: relational_expression -> arithmetic_expression le arithmetic_expression  . 
+
+
+State 96:
+39: relational_expression -> arithmetic_expression ge arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 39: relational_expression -> arithmetic_expression ge arithmetic_expression  . 
+
+
+State 97:
+40: relational_expression -> arithmetic_expression gt arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 40: relational_expression -> arithmetic_expression gt arithmetic_expression  . 
+
+
+State 98:
+41: relational_expression -> arithmetic_expression lt arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 41: relational_expression -> arithmetic_expression lt arithmetic_expression  . 
+
+
+State 99:
+42: relational_expression -> arithmetic_expression eq arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 42: relational_expression -> arithmetic_expression eq arithmetic_expression  . 
+
+
+State 100:
+43: relational_expression -> arithmetic_expression ne arithmetic_expression  . 
+45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
+46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
+47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
+48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
+  0:   On ADD_OP to state 75
+  1:   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
+  Reduce by 43: relational_expression -> arithmetic_expression ne arithmetic_expression  . 
+
+
+State 101:
 45: arithmetic_expression -> arithmetic_expression ADD_OP arithmetic_expression  . 
 45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0 (removed by precedence):   On ADD_OP to state 69
-  1 (removed by precedence):   On SUB_OP to state 70
-  2:   On MULT_OP to state 71
-  3:   On DIV_OP to state 72
+  0 (removed by precedence):   On ADD_OP to state 75
+  1 (removed by precedence):   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
   Reduce by 45: arithmetic_expression -> arithmetic_expression ADD_OP arithmetic_expression  . 
 
 
-State 96:
+State 102:
 46: arithmetic_expression -> arithmetic_expression SUB_OP arithmetic_expression  . 
 45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0 (removed by precedence):   On ADD_OP to state 69
-  1 (removed by precedence):   On SUB_OP to state 70
-  2:   On MULT_OP to state 71
-  3:   On DIV_OP to state 72
+  0 (removed by precedence):   On ADD_OP to state 75
+  1 (removed by precedence):   On SUB_OP to state 76
+  2:   On MULT_OP to state 77
+  3:   On DIV_OP to state 78
   Reduce by 46: arithmetic_expression -> arithmetic_expression SUB_OP arithmetic_expression  . 
 
 
-State 97:
+State 103:
 47: arithmetic_expression -> arithmetic_expression MULT_OP arithmetic_expression  . 
 45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0 (removed by precedence):   On ADD_OP to state 69
-  1 (removed by precedence):   On SUB_OP to state 70
-  2 (removed by precedence):   On MULT_OP to state 71
-  3 (removed by precedence):   On DIV_OP to state 72
+  0 (removed by precedence):   On ADD_OP to state 75
+  1 (removed by precedence):   On SUB_OP to state 76
+  2 (removed by precedence):   On MULT_OP to state 77
+  3 (removed by precedence):   On DIV_OP to state 78
   Reduce by 47: arithmetic_expression -> arithmetic_expression MULT_OP arithmetic_expression  . 
 
 
-State 98:
+State 104:
 48: arithmetic_expression -> arithmetic_expression DIV_OP arithmetic_expression  . 
 45: arithmetic_expression -> arithmetic_expression  . ADD_OP arithmetic_expression 
 46: arithmetic_expression -> arithmetic_expression  . SUB_OP arithmetic_expression 
 47: arithmetic_expression -> arithmetic_expression  . MULT_OP arithmetic_expression 
 48: arithmetic_expression -> arithmetic_expression  . DIV_OP arithmetic_expression 
-  0 (removed by precedence):   On ADD_OP to state 69
-  1 (removed by precedence):   On SUB_OP to state 70
-  2 (removed by precedence):   On MULT_OP to state 71
-  3 (removed by precedence):   On DIV_OP to state 72
+  0 (removed by precedence):   On ADD_OP to state 75
+  1 (removed by precedence):   On SUB_OP to state 76
+  2 (removed by precedence):   On MULT_OP to state 77
+  3 (removed by precedence):   On DIV_OP to state 78
   Reduce by 48: arithmetic_expression -> arithmetic_expression DIV_OP arithmetic_expression  . 
 
 
-State 99:
+State 105:
 50: variable_or_constant_typecast -> '(' FLOAT ')'  . variable_or_constant 
-  0:   On variable_or_constant to state 106
+  0:   On variable_or_constant to state 112
   1:   On variable to state 51
   2:   On constant to state 52
-  3:   On '(' to state 107
+  3:   On '(' to state 113
   4:   On NAME to state 40
   5:   On INTEGER_NUMBER to state 53
   6:   On FLOAT_NUMBER to state 54
 
 
-State 100:
+State 106:
 51: variable_or_constant_typecast -> '(' INTEGER ')'  . variable_or_constant 
-  0:   On variable_or_constant to state 108
+  0:   On variable_or_constant to state 114
   1:   On variable to state 51
   2:   On constant to state 52
-  3:   On '(' to state 107
+  3:   On '(' to state 113
   4:   On NAME to state 40
   5:   On INTEGER_NUMBER to state 53
   6:   On FLOAT_NUMBER to state 54
 
 
-State 101:
+State 107:
 55: variable_or_constant -> '(' arithmetic_expression ')'  . 
   Reduce by 55: variable_or_constant -> '(' arithmetic_expression ')'  . 
 
 
-State 102:
+State 108:
 56: variable_or_constant -> '(' relational_expression ')'  . 
   Reduce by 56: variable_or_constant -> '(' relational_expression ')'  . 
 
 
-State 103:
+State 109:
 31: and_expression -> or_expression andTok and_expression  . 
   Reduce by 31: and_expression -> or_expression andTok and_expression  . 
 
 
-State 104:
+State 110:
 29: or_expression -> not_expression orTok or_expression  . 
   Reduce by 29: or_expression -> not_expression orTok or_expression  . 
 
 
-State 105:
+State 111:
 23: if_else_statement -> IF '(' relational_expression ')' goto_statement ELSE  . goto_statement 
-  0:   On goto_statement to state 109
+  0:   On goto_statement to state 115
   1:   On GOTO to state 38
 
 
-State 106:
+State 112:
 50: variable_or_constant_typecast -> '(' FLOAT ')' variable_or_constant  . 
   Reduce by 50: variable_or_constant_typecast -> '(' FLOAT ')' variable_or_constant  . 
 
 
-State 107:
+State 113:
 55: variable_or_constant -> '('  . arithmetic_expression ')' 
 56: variable_or_constant -> '('  . relational_expression ')' 
-  0:   On arithmetic_expression to state 76
-  1:   On relational_expression to state 77
+  0:   On arithmetic_expression to state 82
+  1:   On relational_expression to state 83
   2:   On SUB_OP to state 47
   3:   On variable_or_constant_typecast to state 48
   4:   On '(' to state 49
@@ -1165,12 +1207,12 @@ State 107:
   10:   On FLOAT_NUMBER to state 54
 
 
-State 108:
+State 114:
 51: variable_or_constant_typecast -> '(' INTEGER ')' variable_or_constant  . 
   Reduce by 51: variable_or_constant_typecast -> '(' INTEGER ')' variable_or_constant  . 
 
 
-State 109:
+State 115:
 23: if_else_statement -> IF '(' relational_expression ')' goto_statement ELSE goto_statement  . 
   Reduce by 23: if_else_statement -> IF '(' relational_expression ')' goto_statement ELSE goto_statement  . 
 

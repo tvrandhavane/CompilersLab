@@ -45,10 +45,10 @@
 %token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
 %token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT
-%left ADD_OP SUB_OP
-%left MULT_OP DIV_OP
 %left ne eq
 %left lt le gt ge
+%left ADD_OP SUB_OP
+%left MULT_OP DIV_OP
 %token nt andTok orTok
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -468,45 +468,44 @@ and_expression:
 ;
 
 relational_expression:
-
-	arithmetic_expression le relational_expression
-	{
-		$$ = new Relational_Expr_Ast($1, LE, $3);
-	}
-|
-	arithmetic_expression ge relational_expression
-	{
-		$$ = new Relational_Expr_Ast($1, GE, $3);
-	}
-|
-	arithmetic_expression lt relational_expression
-	{
-		$$ = new Relational_Expr_Ast($1, LT, $3);
-	}
-|
-	arithmetic_expression gt relational_expression
-	{
-		$$ = new Relational_Expr_Ast($1, GT, $3);
-	}
-|
-	arithmetic_expression eq relational_expression
+	relational_expression eq arithmetic_expression
 	{
 		$$ = new Relational_Expr_Ast($1, EQ, $3);
 	}
 |
-	arithmetic_expression ne relational_expression
+	relational_expression ne arithmetic_expression
 	{
 		$$ = new Relational_Expr_Ast($1, NE, $3);
+	}
+|
+	relational_expression le arithmetic_expression
+	{
+		$$ = new Relational_Expr_Ast($1, LE, $3);
+	}
+|
+	relational_expression ge arithmetic_expression
+	{
+		$$ = new Relational_Expr_Ast($1, GE, $3);
+	}
+|
+	relational_expression lt arithmetic_expression
+	{
+		$$ = new Relational_Expr_Ast($1, LT, $3);
+	}
+|
+	relational_expression gt arithmetic_expression
+	{
+		$$ = new Relational_Expr_Ast($1, GT, $3);
 	}
 |
 	arithmetic_expression le arithmetic_expression
 	{
-		$$ = new Relational_Expr_Ast($1, NE, $3);
+		$$ = new Relational_Expr_Ast($1, LE, $3);
 	}
 |
 	arithmetic_expression ge arithmetic_expression
 	{
-		$$ = new Relational_Expr_Ast($1, NE, $3);
+		$$ = new Relational_Expr_Ast($1, GE, $3);
 	}
 |
 	arithmetic_expression gt arithmetic_expression
@@ -516,12 +515,12 @@ relational_expression:
 |
 	arithmetic_expression lt arithmetic_expression
 	{
-		$$ = new Relational_Expr_Ast($1, NE, $3);
+		$$ = new Relational_Expr_Ast($1,LT, $3);
 	}
 |
 	arithmetic_expression eq arithmetic_expression
 	{
-		$$ = new Relational_Expr_Ast($1, NE, $3);
+		$$ = new Relational_Expr_Ast($1, EQ, $3);
 	}
 |
 	arithmetic_expression ne arithmetic_expression
@@ -535,31 +534,43 @@ arithmetic_expression:
 	SUB_OP variable_or_constant_typecast
 	{
 		$$ = new Arithmetic_Expr_Ast($2, UMINUS, NULL);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	arithmetic_expression ADD_OP arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($1, PLUS, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	arithmetic_expression SUB_OP arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($1, MINUS, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	arithmetic_expression MULT_OP arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($1, MULT, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	arithmetic_expression DIV_OP arithmetic_expression
 	{
 		$$ = new Arithmetic_Expr_Ast($1, DIV, $3);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	variable_or_constant_typecast
 	{
 		$$ = new Arithmetic_Expr_Ast($1, VAR, NULL);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 ;
 
@@ -567,11 +578,15 @@ variable_or_constant_typecast:
 	'(' FLOAT ')' variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	'(' INTEGER ')' variable_or_constant
 	{
 		$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL);
+		int line = get_line_number();
+		$$->check_ast(line);
 	}
 |
 	variable_or_constant

@@ -1,0 +1,23 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 3)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 8)
+         Asgn:
+            LHS (Name : c)
+            RHS (
+            Condition: EQ
+               LHS (
+            Condition: LE
+               LHS (
+            Arith: PLUS
+               LHS (Name : b)
+               RHS (Name : a))
+               RHS (Name : a))
+               RHS (Name : b))
+         Return <NOTHING>

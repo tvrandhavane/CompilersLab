@@ -1,0 +1,11 @@
+Program:
+   Procedure: main
+
+      Basic_Block 2
+         Asgn:
+            LHS (Name : f)
+            RHS (Num : -1.00)
+         Asgn:
+            LHS (Name : g)
+            RHS (Num : 10.00)
+         Return <NOTHING>
