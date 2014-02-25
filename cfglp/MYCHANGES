@@ -4,92 +4,42 @@ Alok yadav			110050043
 
 My Changes:
 
-In scanner.ll:
-1.	We have added new okens for +, -, *,/ and "float"
-2.	We have added a regular expression to identify float number (single digit precision)
-	Regular expression: [-]?[[:digit:]_]+[.][[:digit:]_]+ 
+In ast.cc:
+1. 	Added the class for Arithmetic_Expr_Ast
+2.	Modified the printing of Name_ast to accomodate for float numbers
+3.	Modified the set value function in Name_ast to accomodate for float numbers
+4.	Modified the printing of Number_ast to accomodate for float numbers
+5.	Modified the evaluate function in Number_ast to accomodate for float numbers
+
+In ast.hh:
+1.	Added enumerator for Arithmetic operators.
+2.	Added the declaration for Arithmetic_Expr_Ast
+
+In local-environment.cc:
+1.	Changed the return type of get_value function to float
+2.	Added set_value function for float
+3.	Added inherited class Eval_Result_Value_Float for float results
+4.	Modified print function to accomodate for float numbers
+
+In local-environment.hh:
+1.	Added the declaration for Eval_Result_Value_Float
+2.	Added a float variable result
+3.	Added declarations of functions set_value and get_value for float
 
 In parser.yy:
 
-1.	Modified the grammar of not_expression  -
-	not_expression:
-	relational_expression
-	{}
-	|
-	! relational_expression
-	{}
-	|
-	arithmetic_expression
-	;
-2.	Modified the grammar of relational_expression	-
-	relational_expression:
-	arithmetic_expression le relational_expression{}
-	|
-	arithmetic_expression ge relational_expression{}
-	|
-	arithmetic_expression gt relational_expression{}
-	|
-	arithmetic_expression lt relational_expression{}
-	|
-	arithmetic_expression ne relational_expression{}
-	|
-	arithmetic_expression eq relational_expression{}
-	|
-	arithmetic_expression le arithmetic_expression{}
-	|
-	arithmetic_expression ge arithmetic_expression{}
-	|
-	arithmetic_expression gt arithmetic_expression{}
-	|
-	arithmetic_expression lt arithmetic_expression{}
-	|
-	arithmetic_expression ne arithmetic_expression{}
-	|
-	arithmetic_expression eq arithmetic_expression{}
-	;
-3.	Added grammar for arithmetic expression	-
-	arithmetic_expression:
-	arithmetic_expression ADD_OP arithmetic_expression{}
-	|
-	arithmetic_expression SUB_OP arithmetic_expression{}
-	|
-	arithmetic_expression MULT_OP arithmetic_expression{}
-	|
-	arithmetic_expression DIV_OP arithmetic_expression{}
-	|
-	variable_or_constant ADD_OP variable_or_constant {}
-	|
-	variable_or_constant SUB_OP variable_or_constant {}
-	|
-	variable_or_constant MULT_OP variable_or_constant {}
-	|
-	variable_or_constant DIV_OP variable_or_constant {}
-	;
-4.	Modified grammar for variable_or_constant to implement bracketted expression	-
-	variable_or_constant:
-	variable
-	{}
-	|
-	constant
-	{}
-	|		
-	'('arithmetic_expression')'
-	{}
-	|	
-	'('relational_expression')'	
-	{}
-	;
+1.	Uncommented all of C code.
+2.	Added declarations of double variables
+3.	Tweaked the rule for relational_expression to ensure proper parsing
+4.	Modified the rule for arithmetic_expression to ensure proper parsing
+5.	Added a rule for typecasted variables or constant
+6. 	Added a rule for float numbers
 
-5.	Modified grammar for constant 	-
-	constant:
-	int
-	{}
-	|
-	float
-	{}
-	;
-6.	Specified associativity and priority for relational and arithmetic operators.
+In scanner.ll:
+1.	Added a rule for keyword double
 
-	
-	
+In symbol-table.hh:
+1.	Added a data_type for float
+
+
 
