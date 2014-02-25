@@ -594,7 +594,12 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				result.set_value((int) (lhsResult.get_value() - rhsResult.get_value()) );
 			}
 			if(oper == DIV){
-				result.set_value((int) (lhsResult.get_value() / rhsResult.get_value()) );
+				if((int) rhsResult.get_value() != 0){
+					result.set_value((int) (lhsResult.get_value() / rhsResult.get_value()));
+				}
+				else{
+					report_error("Divided by zero", NOLINE);
+				}
 			}
 			if(oper == MULT){
 				result.set_value((int) (lhsResult.get_value() * rhsResult.get_value()) );
@@ -611,7 +616,12 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				result.set_value((float) (lhsResult.get_value() - rhsResult.get_value()) );
 			}
 			if(oper == DIV){
-				result.set_value((float) (lhsResult.get_value() / rhsResult.get_value()) );
+				if(rhsResult.get_value() != 0){
+					result.set_value((float) (lhsResult.get_value() / rhsResult.get_value()) );
+				}
+				else{
+					report_error("Divided by zero", NOLINE);
+				}
 			}
 			if(oper == MULT){
 				result.set_value((float) (lhsResult.get_value() * rhsResult.get_value()) );
