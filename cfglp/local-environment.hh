@@ -46,9 +46,9 @@ protected:
 	Result_Enum result_type;
 
 public:
-	virtual float get_value();
-	virtual void set_value(int number);
-	virtual void set_value(float number);
+	virtual double get_value();
+	virtual void set_value(double number);
+	//virtual void set_value(float number);
 
 	virtual bool is_variable_defined();
 	virtual void set_variable_status(bool def);
@@ -60,9 +60,10 @@ public:
 class Eval_Result_Value:public Eval_Result
 {
 public:
-	virtual float get_value() = 0;
-	virtual void set_value(int number);
-	virtual void set_value(float number);
+	virtual double get_value() = 0;
+	virtual void set_value(double number);
+	//virtual void set_value(int number);
+	//virtual void set_value(float number);
 
 	virtual bool is_variable_defined() = 0;
 	virtual void set_variable_status(bool def) = 0;
@@ -73,14 +74,15 @@ public:
 
 class Eval_Result_Value_Int:public Eval_Result_Value
 {
-	int value;
+	double value;
 	bool defined;
 public:
 	Eval_Result_Value_Int();
 	~Eval_Result_Value_Int();
 
-	virtual float get_value();
-	virtual void set_value(int number);
+	virtual double get_value();
+	virtual void set_value(double number);
+	// virtual void set_value(int number);
 
 	void set_variable_status(bool def);
 	bool is_variable_defined();
@@ -91,14 +93,14 @@ public:
 
 class Eval_Result_Value_Float:public Eval_Result_Value
 {
-	float value;
+	double value;
 	bool defined;
 public:
 	Eval_Result_Value_Float();
 	~Eval_Result_Value_Float();
 
-	virtual float get_value();
-	virtual void set_value(float number);
+	virtual double get_value();
+	virtual void set_value(double number);
 
 	void set_variable_status(bool def);
 	bool is_variable_defined();
