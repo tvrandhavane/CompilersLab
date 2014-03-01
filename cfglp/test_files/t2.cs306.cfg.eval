@@ -1,0 +1,81 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure << main >>
+      Local Variables (before evaluating):
+         a : undefined
+         iftmp0 : undefined
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (
+         FN CALL: fun())
+               RHS (Num : 3)   Evaluating Procedure << fun >>
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2.30)
+         a : 2.30
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3.20)
+         b : 3.20
+
+
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: DIV
+               LHS (Name : b)
+               RHS (Num : 2.10))
+               RHS (Name : a))
+         a : -0.78
+
+
+         RETURN Name : a
+
+
+      Local Variables (after evaluating) Function: << fun >>
+         a : -0.78
+         b : 3.20
+         return : 0
+
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 1)
+         iftmp0 : 1
+
+
+      Basic Block: 5
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Name : iftmp0)
+         a : 1
+
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << main >>
+         a : 1
+         iftmp0 : 1
+   Global Variables (after evaluating):

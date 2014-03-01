@@ -1,0 +1,13 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure << main >>
+      Local Variables (before evaluating):
+
+
+      Basic Block: 2
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << main >>
+   Global Variables (after evaluating):

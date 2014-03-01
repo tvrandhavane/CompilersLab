@@ -1,0 +1,130 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure << main >>
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2)
+         a : 2
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 2.30)
+         b : 2.30
+
+   Evaluating Procedure << fn >>
+      Local Variables (before evaluating):
+         a : 2
+         b : 2.30
+         c : undefined
+         e : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : e)
+            RHS (Num : 3)
+         e : 3
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 2.00)
+         c : 2.00
+
+
+         RETURN 
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (
+            Arith: MULT
+               LHS (
+            Arith: DIV
+               LHS (Name : c)
+               RHS (Name : e))
+               RHS (Name : b))
+
+
+      Local Variables (after evaluating) Function: << fn >>
+         a : 2
+         b : 2.30
+         c : 2.00
+         e : 3
+         return : 3.53
+   Evaluating Procedure << fn >>
+      Local Variables (before evaluating):
+         a : 3
+         b : 3.20
+         c : undefined
+         e : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : e)
+            RHS (Num : 3)
+         e : 3
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 2.00)
+         c : 2.00
+
+
+         RETURN 
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (
+            Arith: MULT
+               LHS (
+            Arith: DIV
+               LHS (Name : c)
+               RHS (Name : e))
+               RHS (Name : b))
+
+
+      Local Variables (after evaluating) Function: << fn >>
+         a : 3
+         b : 3.20
+         c : 2.00
+         e : 3
+         return : 5.13
+
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Condition: LE
+               LHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (
+            Arith: DIV
+               LHS (
+         FN CALL: fn(
+            Name : a
+            Name : b))
+               RHS (Name : b)))
+               RHS (
+         FN CALL: fn(
+            Num : 3
+            Num : 3.20)))
+         a : 1
+
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << main >>
+         a : 1
+         b : 2.30
+   Global Variables (after evaluating):

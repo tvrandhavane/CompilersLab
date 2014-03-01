@@ -1,0 +1,331 @@
+Evaluating Program
+   Global Variables (before evaluating):
+         prod : 0
+   Evaluating Procedure << main >>
+      Local Variables (before evaluating):
+         a : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10)
+         a : 10
+
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (Num : 1)
+         prod : 1
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 10
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 10
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 9
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 90
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 8
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 720
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 7
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 5040
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 6
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 30240
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 5
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 151200
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 4
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 604800
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 3
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 1814400
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 2
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+
+         Asgn:
+            LHS (Name : prod)
+            RHS (
+            Arith: MULT
+               LHS (Name : prod)
+               RHS (Name : a))
+         prod : 3628800
+
+   Evaluating Procedure << fact >>
+      Local Variables (before evaluating):
+         a : 1
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+
+         RETURN Num : 1
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 1
+         return : 1
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 2
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 3
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 4
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 5
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 6
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 7
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 8
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 9
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << fact >>
+         a : 10
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << main >>
+         a : 10
+   Global Variables (after evaluating):
+         prod : 3628800

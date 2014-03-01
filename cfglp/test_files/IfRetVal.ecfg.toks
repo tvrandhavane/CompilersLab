@@ -1,0 +1,12 @@
+Line: 1 	Token Name: NAME 	Token: fn 	Token Code: 260
+Line: 1 	Token Name: META CHAR 	Token: ( 	Token Code: 40
+Line: 1 	Token Name: META CHAR 	Token: ) 	Token Code: 41
+Line: 2 	Ignored NEWLINE character
+Line: 2 	Token Name: META CHAR 	Token: { 	Token Code: 123
+Line: 3 	Ignored NEWLINE character
+Line: 3 	Ignored lexeme: '	'
+Line: 3 	Token Name: INTEGER 	Token: int 	Token Code: 262
+Line: 3 	Ignored lexeme: ' '
+Line: 3 	Token Name: NAME 	Token: a 	Token Code: 260
+Line: 3 	Ignored lexeme: ' '
+Line: 3 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 266

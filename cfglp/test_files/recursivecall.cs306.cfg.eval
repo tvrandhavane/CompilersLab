@@ -1,0 +1,361 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure << main >>
+      Local Variables (before evaluating):
+         x : undefined
+         y : undefined
+         z : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : x)
+            RHS (Num : 5)
+         x : 5
+
+   Evaluating Procedure << r >>
+      Local Variables (before evaluating):
+         D1234 : undefined
+         a : 5
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+   Evaluating Procedure << r >>
+      Local Variables (before evaluating):
+         D1234 : undefined
+         a : 4
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+   Evaluating Procedure << r >>
+      Local Variables (before evaluating):
+         D1234 : undefined
+         a : 3
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+   Evaluating Procedure << r >>
+      Local Variables (before evaluating):
+         D1234 : undefined
+         a : 2
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+   Evaluating Procedure << r >>
+      Local Variables (before evaluating):
+         D1234 : undefined
+         a : 1
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (Num : 1)
+         D1234 : 1
+
+
+         Goto statement:
+            Successor: 5
+         GOTO (BB 5)
+
+      Basic Block: 5
+
+         RETURN Name : D1234
+
+
+      Local Variables (after evaluating) Function: << r >>
+         D1234 : 1
+         a : 1
+         return : 1
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (
+            Arith: PLUS
+               LHS (
+         FN CALL: r(
+            
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : -1)))
+               RHS (Num : 1))
+         D1234 : 2
+
+
+      Basic Block: 5
+
+         RETURN Name : D1234
+
+
+      Local Variables (after evaluating) Function: << r >>
+         D1234 : 2
+         a : 2
+         return : 2
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (
+            Arith: PLUS
+               LHS (
+         FN CALL: r(
+            
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : -1)))
+               RHS (Num : 1))
+         D1234 : 3
+
+
+      Basic Block: 5
+
+         RETURN Name : D1234
+
+
+      Local Variables (after evaluating) Function: << r >>
+         D1234 : 3
+         a : 3
+         return : 3
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (
+            Arith: PLUS
+               LHS (
+         FN CALL: r(
+            
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : -1)))
+               RHS (Num : 1))
+         D1234 : 4
+
+
+      Basic Block: 5
+
+         RETURN Name : D1234
+
+
+      Local Variables (after evaluating) Function: << r >>
+         D1234 : 4
+         a : 4
+         return : 4
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (
+            Arith: PLUS
+               LHS (
+         FN CALL: r(
+            
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : -1)))
+               RHS (Num : 1))
+         D1234 : 5
+
+
+      Basic Block: 5
+
+         RETURN Name : D1234
+
+
+      Local Variables (after evaluating) Function: << r >>
+         D1234 : 5
+         a : 5
+         return : 5
+
+         Asgn:
+            LHS (Name : y)
+            RHS (
+         FN CALL: r(
+            Name : x))
+         y : 5
+
+   Evaluating Procedure << r >>
+      Local Variables (before evaluating):
+         D1234 : undefined
+         a : 3
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+   Evaluating Procedure << r >>
+      Local Variables (before evaluating):
+         D1234 : undefined
+         a : 2
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+   Evaluating Procedure << r >>
+      Local Variables (before evaluating):
+         D1234 : undefined
+         a : 1
+
+
+      Basic Block: 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (Num : 1)
+         D1234 : 1
+
+
+         Goto statement:
+            Successor: 5
+         GOTO (BB 5)
+
+      Basic Block: 5
+
+         RETURN Name : D1234
+
+
+      Local Variables (after evaluating) Function: << r >>
+         D1234 : 1
+         a : 1
+         return : 1
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (
+            Arith: PLUS
+               LHS (
+         FN CALL: r(
+            
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : -1)))
+               RHS (Num : 1))
+         D1234 : 2
+
+
+      Basic Block: 5
+
+         RETURN Name : D1234
+
+
+      Local Variables (after evaluating) Function: << r >>
+         D1234 : 2
+         a : 2
+         return : 2
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (
+            Arith: PLUS
+               LHS (
+         FN CALL: r(
+            
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : -1)))
+               RHS (Num : 1))
+         D1234 : 3
+
+
+      Basic Block: 5
+
+         RETURN Name : D1234
+
+
+      Local Variables (after evaluating) Function: << r >>
+         D1234 : 3
+         a : 3
+         return : 3
+
+         Asgn:
+            LHS (Name : z)
+            RHS (
+         FN CALL: r(
+            Num : 3))
+         z : 3
+
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << main >>
+         x : 5
+         y : 5
+         z : 3
+   Global Variables (after evaluating):

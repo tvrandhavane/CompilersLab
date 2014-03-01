@@ -1,0 +1,145 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure << main >>
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         d : undefined
+         e : undefined
+         f : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2.00)
+         a : 2.00
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3.00)
+         b : 3.00
+
+   Evaluating Procedure << add >>
+      Local Variables (before evaluating):
+         a1 : 2.00
+         b1 : 3.00
+
+
+      Basic Block: 2
+
+         RETURN 
+            Arith: PLUS
+               LHS (Name : a1)
+               RHS (Name : b1)
+
+
+      Local Variables (after evaluating) Function: << add >>
+         a1 : 2.00
+         b1 : 3.00
+         return : 5.00
+
+         Asgn:
+            LHS (Name : c)
+            RHS (
+         FN CALL: add(
+            Name : a
+            Name : b))
+         c : 5.00
+
+   Evaluating Procedure << sub >>
+      Local Variables (before evaluating):
+         a1 : 2.00
+         b1 : 3.00
+
+
+      Basic Block: 2
+
+         RETURN 
+            Arith: MINUS
+               LHS (Name : a1)
+               RHS (Name : b1)
+
+
+      Local Variables (after evaluating) Function: << sub >>
+         a1 : 2.00
+         b1 : 3.00
+         return : -1.00
+
+         Asgn:
+            LHS (Name : d)
+            RHS (
+         FN CALL: sub(
+            Name : a
+            Name : b))
+         d : -1.00
+
+   Evaluating Procedure << mul >>
+      Local Variables (before evaluating):
+         a1 : 2.00
+         b1 : 3.00
+
+
+      Basic Block: 2
+
+         RETURN 
+            Arith: MULT
+               LHS (Name : a1)
+               RHS (Name : b1)
+
+
+      Local Variables (after evaluating) Function: << mul >>
+         a1 : 2.00
+         b1 : 3.00
+         return : 6.00
+
+         Asgn:
+            LHS (Name : e)
+            RHS (
+         FN CALL: mul(
+            Name : a
+            Name : b))
+         e : 6.00
+
+   Evaluating Procedure << div >>
+      Local Variables (before evaluating):
+         a1 : 2.00
+         b1 : 3.00
+
+
+      Basic Block: 2
+
+         RETURN 
+            Arith: DIV
+               LHS (Name : a1)
+               RHS (Name : b1)
+
+
+      Local Variables (after evaluating) Function: << div >>
+         a1 : 2.00
+         b1 : 3.00
+         return : 0.67
+
+         Asgn:
+            LHS (Name : f)
+            RHS (
+         FN CALL: div(
+            Name : a
+            Name : b))
+         f : 0.67
+
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << main >>
+         a : 2.00
+         b : 3.00
+         c : 5.00
+         d : -1.00
+         e : 6.00
+         f : 0.67
+   Global Variables (after evaluating):

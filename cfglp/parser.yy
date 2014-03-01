@@ -44,30 +44,13 @@
 %token <float_value> FLOAT_NUMBER
 %token <integer_value> BASIC_BLOCK
 %token <string_value> NAME
-%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT DOUBLE
+%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT DOUBLE VOID
 %left ne eq
 %left lt le gt ge
 %left ADD_OP SUB_OP
 %left MULT_OP DIV_OP
 %token nt andTok orTok
-%type <symbol_table> declaration_statement_list
-%type <symbol_entry> declaration_statement
-%type <basic_block_list> basic_block_list
-%type <basic_block> basic_block
-%type <ast_list> executable_statement_list
-%type <ast_list> assignment_statement_list
-%type <ast> if_else_statement
-%type <ast> goto_statement
-%type <ast> assignment_statement
-%type <ast> relational_expression
-%type <ast> arithmetic_expression
-%type <ast> and_expression
-%type <ast> or_expression
-%type <ast> not_expression
-%type <ast> variable_or_constant
-%type <ast> variable_or_constant_typecast
-%type <ast> variable
-%type <ast> constant
+
 
 
 
@@ -77,37 +60,68 @@
 %%
 
 program:
-	declaration_statement_list procedure_name
+	global_declaration_statement_list procedure_list
 	{
+		/*
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
+		*/
 	}
+|	
+	procedure_list
+	{
+		
+	}
+;
+procedure_list:	
+	procedure_list	procedure_name
+	{
+		/*
+		return_statement_used_flag = true;				// No return statement in the current procedure till now
+		*/
+	}
+
 	procedure_body
 	{
+		/*
 		program_object.set_procedure_map(*current_procedure);
 
 		if ($1)
 			$1->global_list_in_proc_map_check(get_line_number());
 
 		delete $1;
+		*/
 	}
 |
 	procedure_name
 	{
+		/*
 		return_statement_used_flag = true;				// No return statement in the current procedure till now
+		*/
 	}
 
 	procedure_body
 	{
+		/*
 		program_object.set_procedure_map(*current_procedure);
+		*/
 	}
 ;
 
 procedure_name:
+	NAME '(' argument_list ')'
+	{
+		/*
+		current_procedure = new Procedure(void_data_type, *$1);	 
+		*/
+		
+	}
+|	
 	NAME '(' ')'
 	{
-		 
+		/*
 		current_procedure = new Procedure(void_data_type, *$1);	 
+		*/
 		
 	}
 ;
@@ -115,9 +129,10 @@ procedure_name:
 procedure_body:
 	'{' declaration_statement_list
 	{
-		 
+		/* 
 		current_procedure->set_local_list(*$2);
 		delete $2;
+		*/
 
 		 
 		
@@ -127,14 +142,18 @@ procedure_body:
 		 
 		if (return_statement_used_flag == false)
 		{
+			/*
 			int line = get_line_number();
 			report_error("Atleast 1 basic block should have a return statement", line);
+			*/
 
 		}
 
+		/*
 		current_procedure->set_basic_block_list(*$4);
 
 		delete $4;
+		*/
 
 		 
 		
@@ -143,6 +162,7 @@ procedure_body:
 	'{' basic_block_list '}'
 	{
 		 
+		/*
 		if (return_statement_used_flag == false)
 		{
 			int line = get_line_number();
@@ -153,15 +173,26 @@ procedure_body:
 
 		delete $2;
 
-		 
+		*/ 
 		
 	}
 ;
 
-declaration_statement_list:
+global_declaration_statement_list:
+	gloabal_declaration_statement
+	{
+
+	}
+|	
+	global_declaration_statement_list gloabal_declaration_statement
+	{
+
+	}
+;
+gloabal_declaration_statement:
 	declaration_statement
 	{
-		 
+		/*
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
@@ -176,12 +207,141 @@ declaration_statement_list:
 		$$->push_symbol($1);
 
 		 
+		*/
+	}
+|
+	function_declaration_statement
+	{
+
+	}	
+;
+
+declaration_statement:
+	INTEGER NAME ';'
+	{
+		/*
+		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+
+		delete $2;
+		*/
+
+	}
+|
+	FLOAT NAME ';'
+	{
+		/*
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
+		*/
+	}
+|
+	DOUBLE NAME ';'
+	{
+		/*
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
+		*/
+	}
+;
+
+function_declaration_statement:
+	INTEGER NAME '(' argument_list ')' ';'
+	{
+
+	
+	}
+|	
+	FLOAT NAME '(' argument_list ')' ';'
+	{
+
+	}
+|
+	DOUBLE NAME '(' argument_list ')' ';'
+	{
+
+	}
+|
+	VOID NAME '(' argument_list ')' ';'
+	{
+
+	}
+|
+	INTEGER NAME '(' ')' ';'
+	{
+
+	
+	}
+|	
+	FLOAT NAME '('')' ';'
+	{
+
+	}
+|
+	DOUBLE NAME '(' ')' ';'
+	{
+
+	}
+|
+	VOID NAME '('')' ';'
+	{
+
+	}
+;
+argument_list:
+	argument_list ',' argument
+	{
 		
+	}
+|	
+	argument
+	{
+
+	}
+;
+
+argument:
+	INTEGER NAME 
+	{
+
+	}
+|
+	FLOAT NAME 
+	{
+
+	}
+|
+	DOUBLE NAME 
+	{
+
+	}
+;
+
+declaration_statement_list:
+	declaration_statement
+	{
+		/*
+		int line = get_line_number();
+		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
+
+		string var_name = $1->get_variable_name();
+		if (current_procedure && current_procedure->get_proc_name() == var_name)
+		{
+			int line = get_line_number();
+			report_error("Variable name cannot be same as procedure name", line);
+		}
+
+		$$ = new Symbol_Table();
+		$$->push_symbol($1);
+
+		 
+		*/
 	}
 |
 	declaration_statement_list declaration_statement
 	{
-		 
+		/*
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
 		
@@ -211,41 +371,18 @@ declaration_statement_list:
 
 		$$->push_symbol($2);
 
-		 
+		*/ 
 		
 	}
 ;
 
-declaration_statement:
-	INTEGER NAME ';'
-	{
-		$$ = new Symbol_Table_Entry(*$2, int_data_type);
 
-		delete $2;
 
-	}
-|
-	FLOAT NAME ';'
-	{
-
-		$$ = new Symbol_Table_Entry(*$2, float_data_type);
-
-		delete $2;
-	}
-|
-	DOUBLE NAME ';'
-	{
-
-		$$ = new Symbol_Table_Entry(*$2, float_data_type);
-
-		delete $2;
-	}
-;
 
 basic_block_list:
 	basic_block_list basic_block
 	{
-		 
+		/*
 		if (!$2)
 		{
 			int line = get_line_number();
@@ -261,12 +398,12 @@ basic_block_list:
 		$$->push_back($2);
 		
 				 
-		
+		*/
 	}
 |
 	basic_block
 	{
-		 
+		/* 
 		if (!$1)
 		{
 			int line = get_line_number();
@@ -275,12 +412,14 @@ basic_block_list:
 
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
+		*/
 	}
 ;
 
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
 	{
+		/*
 		if ($1 < 2)
 		{
 			int line = get_line_number();
@@ -300,21 +439,23 @@ basic_block:
 		}
 
 		delete $3;
+		*/
 	}
 ;
 
 executable_statement_list:
 	assignment_statement_list
 	{
-		 
+		/* 
 		$$ = $1;
+		*/
 		 
 		
 	}
 |
-	assignment_statement_list RETURN ';'
+	assignment_statement_list RETURN  return_value ';'
 	{
-		 
+		/*
 		Ast * ret = new Return_Ast();
 
 		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
@@ -327,12 +468,12 @@ executable_statement_list:
 
 		$$->push_back(ret);
 		
-		 
+		*/
 	}
 |
 	assignment_statement_list if_else_statement
 	{
-		 
+		/* 
 		if ($1 != NULL)
 			$$ = $1;
 
@@ -341,12 +482,12 @@ executable_statement_list:
 
 		$$->push_back($2);
 
-		 
+		*/ 
 	}
 |
 	assignment_statement_list goto_statement
 	{
-		 
+		/*
 		if ($1 != NULL)
 			$$ = $1;
 
@@ -354,21 +495,23 @@ executable_statement_list:
 			$$ = new list<Ast *>;
 
 		$$->push_back($2);
-		 
+		*/
 	}
 ;
 
+
+
 assignment_statement_list:
 	{
-		 
+		/*
 		$$ = NULL;
-		 
+		*/
 		
 	}
 |
-	assignment_statement_list assignment_statement
+	assignment_statement_list assignment_statement_or_function_call
 	{
-		 
+		/* 
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
 
@@ -376,21 +519,33 @@ assignment_statement_list:
 			$$ = $1;
 
 		$$->push_back($2);
-		 
+		
+		*/ 
 		
 	}
 ;
 
+assignment_statement_or_function_call:
+	assignment_statement
+	{
+
+	}
+|
+	function_call ';'
+	{
+
+	}
+;
 assignment_statement:
 	variable ASSIGN_OP and_expression ';'
 	{
-		 
+		/*
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
 		
-		 
+		*/
 	}
 ;
 
@@ -400,16 +555,17 @@ if_else_statement:
 	ELSE
 		goto_statement
 	{
-			 
+		/*	 
 		$$ = new If_Else_Ast($5, $3, $7);
 		
-		 
+		*/
 	}
 ;
 
 goto_statement:
 	GOTO BASIC_BLOCK ';'
 	{
+		/*
 		if ($2 < 2)
 		{
 			int line = get_line_number();
@@ -417,30 +573,44 @@ goto_statement:
 		}
 		
 		$$ = new Goto_Ast($2);
-		
+		*/
 		 
+	}
+;
+
+return_value:
+	and_expression
+	{
+
+	}
+|
+	{
+
 	}
 ;
 
 not_expression:	
 	arithmetic_expression
-	{
+	{	/*
 		$$ = $1;
+		*/
 	}
 |
 	relational_expression
 	{
 		 
+		/*
 		$$ = $1;
+		*/
 		
 		 
 	}
 |
 	nt relational_expression
 	{
-		 
+		/* 
 		$$ = new Relational_Expr_Ast($2, NOT, NULL);
-			
+		*/	
 		 
 	}
 
@@ -448,17 +618,18 @@ not_expression:
 or_expression:
 	not_expression
 	{	
-		 
+		/* 
 		$$ = $1;
+		*/
 		
 		 
 	}
 |
 	not_expression orTok or_expression
 	{
-		 
+		/* 
 		$$ = new Relational_Expr_Ast($1, OR, $3);
-		
+		*/
 		 
 	}
 ;
@@ -466,74 +637,102 @@ or_expression:
 and_expression:
 	or_expression
 	{
+		/*
 		$$ = $1;
+		*/
 	}
 |
 	or_expression andTok and_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, AND, $3);
+		*/
 	}
 ;
 
 relational_expression:
 	relational_expression eq arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, EQ, $3);
+		*/
 	}
 |
 	relational_expression ne arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, NE, $3);
+		*/
 	}
 |
 	relational_expression le arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, LE, $3);
+		*/
 	}
 |
 	relational_expression ge arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, GE, $3);
+		*/
 	}
 |
 	relational_expression lt arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, LT, $3);
+		*/
 	}
 |
 	relational_expression gt arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, GT, $3);
+		*/
 	}
 |
 	arithmetic_expression le arithmetic_expression
-	{
+	{	
+		/*
 		$$ = new Relational_Expr_Ast($1, LE, $3);
+		*/
 	}
 |
 	arithmetic_expression ge arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, GE, $3);
+		*/
 	}
 |
 	arithmetic_expression gt arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, GT, $3);
+		*/
 	}
 |
 	arithmetic_expression lt arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1,LT, $3);
+		*/
 	}
 |
 	arithmetic_expression eq arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, EQ, $3);
+		*/
 	}
 |
 	arithmetic_expression ne arithmetic_expression
 	{
+		/*
 		$$ = new Relational_Expr_Ast($1, NE, $3);
+		*/
 	}
 
 ;
@@ -541,101 +740,160 @@ relational_expression:
 arithmetic_expression:
 	SUB_OP variable_or_constant_typecast
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($2, UMINUS, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
 |
 	arithmetic_expression ADD_OP arithmetic_expression
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($1, PLUS, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
 |
 	arithmetic_expression SUB_OP arithmetic_expression
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($1, MINUS, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
 |
 	arithmetic_expression MULT_OP arithmetic_expression
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($1, MULT, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
 |
 	arithmetic_expression DIV_OP arithmetic_expression
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($1, DIV, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
 |
 	variable_or_constant_typecast
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($1, VAR, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
 ;
 
 variable_or_constant_typecast:
 	'(' FLOAT ')' variable_or_constant
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
+
 |
 	'(' DOUBLE ')' variable_or_constant
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
 |
 	'(' INTEGER ')' variable_or_constant
 	{
+		/*
 		$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
+		*/
 	}
 |
 
 	variable_or_constant
 	{
+		/*
 		$$ = $1;
+		*/
+	}
+;
+
+function_call:
+	NAME '(' argument_input_list ')'
+	{
+		
+	}
+|
+	NAME '(' ')'
+	{
+
+	}
+;
+argument_input_list:
+	argument_input_list ',' not_expression
+	{
+
+	}
+|
+	not_expression
+	{
+
 	}
 ;
 
 variable_or_constant:
 	variable
 	{
+		/*
 		$$ = $1;
+		*/
 	}
 |
 	constant
 	{
+		/*
 		$$ = $1;
+		*/
+	}
+|
+	function_call
+	{
+
 	}
 |
 	'('arithmetic_expression')'
 	{
+		/*
 		$$ = $2;
+		*/
 	}
 |
 	'('relational_expression')'
 	{
+		/*
 		$$ = $2;
+		*/
 	}
 ;
 
 variable:
 	NAME
 	{
+
+		/*
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
@@ -653,16 +911,21 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
+		*/
 	}
 ;
 
 constant:
 	INTEGER_NUMBER
 	{
+		/*
 		$$ = new Number_Ast<int>($1, int_data_type);
+		*/
 	}
 |	FLOAT_NUMBER
 	{
+		/*
 		$$ = new Number_Ast<float>($1, float_data_type);
+		*/
 	}
 ;

@@ -1,0 +1,135 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure << main >>
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         d : undefined
+         iftmp0 : undefined
+
+
+      Basic Block: 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2.00)
+         a : 2.00
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3.00)
+         b : 3.00
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 4.00)
+         c : 4.00
+
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GT
+               LHS (Name : b)
+               RHS (Num : 1.00))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 4
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 1.00)
+         iftmp0 : 1.00
+
+
+         Goto statement:
+            Successor: 5
+         GOTO (BB 5)
+
+      Basic Block: 5
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GE
+               LHS (
+         FN CALL: add(
+            
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Name : b)
+            Name : iftmp0))
+               RHS (Name : c))
+               RHS (Num : 0)   Evaluating Procedure << add >>
+      Local Variables (before evaluating):
+         a1 : 5.00
+         b1 : 1.00
+
+
+      Basic Block: 2
+
+         RETURN 
+            Arith: PLUS
+               LHS (Name : a1)
+               RHS (Name : b1)
+
+
+      Local Variables (after evaluating) Function: << add >>
+         a1 : 5.00
+         b1 : 1.00
+         return : 6.00
+
+            True Successor: 6
+            False Successor: 7
+         Condition True : Goto (BB 6)
+
+      Basic Block: 6
+   Evaluating Procedure << add >>
+      Local Variables (before evaluating):
+         a1 : 2.00
+         b1 : 3.00
+
+
+      Basic Block: 2
+
+         RETURN 
+            Arith: PLUS
+               LHS (Name : a1)
+               RHS (Name : b1)
+
+
+      Local Variables (after evaluating) Function: << add >>
+         a1 : 2.00
+         b1 : 3.00
+         return : 5.00
+
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Arith: PLUS
+               LHS (
+         FN CALL: add(
+            Name : a
+            Name : b))
+               RHS (Name : c))
+         d : 9.00
+
+
+      Basic Block: 7
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << main >>
+         a : 2.00
+         b : 3.00
+         c : 4.00
+         d : 9.00
+         iftmp0 : 1.00
+   Global Variables (after evaluating):
