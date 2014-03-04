@@ -41,10 +41,10 @@
 };
 
 %token <integer_value> INTEGER_NUMBER
-%token <float_value> FLOAT_NUMBER
 %token <integer_value> BASIC_BLOCK
+%token <float_value> FLOAT_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT DOUBLE VOID
+%token RETURN INTEGER FLOAT DOUBLE VOID IF ELSE GOTO ASSIGN_OP
 %left ne eq
 %left lt le gt ge
 %left ADD_OP SUB_OP

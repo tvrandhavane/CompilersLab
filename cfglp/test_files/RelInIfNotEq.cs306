@@ -1,0 +1,40 @@
+
+;; Function main (main)
+
+
+main ()
+{
+  int c;
+  int b;
+  int a;
+  int D.1596;
+  int D.1595;
+  _Bool D.1592;
+  _Bool D.1591;
+  _Bool D.1590;
+
+<bb 2>:
+  a = 3;
+  b = 5;
+  c = 4;
+  D.1590 = a > b;
+  D.1591 = a == 0;
+  D.1592 = D.1590 ^ D.1591;
+  if (D.1592 != 0)
+    goto <bb 3>;
+  else
+    goto <bb 4>;
+
+<bb 3>:
+  a = 4;
+  D.1595 = a > b;
+  b = D.1595 >= c;
+  D.1596 = b < a;
+  c = D.1596 != c;
+
+<bb 4>:
+  return;
+
+}
+
+

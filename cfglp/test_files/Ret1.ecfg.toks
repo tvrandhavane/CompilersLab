@@ -1,0 +1,18 @@
+Line: 2 	Ignored NEWLINE character
+Line: 2 	Ignored lexeme: ';; Function f (f)'
+Line: 3 	Ignored NEWLINE character
+Line: 4 	Ignored NEWLINE character
+Line: 4 	Ignored lexeme: ';;Merging blocks 2 and 3'
+Line: 5 	Ignored NEWLINE character
+Line: 6 	Ignored NEWLINE character
+Line: 6 	Token Name: NAME 	Token: main 	Token Code: 260
+Line: 6 	Token Name: META CHAR 	Token: ( 	Token Code: 40
+Line: 6 	Token Name: META CHAR 	Token: ) 	Token Code: 41
+Line: 7 	Ignored NEWLINE character
+Line: 7 	Token Name: META CHAR 	Token: { 	Token Code: 123
+Line: 8 	Ignored NEWLINE character
+Line: 8 	Ignored lexeme: ' '
+Line: 8 	Ignored lexeme: ' '
+Line: 8 	Token Name: INTEGER 	Token: int 	Token Code: 262
+Line: 8 	Ignored lexeme: ' '
+Line: 8 	Token Name: NAME 	Token: D 	Token Code: 260
