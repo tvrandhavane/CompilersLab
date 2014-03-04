@@ -4,39 +4,35 @@ Alok yadav			110050043
 
 My Changes:
 
-In ast.cc:
-1. 	Added the class for Arithmetic_Expr_Ast
-2.	Modified the printing of Name_ast to accomodate for float numbers
-3.	Modified the set value function in Name_ast to accomodate for float numbers
-4.	Modified the printing of Number_ast to accomodate for float numbers
-5.	Modified the evaluate function in Number_ast to accomodate for float numbers
-
-In ast.hh:
-1.	Added enumerator for Arithmetic operators.
-2.	Added the declaration for Arithmetic_Expr_Ast
-
-In local-environment.cc:
-1.	Changed the return type of get_value function to float
-2.	Added set_value function for float
-3.	Added inherited class Eval_Result_Value_Float for float results
-4.	Modified print function to accomodate for float numbers
-
-In local-environment.hh:
-1.	Added the declaration for Eval_Result_Value_Float
-2.	Added a float variable result
-3.	Added declarations of functions set_value and get_value for float
+In scanner.ll:
+1.	Added a meta char for ','.
 
 In parser.yy:
-
-1.	Uncommented all of C code.
-2.	Added declarations of double variables
-3.	Tweaked the rule for relational_expression to ensure proper parsing
-4.	Modified the rule for arithmetic_expression to ensure proper parsing
-5.	Added a rule for typecasted variables or constant
-6. 	Added a rule for float numbers
-
-In scanner.ll:
-1.	Added a rule for keyword double
-
-In symbol-table.hh:
-1.	Added a data_type for float
+1.	Added procedure_list for multiple procedures
+2.	Added global_declaration_statement_list to define list of functions and global variables
+3. 	Added global_declaration_statement to define functions and global 
+4.	Added function declaration statement and it's grammar
+	INTEGER NAME '(' argument_list ')' ';'
+	|
+	FLOAT NAME '(' argument_list ')' ';'
+	|
+	DOUBLE NAME '(' argument_list ')' ';'
+	|
+	VOID NAME '(' argument_list ')' ';'
+	|
+	INTEGER NAME '(' ')' ';'
+	|
+	FLOAT NAME '('')' ';'
+	|
+	DOUBLE NAME '(' ')' ';'
+	|
+	VOID NAME '('')' ';'
+5.	Created function argument_list and argument to define function arguments
+6.	Added return_value to return statements
+7.	Modified executable statement list to handle function calls
+8.	Added rule for function_call
+	NAME '(' argument_input_list ')'
+	|
+	NAME '(' ')'
+9.	argument_input_list can be a list of any expression
+10.	added function_call to variable_or_constant

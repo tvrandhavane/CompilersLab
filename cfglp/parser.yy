@@ -179,17 +179,17 @@ procedure_body:
 ;
 
 global_declaration_statement_list:
-	gloabal_declaration_statement
+	global_declaration_statement
 	{
 
 	}
 |	
-	global_declaration_statement_list gloabal_declaration_statement
+	global_declaration_statement_list global_declaration_statement
 	{
 
 	}
 ;
-gloabal_declaration_statement:
+global_declaration_statement:
 	declaration_statement
 	{
 		/*
