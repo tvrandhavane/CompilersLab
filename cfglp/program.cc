@@ -90,7 +90,17 @@ Procedure * Program::get_main_procedure(ostream & file_buffer)
 	
 	return NULL;
 }
+Procedure * Program::get_procedure(string name){
+	map<string, Procedure *>::iterator i;
+	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	{
+		if (i->second != NULL && i->second->get_proc_name() == name)
+				return i->second;
+	}
+	
+	return NULL;
 
+}
 void Program::print_ast()
 {
 	command_options.create_ast_buffer();
@@ -98,13 +108,19 @@ void Program::print_ast()
 
 	ast_buffer << "Program:\n";
 
+
 	Procedure * main = get_main_procedure(ast_buffer);
 	if (main == NULL)
 		report_error("No main function found in the program", NOLINE);
 
 	else
 	{
-		main->print_ast(ast_buffer);
+		map<string, Procedure *>::iterator i;
+		for(i = procedure_map.begin(); i != procedure_map.end(); i++){
+			if (i->second != NULL)
+				(i->second)->print_ast(ast_buffer);
+		}
+		//main->print_ast(ast_buffer);
 	}
 }
 

@@ -103,7 +103,7 @@ bool Assignment_Ast::check_ast(int line)
 
 void Assignment_Ast::print_ast(ostream & file_buffer)
 {
-
+	file_buffer << "\n";
 	file_buffer << AST_SPACE << "Asgn:\n";
 
 	file_buffer << AST_NODE_SPACE << "LHS (";
@@ -113,7 +113,7 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 	file_buffer << AST_NODE_SPACE << "RHS (";
 	rhs->print_ast(file_buffer);
 
-	file_buffer << ")\n";
+	file_buffer << ")";
 }
 
 int Assignment_Ast::get_successor(){
@@ -172,10 +172,11 @@ bool Goto_Ast::check_ast(int line)
 
 void Goto_Ast::print_ast(ostream & file_buffer)
 {
+	file_buffer << "\n";
 	file_buffer << AST_SPACE << "Goto statement:\n";
 
 	file_buffer << AST_NODE_SPACE << "Successor: " << bb;
-	file_buffer << "\n";
+	
 }
 
 int Goto_Ast::get_successor(){
@@ -226,13 +227,14 @@ bool If_Else_Ast::check_ast(int line)
 
 void If_Else_Ast::print_ast(ostream & file_buffer)
 {
+	file_buffer << "\n";
 	file_buffer << AST_SPACE << "If_Else statement:";
 	condition->print_ast(file_buffer);
 	file_buffer << "\n";
 	file_buffer << AST_NODE_SPACE << "True Successor: " << gotoTrue->get_successor();
 	file_buffer << "\n";
 	file_buffer << AST_NODE_SPACE << "False Successor: " << gotoFalse ->get_successor();
-	file_buffer << "\n";
+	
 }
 
 int If_Else_Ast::get_successor(){
@@ -283,7 +285,9 @@ bool Relational_Expr_Ast::check_ast(int line)
 {
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
-		node_data_type = lhs->get_data_type();
+
+		//change here
+		node_data_type = int_data_type;
 		return true;
 	}
 
@@ -665,6 +669,63 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+Function_Call_Ast::Function_Call_Ast(string name , Data_Type return_data_type, list <Ast *> * input_list){
+
+	func_name = name;
+	input_argument_list = input_list;
+	successor = -1;
+	node_data_type = return_data_type;
+
+}
+
+Function_Call_Ast::~Function_Call_Ast()
+{
+
+}
+
+Data_Type Function_Call_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Function_Call_Ast::check_ast(int line)
+{
+
+}
+
+void Function_Call_Ast::print_ast(ostream & file_buffer)
+{
+
+		file_buffer<<"\n";
+		file_buffer << AST_SPACE << "FN CALL: ";
+		list<Ast *>::iterator i;
+		if(input_argument_list != NULL){
+			//file_buffer << AST_NODE_SPACE 	;
+			file_buffer <<func_name << "(";
+			for(i = input_argument_list->begin(); i != input_argument_list->end(); i++){
+				file_buffer<<"\n";
+				file_buffer << AST_NODE_SPACE 	;
+				(*i)->print_ast(file_buffer);
+
+			}
+		}
+		else
+			file_buffer <<func_name << "(";
+		file_buffer << ")";
+
+}
+
+int Function_Call_Ast::get_successor(){
+	return successor;
+}
+Eval_Result & Function_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+
+	Eval_Result & result = *new Eval_Result_Value_Int();
+	return result;
+}
 
 
 
@@ -675,11 +736,6 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 
 
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -851,8 +907,9 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast()
+Return_Ast::Return_Ast(Ast * to_return)
 {
+	return_Ast = to_return;
 	successor = -2;
 }
 
@@ -865,7 +922,16 @@ int Return_Ast::get_successor(){
 
 void Return_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Return <NOTHING>\n";
+	if(return_Ast == NULL){
+		file_buffer <<"\n";
+		file_buffer << AST_SPACE << "RETURN <NOTHING>\n";
+	}
+	else{
+		file_buffer <<"\n";
+		file_buffer << AST_SPACE << "RETURN ";
+		return_Ast->print_ast(file_buffer);
+		file_buffer<<"\n";
+	}
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)

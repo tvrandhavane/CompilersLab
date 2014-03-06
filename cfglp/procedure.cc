@@ -36,9 +36,10 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
-Procedure::Procedure(Data_Type proc_return_type, string proc_name)
+Procedure::Procedure(Data_Type proc_return_type, string proc_name ,Symbol_Table & argument_list)
 {
 	return_type = proc_return_type;
+	argument_symbol_table = argument_list;
 	name = proc_name;
 }
 
@@ -72,7 +73,12 @@ Data_Type Procedure::get_return_type()
 
 bool Procedure::variable_in_symbol_list_check(string variable)
 {
-	return local_symbol_table.variable_in_symbol_list_check(variable);
+	return local_symbol_table.variable_in_symbol_list_check(variable) ;
+}
+
+bool Procedure::variable_in_argument_list_check(string variable)
+{
+	return argument_symbol_table.variable_in_symbol_list_check(variable);
 }
 
 Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
@@ -80,9 +86,14 @@ Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
 	return local_symbol_table.get_symbol_table_entry(variable_name);
 }
 
+Symbol_Table_Entry & Procedure::get_argument_table_entry(string variable_name)
+{
+	return argument_symbol_table.get_symbol_table_entry(variable_name);
+}
+
 void Procedure::print_ast(ostream & file_buffer)
 {
-	file_buffer << PROC_SPACE << "Procedure: main" << "\n\n";
+	file_buffer << PROC_SPACE << "Procedure: "<< get_proc_name() << "\n\n";
 
 	list<Basic_Block *>::iterator i;
 	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
