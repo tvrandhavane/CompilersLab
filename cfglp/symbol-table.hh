@@ -47,9 +47,10 @@ typedef enum
 
 class Symbol_Table
 {
-	list<Symbol_Table_Entry *> variable_table;
+	
 	Table_Scope scope;
 public:
+	list<Symbol_Table_Entry *> variable_table;
 	Symbol_Table();
 	~Symbol_Table();
 
@@ -63,6 +64,19 @@ public:
 	void global_list_in_proc_map_check(int line);
 
 	void create(Local_Environment & local_global_variables_table);
+};
+
+class Argument_Table {
+	
+public:
+	list<Symbol_Table_Entry *> variable_table;
+	Argument_Table();
+	~Argument_Table();
+	void push_symbol(Symbol_Table_Entry * variable);
+	void symbol_table_entry_check(list<Symbol_Table_Entry *> & var_table);
+	bool variable_in_symbol_list_check(string variable);
+	Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
+
 };
 
 class Symbol_Table_Entry

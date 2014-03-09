@@ -79,6 +79,11 @@ void Program::variable_in_proc_map_check(string variable, int line)
 		report_error("Variable name cannot be same as procedure name", line);
 }
 
+void Program::check_procedure_predefined(string variable, int line){
+	if(procedure_map[variable] == NULL)
+		report_error("Procedure corresponding to the name is not found", line);
+}
+
 Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
 	map<string, Procedure *>::iterator i;
@@ -137,8 +142,8 @@ Eval_Result & Program::evaluate()
 	file_buffer << "Evaluating Program\n";
 	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
 	interpreter_global_table.print(file_buffer);
-
-	Eval_Result & result = main->evaluate(file_buffer);
+	Local_Environment & eval_env = *new Local_Environment();
+	Eval_Result & result = main->evaluate(eval_env, file_buffer);
 
 	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
 	interpreter_global_table.print(file_buffer);

@@ -30,10 +30,11 @@ using namespace std;
 #include"user-options.hh"
 #include"error-display.hh"
 #include"local-environment.hh"
-
 #include"symbol-table.hh"
 #include"ast.hh"
-
+#include"basic-block.hh"
+#include"procedure.hh"
+#include"program.hh"
 Ast::Ast()
 {}
 
@@ -186,10 +187,10 @@ int Goto_Ast::get_successor(){
 Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	// Print the result
-	file_buffer << "\n";
 	print_ast(file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	result.set_value(bb);
+	file_buffer << "\n";
 	file_buffer << AST_SPACE << "GOTO (BB " << successor << ")\n";
 	successor = bb;
 	return result;
@@ -244,12 +245,19 @@ int If_Else_Ast::get_successor(){
 Eval_Result & If_Else_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	// Print the result
+	file_buffer << "\n";
+	file_buffer << AST_SPACE << "If_Else statement:";
+	condition->print_ast(file_buffer);
 	Eval_Result & conditionResult = condition->evaluate(eval_env, file_buffer);
 	int value = conditionResult.get_value();
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	file_buffer << "\n";
-	print_ast(file_buffer);
+	file_buffer << AST_NODE_SPACE << "True Successor: " << gotoTrue->get_successor();
+	file_buffer << "\n";
+	file_buffer << AST_NODE_SPACE << "False Successor: " << gotoFalse ->get_successor();
+	file_buffer << "\n";
 	if(value == 1){
+
 		file_buffer << AST_SPACE << "Condition True : Goto (BB " << gotoTrue->get_successor() << ")\n";
 		successor = gotoTrue->get_successor();
 	}
@@ -723,8 +731,41 @@ int Function_Call_Ast::get_successor(){
 }
 Eval_Result & Function_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
 
-	Eval_Result & result = *new Eval_Result_Value_Int();
-	return result;
+	
+	Procedure *funct_call = program_object.get_procedure(func_name);
+	Argument_Table & arg = funct_call->get_argument_symbol_table();
+	Local_Environment & func_eval_env = *new Local_Environment();
+
+	//arg.create(func_eval_env);
+	list<Ast *>::iterator i;
+	if(input_argument_list!=NULL){
+		list<Symbol_Table_Entry *>::iterator j;
+		i = input_argument_list->begin();
+		j = arg.variable_table.begin();
+		for(;i != input_argument_list->end();i++,j++){
+			Eval_Result_Value * k;
+			string variable_name = (*j)->get_variable_name();
+			Eval_Result & result = (*i)->evaluate(eval_env, file_buffer);
+			if (result.get_result_enum() == int_result && (*j)->get_data_type() == int_data_type)
+			{
+				k = new Eval_Result_Value_Int();
+			 	k->set_value((int)result.get_value());
+				func_eval_env.put_variable_value(*k, variable_name);
+
+			}
+			else if(result.get_result_enum() == float_result && (*j)->get_data_type() == float_data_type){
+				k = new Eval_Result_Value_Float();
+			 	k->set_value(result.get_value());
+					func_eval_env.put_variable_value(*k, variable_name);
+
+			}
+			else{
+				report_error("Passed argument is not compatible",NOLINE);
+			}
+		}
+	}
+	Eval_Result & return_result = funct_call->evaluate(func_eval_env,file_buffer);
+	return return_result;
 }
 
 
@@ -911,6 +952,9 @@ Return_Ast::Return_Ast(Ast * to_return)
 {
 	return_Ast = to_return;
 	successor = -2;
+	if(return_Ast == NULL){
+		node_data_type = void_data_type;
+	}
 }
 
 Return_Ast::~Return_Ast()
@@ -920,6 +964,15 @@ int Return_Ast::get_successor(){
 	return successor;
 }
 
+Data_Type Return_Ast::get_data_type()
+{
+	return node_data_type;
+}
+bool Return_Ast::check_ast(int line){
+	if(return_Ast == NULL){
+		node_data_type = void_data_type;
+	}
+}
 void Return_Ast::print_ast(ostream & file_buffer)
 {
 	if(return_Ast == NULL){
@@ -936,10 +989,18 @@ void Return_Ast::print_ast(ostream & file_buffer)
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	file_buffer << "\n";
-	print_ast(file_buffer);
-	Eval_Result & result = *new Eval_Result_Value_Int();
-	return result;
+	
+	if(return_Ast!=NULL){
+		Eval_Result & result = return_Ast->evaluate(eval_env,file_buffer);
+		print_ast(file_buffer);
+		return result;
+	}
+	else{
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		result.set_result_enum(void_result);
+		print_ast(file_buffer);
+		return result;
+	}
 }
 
 template class Number_Ast<int>;

@@ -60,6 +60,7 @@ public:
 
 	bool variable_in_symbol_list_check(string variable);
 	void variable_in_proc_map_check(string symbol, int line);
+	void check_procedure_predefined(string variable, int line);
 };
 
 #endif

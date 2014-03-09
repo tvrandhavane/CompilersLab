@@ -34,6 +34,7 @@
 	list<Ast *> * ast_list;
 	Ast * ast;
 	Symbol_Table * symbol_table;
+	Argument_Table * argument_table;
 	Symbol_Table_Entry * symbol_entry;
 	Basic_Block * basic_block;
 	list<Basic_Block *> * basic_block_list;
@@ -50,7 +51,7 @@
 %left ADD_OP SUB_OP
 %left MULT_OP DIV_OP
 %token nt andTok orTok
-%type <symbol_table> argument_list
+%type <argument_table> argument_list
 %type <symbol_entry> argument
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
@@ -85,24 +86,24 @@
 %%
 
 program:
-	declaration_statement_list function_declaration_statement_list{
-		
+	declaration_statement_list function_declaration_statement_list{		
 		program_object.set_global_table(*$1);
-		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
+		//return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
 		
 	} procedure_list
 
 |	
-	function_declaration_statement_list procedure_list
-	{
+	function_declaration_statement_list 
+	{		
+		//return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
 		
-	}
+	} procedure_list
 |	
 	declaration_statement_list 
 	{
 
 		program_object.set_global_table(*$1);
-		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
+		//return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
 
 	} procedure_list
 |
@@ -115,7 +116,7 @@ procedure_list:
 	procedure_list	procedure_name
 	{
 		
-		return_statement_used_flag = true;				// No return statement in the current procedure till now
+		//return_statement_used_flag = true;				// No return statement in the current procedure till now
 		
 	}
 
@@ -146,29 +147,49 @@ procedure_list:
 procedure_name:
 	NAME '(' argument_list ')'
 	{
+		if(program_object.variable_in_symbol_list_check(*$1)){
+			int line = get_line_number();
+			report_error("Procedure name cannot be same as global variable",line);
+		}
 		if((*$1).compare("main") == 0 )
 			current_procedure = new Procedure(void_data_type, *$1 ,*$3);
-		else 
+		else {
+			int line = get_line_number();
+			program_object.check_procedure_predefined(*$1,line);
 			current_procedure = program_object.get_procedure(*$1); 
-		
+		}
+		current_procedure->get_argument_symbol_table().symbol_table_entry_check((*$3).variable_table);
+
 		
 	}
 |	
 	NAME '(' ')'
 	{
-		
+		if(program_object.variable_in_symbol_list_check(*$1)){
+			int line = get_line_number();
+			report_error("Procedure name cannot be same as global variable",line);
+		}
+
 		if((*$1).compare("main") == 0 )
-			current_procedure = new Procedure(void_data_type, *$1 ,*(new Symbol_Table()));
-		else 
-			current_procedure = program_object.get_procedure(*$1); 		
+			current_procedure = new Procedure(void_data_type, *$1 ,*(new Argument_Table()));
+		else {
+			int line  = get_line_number();
+			program_object.check_procedure_predefined(*$1,line);
+			current_procedure = program_object.get_procedure(*$1); 
+		}
+	current_procedure->get_argument_symbol_table().symbol_table_entry_check((*(new Argument_Table())).variable_table);		
 	}
 ;
 
 procedure_body:
 	'{' declaration_statement_list
 	{
-		 
+	
 		current_procedure->set_local_list(*$2);
+		if(current_procedure->check_parameter_local_var()){
+			int line = get_line_number();
+			report_error("Formal parameter and local variable name cannot be same", line);			
+		}
 		delete $2;
 		
 
@@ -178,14 +199,14 @@ procedure_body:
 	basic_block_list '}'
 	{
 		 
-		if (return_statement_used_flag == false)
+		/*if (return_statement_used_flag == false)
 		{
 			
 			int line = get_line_number();
 			report_error("Atleast 1 basic block should have a return statement", line);
 			
 
-		}
+		}*/
 
 		
 		current_procedure->set_basic_block_list(*$4);
@@ -232,43 +253,51 @@ function_declaration_statement_list:
 function_declaration_statement:
 	INTEGER NAME '(' argument_list ')' ';'
 	{
+
 		current_procedure = new Procedure(int_data_type, *$2 , *$4);	
 	
 	}
 |	
 	FLOAT NAME '(' argument_list ')' ';'
 	{
+
 		current_procedure = new Procedure(float_data_type, *$2 , *$4);
 	}
 |
 	DOUBLE NAME '(' argument_list ')' ';'
 	{
+
 		current_procedure = new Procedure(float_data_type, *$2 , *$4);
 	}
 |
 	VOID NAME '(' argument_list ')' ';'
 	{
+
 		current_procedure = new Procedure(void_data_type, *$2 , *$4);
 	}
 |
 	INTEGER NAME '(' ')' ';'
 	{
-		current_procedure = new Procedure(int_data_type, *$2 , *(new Symbol_Table()));
+
+		current_procedure = new Procedure(int_data_type, *$2 , *(new Argument_Table()));
 	}
 |	
 	FLOAT NAME '('')' ';'
 	{
-		current_procedure = new Procedure(float_data_type, *$2 , *(new Symbol_Table()));
+\
+		current_procedure = new Procedure(float_data_type, *$2 , *(new Argument_Table()));
 	}
 |
 	DOUBLE NAME '(' ')' ';'
 	{
-		current_procedure = new Procedure(float_data_type, *$2 , *(new Symbol_Table()));
+
+		current_procedure = new Procedure(float_data_type, *$2 , *(new Argument_Table()));
 	}
 |
 	VOID NAME '('')' ';'
 	{
-		current_procedure = new Procedure(void_data_type, *$2 , *(new Symbol_Table()));
+
+		current_procedure = new Procedure(void_data_type, *$2 , *(new Argument_Table()));
 	}
 ;
 argument_list:
@@ -279,16 +308,19 @@ argument_list:
 
 			$$ = $1;
 		}
-
 		else
-			$$ = new Symbol_Table();
+			$$ = new Argument_Table();
 
+		if($$->variable_in_symbol_list_check((*$3).get_variable_name())) {
+			int line= get_line_number();
+			report_error("Formal Parameter declared twice" , line);
+		}
 		$$->push_symbol($3);
 	}
 |	
 	argument
 	{
-		$$ = new Symbol_Table();
+		$$ = new Argument_Table();
 		$$->push_symbol($1);
 	}
 ;
@@ -357,7 +389,8 @@ declaration_statement_list:
 		{
 			int line = get_line_number();
 			report_error("Variable name cannot be same as procedure name", line);
-		}
+		} 
+
 
 		if ($1 != NULL)
 		{
@@ -488,7 +521,10 @@ executable_statement_list:
 	assignment_statement_list RETURN  return_value ';'
 	{
 		
+		//if(current_procedure->get_return_type != void_data_type && $3 == NULL)
 		Ast * ret = new Return_Ast($3);
+
+
 
 		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
