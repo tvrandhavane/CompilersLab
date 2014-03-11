@@ -178,10 +178,12 @@ void Local_Environment::print(ostream & file_buffer)
 bool Local_Environment::is_variable_defined(string name)
 {
 	Eval_Result_Value * i = variable_table[name];
-	if (i != NULL)
+	if (i != NULL){
 		return i->is_variable_defined();
-	else
+	}
+	else{
 		return false;
+	}
 }
 
 Eval_Result_Value * Local_Environment::get_variable_value(string name)

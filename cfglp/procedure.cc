@@ -40,6 +40,7 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name ,Argument_Tabl
 	return_type = proc_return_type;
 	argument_symbol_table = argument_list;
 	name = proc_name;
+	return_flag = 0;
 }
 
 Procedure::~Procedure()
@@ -47,6 +48,14 @@ Procedure::~Procedure()
 	list<Basic_Block *>::iterator i;
 	for (i = basic_block_list.begin(); i != basic_block_list.end(); i++)
 		delete (*i);
+}
+
+void Procedure::set_return_flag(int ret){
+	return_flag = ret;
+}
+
+int Procedure::get_return_flag(){
+	return return_flag;
 }
 
 string Procedure::get_proc_name()
@@ -194,6 +203,8 @@ Eval_Result & Procedure::evaluate(Local_Environment & eval_env , ostream & file_
 		}
 
 	}
+	//else if(return_type != void_return_type)
+
 	eval_env.print(file_buffer);
 	/*if(result->get_result_enum() != void_result ){
 		if(result->get_result_enum() == int_result)

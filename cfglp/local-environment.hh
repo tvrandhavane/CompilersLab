@@ -48,7 +48,7 @@ protected:
 public:
 	virtual double get_value();
 	virtual void set_value(double number);
-	//virtual void set_value(float number);
+	//virtual void set_value(int number);
 
 	virtual bool is_variable_defined();
 	virtual void set_variable_status(bool def);

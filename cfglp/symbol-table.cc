@@ -107,6 +107,7 @@ void Symbol_Table::create(Local_Environment & local_global_variables_table)
 		}
 
 		local_global_variables_table.put_variable_value(*j, name);
+		
 	}
 }
 //////////////////////////////////////////////////////////////

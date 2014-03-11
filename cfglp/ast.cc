@@ -124,9 +124,8 @@ int Assignment_Ast::get_successor(){
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+	//printf("\n:: %d \n",result.is_variable_defined() );
 
-	if (result.is_variable_defined() == false)
-		report_error("Variable should be defined to be on rhs", NOLINE);
 
 	lhs->set_value_of_evaluation(eval_env, result);
 	// Print the result
@@ -599,22 +598,33 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 			Eval_Result & result = *new Eval_Result_Value_Int();
 			if(oper == PLUS){
-
-				result.set_value((int) (lhsResult.get_value() + rhsResult.get_value()) );
+				int lh_result = lhsResult.get_value();
+				int rh_result = rhsResult.get_value();
+				int res = lh_result + rh_result;
+				result.set_value(res);
 			}
 			if(oper == MINUS){
-				result.set_value((int) (lhsResult.get_value() - rhsResult.get_value()) );
+				int lh_result = lhsResult.get_value();
+				int rh_result = rhsResult.get_value();
+				int res = lh_result - rh_result;
+				result.set_value(res);
 			}
 			if(oper == DIV){
 				if((int) rhsResult.get_value() != 0){
-					result.set_value((int) (lhsResult.get_value() / rhsResult.get_value()));
+					int lh_result = lhsResult.get_value();
+					int rh_result = rhsResult.get_value();
+					int res = lh_result / rh_result;
+					result.set_value(res);
 				}
 				else{
 					report_error("Divided by zero", NOLINE);
 				}
 			}
-			if(oper == MULT){
-				result.set_value((int) (lhsResult.get_value() * rhsResult.get_value()) );
+			if(oper == MULT){ 
+				int lh_result = lhsResult.get_value();
+				int rh_result = rhsResult.get_value();
+				int res = lh_result * rh_result;
+				result.set_value(res);
 			}
 			return result;
 		}
@@ -854,7 +864,12 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
 	if (eval_env.does_variable_exist(variable_name))
 	{
+
 		Eval_Result * result = eval_env.get_variable_value(variable_name);
+
+		if (result->is_variable_defined() == 0)
+			report_error("Variable should be defined before its use", NOLINE);
+
 		return *result;
 	}
 

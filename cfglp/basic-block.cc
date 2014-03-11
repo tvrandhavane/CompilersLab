@@ -76,7 +76,7 @@ void Basic_Block::print_bb(ostream & file_buffer)
 Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result * result = NULL;
-
+	//printf("\n id :: %d\n",id_number);
 	file_buffer << "\n" << BB_SPACE << "Basic Block: " << id_number << "\n";
 
 	list <Ast *>::iterator i;

@@ -65,6 +65,7 @@
 %type <ast> assignment_statement_or_function_call
 %type <ast> assignment_statement
 %type <ast> relational_expression
+%type <ast> expression
 %type <ast> arithmetic_expression
 %type <ast> function_call
 %type <ast> return_value
@@ -88,14 +89,14 @@
 program:
 	declaration_statement_list function_declaration_statement_list{		
 		program_object.set_global_table(*$1);
-		//return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
+		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
 		
 	} procedure_list
 
 |	
 	function_declaration_statement_list 
 	{		
-		//return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
+		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
 		
 	} procedure_list
 |	
@@ -103,7 +104,7 @@ program:
 	{
 
 		program_object.set_global_table(*$1);
-		//return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
+		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
 
 	} procedure_list
 |
@@ -116,7 +117,7 @@ procedure_list:
 	procedure_list	procedure_name
 	{
 		
-		//return_statement_used_flag = true;				// No return statement in the current procedure till now
+		return_statement_used_flag = true;				// No return statement in the current procedure till now
 		
 	}
 
@@ -126,6 +127,12 @@ procedure_list:
 		string var_name = current_procedure->get_proc_name();
 		if(var_name.compare("main") == 0 )
 			program_object.set_procedure_map(*current_procedure);
+		else {
+			if(current_procedure->get_return_type() != void_data_type && return_statement_used_flag == true){
+					int line = get_line_number();
+					report_error("Last return statement type, of procedure, and its prototype should match", line);
+				}
+		}
 	}
 |
 	procedure_name
@@ -140,6 +147,12 @@ procedure_list:
 		string var_name = current_procedure->get_proc_name();
 		if(var_name.compare("main") == 0 )
 			program_object.set_procedure_map(*current_procedure);
+		else{
+			if(current_procedure->get_return_type() != void_data_type  && return_statement_used_flag == true){
+				int line = get_line_number();
+				report_error("Last return statement type, of procedure, and its prototype should match", line);
+			}
+		}
 		
 	}
 ;
@@ -221,12 +234,6 @@ procedure_body:
 	'{' basic_block_list '}'
 	{
 		 
-		
-		if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
 
 		current_procedure->set_basic_block_list(*$2);
 
@@ -521,12 +528,10 @@ executable_statement_list:
 	assignment_statement_list RETURN  return_value ';'
 	{
 		
-		//if(current_procedure->get_return_type != void_data_type && $3 == NULL)
+		if($3 != NULL){
+			return_statement_used_flag = false;
+		}
 		Ast * ret = new Return_Ast($3);
-
-
-
-		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
 
 		if ($1 != NULL)
 			$$ = $1;
@@ -608,6 +613,11 @@ assignment_statement_or_function_call:
 return_value:
 	and_expression
 	{
+		if(current_procedure->get_proc_name() != "main" && current_procedure->get_return_type() != $1->get_data_type()){
+			int line = get_line_number();
+			report_error("Last return statement type, of procedure, and its prototype should match", line);
+		}
+
 		$$ =  $1;
 	}
 |
@@ -721,94 +731,64 @@ and_expression:
 ;
 
 relational_expression:
-	relational_expression eq arithmetic_expression
+	expression eq expression
 	{
 		
 		$$ = new Relational_Expr_Ast($1, EQ, $3);
 		
 	}
 |
-	relational_expression ne arithmetic_expression
+	expression ne expression
 	{
 		
 		$$ = new Relational_Expr_Ast($1, NE, $3);
 		
 	}
 |
-	relational_expression le arithmetic_expression
+	expression le expression
 	{
 		
 		$$ = new Relational_Expr_Ast($1, LE, $3);
 		
 	}
 |
-	relational_expression ge arithmetic_expression
+	expression ge expression
 	{
 		
 		$$ = new Relational_Expr_Ast($1, GE, $3);
 		
 	}
 |
-	relational_expression lt arithmetic_expression
+	expression lt expression
 	{
 		
 		$$ = new Relational_Expr_Ast($1, LT, $3);
 		
 	}
 |
-	relational_expression gt arithmetic_expression
+	expression gt expression
 	{
 		
 		$$ = new Relational_Expr_Ast($1, GT, $3);
-		
-	}
-|
-	arithmetic_expression le arithmetic_expression
-	{	
-		
-		$$ = new Relational_Expr_Ast($1, LE, $3);
-		
-	}
-|
-	arithmetic_expression ge arithmetic_expression
-	{
-		
-		$$ = new Relational_Expr_Ast($1, GE, $3);
-		
-	}
-|
-	arithmetic_expression gt arithmetic_expression
-	{
-		
-		$$ = new Relational_Expr_Ast($1, GT, $3);
-		
-	}
-|
-	arithmetic_expression lt arithmetic_expression
-	{
-		
-		$$ = new Relational_Expr_Ast($1,LT, $3);
-		
-	}
-|
-	arithmetic_expression eq arithmetic_expression
-	{
-		
-		$$ = new Relational_Expr_Ast($1, EQ, $3);
-		
-	}
-|
-	arithmetic_expression ne arithmetic_expression
-	{
-		
-		$$ = new Relational_Expr_Ast($1, NE, $3);
 		
 	}
 
 ;
 
+expression:
+	arithmetic_expression
+	{
+		$$ =  $1;
+	}
+|	
+	relational_expression
+	{
+		$$ = $1;
+	}
+
+;
 arithmetic_expression:
-	SUB_OP variable_or_constant_typecast
+	SUB_OP variable_or_constant_typecast 
 	{
 		
 		$$ = new Arithmetic_Expr_Ast($2, UMINUS, NULL);
