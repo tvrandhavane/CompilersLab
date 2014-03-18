@@ -1,0 +1,41 @@
+
+Tanmay Randhavane	110050010
+Alok yadav			110050043
+
+My Changes:
+
+In scanner.ll:
+1.	Added token for '!='.
+
+In reg-alloc.cc:
+1.	Added check for used_for_expr_result==false, in is_empty() function
+2.	Added new instructions to initialize_instruction_table()
+
+In procedure.cc:
+1.	Modified the get_next_bb() procedure to give appropriate next basic block. Done in order to allow goto to the basic block in eval
+
+In parser.yy:
+1.	Added rules for if-else statement, goto statement and relational expression statement
+
+In icode.hh:
+1.	Added spim commands to Tgt_op enum
+2.	Added declaration for classes Label_IC_Stmt, Compute_IC_Stmt and Control_Flow_IC_Stmt
+
+In icode.cc:
+1.	Added definition for classes Label_IC_Stmt, Compute_IC_Stmt and Control_Flow_IC_Stmt
+
+In basic_block.hh:
+1.	Added successor variable which will carry the id of successor basic block.
+2.	Added an accessor function to the successor variable
+
+In basic_block.cc:
+1.	Defines the accessor function for the successor variable
+2.	Modified the evaluate function to update the successor variable when available
+
+In ast.hh:
+1.	Added enum for relational_operators.
+2.	Added declaration for relational_expr_ast, if_else_ast and goto_ast
+3. 	Added successor variable which contains the id of successor basic block if applicable.
+
+In ast.cc:
+1.	Added definition for relational_expr_ast, if_else_ast and goto_ast
