@@ -1,12 +1,16 @@
 int a;
+float b;
+int c;
+float d;
+float e;
 main()
 {
-	int a = 3;
-	a = 10;
-	fn();
-}
+	a = c = 2;
+	b = d = e = 3.4;
 
-fn()
-{
-	int a = 6;
+	int f = 3;
+	float t = 10;
+
+	a = t * f + e / c;
+	t = a * e / t / f;
 }

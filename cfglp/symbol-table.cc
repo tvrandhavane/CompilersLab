@@ -107,7 +107,56 @@ void Symbol_Table::create(Local_Environment & local_global_variables_table)
 		}
 
 		local_global_variables_table.put_variable_value(*j, name);
+		
 	}
+}
+//////////////////////////////////////////////////////////////
+Argument_Table::Argument_Table()
+{}
+
+Argument_Table::~Argument_Table()
+{}
+
+void Argument_Table::push_symbol(Symbol_Table_Entry * variable)
+{
+	variable_table.push_back(variable);
+}
+bool Argument_Table::variable_in_symbol_list_check(string variable)
+{
+	list<Symbol_Table_Entry *>::iterator i;
+	for (i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		if ((*i)->get_variable_name() == variable)
+			return true;
+	}
+
+	return false;
+}
+void Argument_Table::symbol_table_entry_check(list<Symbol_Table_Entry *> & var_table){
+	list<Symbol_Table_Entry *>::iterator i;
+	list<Symbol_Table_Entry *>::iterator j;
+	if(variable_table.size() != var_table.size()){
+		report_error("Number of the parameters of the procedre and its prototypes aren't same", NOLINE);
+	}
+	for (i = variable_table.begin(),j= var_table.begin(); i != variable_table.end(); i++,j++)
+	{
+		if ((*i)->get_variable_name() != (*j)->get_variable_name()){
+			report_error("Variable name of one of the parameters of the procedre and its prototypes doesn't match", NOLINE);
+		}
+
+		//if(*i)->get_data_type() != (*j)->get_data_type())		
+	}
+}
+Symbol_Table_Entry & Argument_Table::get_symbol_table_entry(string variable_name)
+{
+	list<Symbol_Table_Entry *>::iterator i;
+	for (i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		if ((*i)->get_variable_name() == variable_name)
+			return **i;
+	}
+
+	report_error("variable symbol entry doesn't exist", NOLINE);
 }
 
 /////////////////////////////////////////////////////////////

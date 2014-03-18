@@ -1,5 +1,5 @@
 
-/********************************************************************************************
+/*******************************************************************************************
 
                                 cfglp : A CFG Language Processor
                                 --------------------------------
@@ -19,7 +19,7 @@
            tools are  available at http://www.cse.iitb.ac.in/~uday/cfglp
 
 
-***********************************************************************************************/
+**********************************************************************************************/
 
 %scanner ../scanner.h
 %scanner-token-function d_scanner.lex()
@@ -34,6 +34,7 @@
 	list<Ast *> * ast_list;
 	Ast * ast;
 	Symbol_Table * symbol_table;
+	Argument_Table * argument_table;
 	Symbol_Table_Entry * symbol_entry;
 	Basic_Block * basic_block;
 	list<Basic_Block *> * basic_block_list;
@@ -50,6 +51,32 @@
 %left ADD_OP SUB_OP
 %left MULT_OP DIV_OP
 %token nt andTok orTok
+%type <argument_table> argument_list
+%type <symbol_entry> argument
+%type <symbol_table> declaration_statement_list
+%type <symbol_entry> declaration_statement
+%type <basic_block_list> basic_block_list
+%type <basic_block> basic_block
+%type <ast_list> executable_statement_list
+%type <ast_list> assignment_statement_list
+%type <ast_list> argument_input_list
+%type <ast> if_else_statement
+%type <ast> goto_statement
+%type <ast> assignment_statement_or_function_call
+%type <ast> assignment_statement
+%type <ast> relational_expression
+%type <ast> expression
+%type <ast> arithmetic_expression
+%type <ast> function_call
+%type <ast> return_value
+%type <ast> and_expression
+%type <ast> or_expression
+%type <ast> not_expression
+%type <ast> variable_or_constant
+%type <ast> variable_or_constant_typecast
+%type <ast> variable
+%type <ast> constant
+
 
 
 
@@ -60,79 +87,124 @@
 %%
 
 program:
-	global_declaration_statement_list procedure_list
-	{
-		/*
+	declaration_statement_list function_declaration_statement_list{		
 		program_object.set_global_table(*$1);
 		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
-		*/
-	}
+		
+	} procedure_list
+
 |	
+	function_declaration_statement_list 
+	{		
+		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
+		
+	} procedure_list
+|	
+	declaration_statement_list 
+	{
+
+		program_object.set_global_table(*$1);
+		return_statement_used_flag = true;				// Do not check for return here, checked in the procedure file
+
+	} procedure_list
+|
 	procedure_list
 	{
-		
+
 	}
 ;
 procedure_list:	
 	procedure_list	procedure_name
 	{
-		/*
+		
 		return_statement_used_flag = true;				// No return statement in the current procedure till now
-		*/
+		
 	}
 
 	procedure_body
 	{
-		/*
-		program_object.set_procedure_map(*current_procedure);
-
-		if ($1)
-			$1->global_list_in_proc_map_check(get_line_number());
-
-		delete $1;
-		*/
+		
+		string var_name = current_procedure->get_proc_name();
+		if(var_name.compare("main") == 0 )
+			program_object.set_procedure_map(*current_procedure);
+		else {
+			if(current_procedure->get_return_type() != void_data_type && return_statement_used_flag == true){
+					int line = get_line_number();
+					report_error("Last return statement type, of procedure, and its prototype should match", line);
+				}
+		}
 	}
 |
 	procedure_name
 	{
-		/*
+		
 		return_statement_used_flag = true;				// No return statement in the current procedure till now
-		*/
+		
 	}
 
 	procedure_body
 	{
-		/*
-		program_object.set_procedure_map(*current_procedure);
-		*/
+		string var_name = current_procedure->get_proc_name();
+		if(var_name.compare("main") == 0 )
+			program_object.set_procedure_map(*current_procedure);
+		else{
+			if(current_procedure->get_return_type() != void_data_type  && return_statement_used_flag == true){
+				int line = get_line_number();
+				report_error("Last return statement type, of procedure, and its prototype should match", line);
+			}
+		}
+		
 	}
 ;
 
 procedure_name:
 	NAME '(' argument_list ')'
 	{
-		/*
-		current_procedure = new Procedure(void_data_type, *$1);	 
-		*/
+		if(program_object.variable_in_symbol_list_check(*$1)){
+			int line = get_line_number();
+			report_error("Procedure name cannot be same as global variable",line);
+		}
+		if((*$1).compare("main") == 0 )
+			current_procedure = new Procedure(void_data_type, *$1 ,*$3);
+		else {
+			int line = get_line_number();
+			program_object.check_procedure_predefined(*$1,line);
+			current_procedure = program_object.get_procedure(*$1); 
+		}
+		current_procedure->get_argument_symbol_table().symbol_table_entry_check((*$3).variable_table);
+
 		
 	}
 |	
 	NAME '(' ')'
 	{
-		/*
-		current_procedure = new Procedure(void_data_type, *$1);	 
-		*/
-		
+		if(program_object.variable_in_symbol_list_check(*$1)){
+			int line = get_line_number();
+			report_error("Procedure name cannot be same as global variable",line);
+		}
+
+		if((*$1).compare("main") == 0 )
+			current_procedure = new Procedure(void_data_type, *$1 ,*(new Argument_Table()));
+		else {
+			int line  = get_line_number();
+			program_object.check_procedure_predefined(*$1,line);
+			current_procedure = program_object.get_procedure(*$1); 
+		}
+	current_procedure->get_argument_symbol_table().symbol_table_entry_check((*(new Argument_Table())).variable_table);		
 	}
 ;
 
 procedure_body:
 	'{' declaration_statement_list
 	{
-		/* 
+	
 		current_procedure->set_local_list(*$2);
+		if(current_procedure->check_parameter_local_var()){
+			int line = get_line_number();
+			report_error("Formal parameter and local variable name cannot be same", line);			
+		}
 		delete $2;
-		*/
+		
 
 		 
 		
@@ -140,20 +212,20 @@ procedure_body:
 	basic_block_list '}'
 	{
 		 
-		if (return_statement_used_flag == false)
+		/*if (return_statement_used_flag == false)
 		{
-			/*
+			
 			int line = get_line_number();
 			report_error("Atleast 1 basic block should have a return statement", line);
-			*/
+			
 
-		}
+		}*/
 
-		/*
+		
 		current_procedure->set_basic_block_list(*$4);
 
 		delete $4;
-		*/
+		
 
 		 
 		
@@ -162,142 +234,101 @@ procedure_body:
 	'{' basic_block_list '}'
 	{
 		 
-		/*
-		if (return_statement_used_flag == false)
-		{
-			int line = get_line_number();
-			report_error("Atleast 1 basic block should have a return statement", line);
-		}
 
 		current_procedure->set_basic_block_list(*$2);
 
 		delete $2;
 
-		*/ 
+		 
 		
 	}
 ;
 
-global_declaration_statement_list:
-	global_declaration_statement
-	{
-
-	}
-|	
-	global_declaration_statement_list global_declaration_statement
-	{
-
-	}
-;
-global_declaration_statement:
-	declaration_statement
-	{
-		/*
-		int line = get_line_number();
-		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
-
-		string var_name = $1->get_variable_name();
-		if (current_procedure && current_procedure->get_proc_name() == var_name)
-		{
-			int line = get_line_number();
-			report_error("Variable name cannot be same as procedure name", line);
-		}
-
-		$$ = new Symbol_Table();
-		$$->push_symbol($1);
-
-		 
-		*/
-	}
-|
+function_declaration_statement_list:
 	function_declaration_statement
 	{
-
-	}	
-;
-
-declaration_statement:
-	INTEGER NAME ';'
-	{
-		/*
-		$$ = new Symbol_Table_Entry(*$2, int_data_type);
-
-		delete $2;
-		*/
-
+		program_object.set_procedure_map(*current_procedure);
 	}
-|
-	FLOAT NAME ';'
+|	
+	function_declaration_statement_list function_declaration_statement
 	{
-		/*
-		$$ = new Symbol_Table_Entry(*$2, float_data_type);
-
-		delete $2;
-		*/
-	}
-|
-	DOUBLE NAME ';'
-	{
-		/*
-		$$ = new Symbol_Table_Entry(*$2, float_data_type);
-
-		delete $2;
-		*/
+		program_object.set_procedure_map(*current_procedure);
 	}
 ;
+
 
 function_declaration_statement:
 	INTEGER NAME '(' argument_list ')' ';'
 	{
 
+		current_procedure = new Procedure(int_data_type, *$2 , *$4);	
 	
 	}
 |	
 	FLOAT NAME '(' argument_list ')' ';'
 	{
 
+		current_procedure = new Procedure(float_data_type, *$2 , *$4);
 	}
 |
 	DOUBLE NAME '(' argument_list ')' ';'
 	{
 
+		current_procedure = new Procedure(float_data_type, *$2 , *$4);
 	}
 |
 	VOID NAME '(' argument_list ')' ';'
 	{
 
+		current_procedure = new Procedure(void_data_type, *$2 , *$4);
 	}
 |
 	INTEGER NAME '(' ')' ';'
 	{
 
-	
+		current_procedure = new Procedure(int_data_type, *$2 , *(new Argument_Table()));
 	}
 |	
 	FLOAT NAME '('')' ';'
 	{
-
+\
+		current_procedure = new Procedure(float_data_type, *$2 , *(new Argument_Table()));
 	}
 |
 	DOUBLE NAME '(' ')' ';'
 	{
 
+		current_procedure = new Procedure(float_data_type, *$2 , *(new Argument_Table()));
 	}
 |
 	VOID NAME '('')' ';'
 	{
 
+		current_procedure = new Procedure(void_data_type, *$2 , *(new Argument_Table()));
 	}
 ;
 argument_list:
 	argument_list ',' argument
 	{
-		
+		if ($1 != NULL)
+		{
+
+			$$ = $1;
+		}
+		else
+			$$ = new Argument_Table();
+
+		if($$->variable_in_symbol_list_check((*$3).get_variable_name())) {
+			int line= get_line_number();
+			report_error("Formal Parameter declared twice" , line);
+		}
+		$$->push_symbol($3);
 	}
 |	
 	argument
 	{
-
+		$$ = new Argument_Table();
+		$$->push_symbol($1);
 	}
 ;
 
@@ -305,15 +336,28 @@ argument:
 	INTEGER NAME 
 	{
 
+		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+
+		delete $2;
 	}
 |
 	FLOAT NAME 
 	{
 
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
+		
+
 	}
 |
 	DOUBLE NAME 
 	{
+		
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
+		
 
 	}
 ;
@@ -321,7 +365,7 @@ argument:
 declaration_statement_list:
 	declaration_statement
 	{
-		/*
+		
 		int line = get_line_number();
 		program_object.variable_in_proc_map_check($1->get_variable_name(), line);
 
@@ -332,16 +376,15 @@ declaration_statement_list:
 			report_error("Variable name cannot be same as procedure name", line);
 		}
 
+		
 		$$ = new Symbol_Table();
 		$$->push_symbol($1);
-
 		 
-		*/
 	}
 |
 	declaration_statement_list declaration_statement
 	{
-		/*
+		
 		// if declaration is local then no need to check in global list
 		// if declaration is global then this list is global list
 		
@@ -353,7 +396,8 @@ declaration_statement_list:
 		{
 			int line = get_line_number();
 			report_error("Variable name cannot be same as procedure name", line);
-		}
+		} 
+
 
 		if ($1 != NULL)
 		{
@@ -371,18 +415,46 @@ declaration_statement_list:
 
 		$$->push_symbol($2);
 
-		*/ 
+		 
+		
+	}
+;
+
+declaration_statement:
+	INTEGER NAME ';'
+	{
+		
+		$$ = new Symbol_Table_Entry(*$2, int_data_type);
+
+		delete $2;
+		
+
+	}
+|
+	FLOAT NAME ';'
+	{
+		
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
+		
+	}
+|
+	DOUBLE NAME ';'
+	{
+		
+		$$ = new Symbol_Table_Entry(*$2, float_data_type);
+
+		delete $2;
 		
 	}
 ;
 
 
-
-
 basic_block_list:
 	basic_block_list basic_block
 	{
-		/*
+		
 		if (!$2)
 		{
 			int line = get_line_number();
@@ -398,12 +470,12 @@ basic_block_list:
 		$$->push_back($2);
 		
 				 
-		*/
+		
 	}
 |
 	basic_block
 	{
-		/* 
+		 
 		if (!$1)
 		{
 			int line = get_line_number();
@@ -412,14 +484,14 @@ basic_block_list:
 
 		$$ = new list<Basic_Block *>;
 		$$->push_back($1);
-		*/
+		
 	}
 ;
 
 basic_block:
 	BASIC_BLOCK ':' executable_statement_list
 	{
-		/*
+		
 		if ($1 < 2)
 		{
 			int line = get_line_number();
@@ -439,26 +511,27 @@ basic_block:
 		}
 
 		delete $3;
-		*/
+		
 	}
 ;
 
 executable_statement_list:
 	assignment_statement_list
 	{
-		/* 
+		 
 		$$ = $1;
-		*/
+		
 		 
 		
 	}
 |
 	assignment_statement_list RETURN  return_value ';'
 	{
-		/*
-		Ast * ret = new Return_Ast();
-
-		return_statement_used_flag = true;					// Current procedure has an occurrence of return statement
+		
+		if($3 != NULL){
+			return_statement_used_flag = false;
+		}
+		Ast * ret = new Return_Ast($3);
 
 		if ($1 != NULL)
 			$$ = $1;
@@ -468,12 +541,12 @@ executable_statement_list:
 
 		$$->push_back(ret);
 		
-		*/
+		
 	}
 |
 	assignment_statement_list if_else_statement
 	{
-		/* 
+		 
 		if ($1 != NULL)
 			$$ = $1;
 
@@ -482,12 +555,12 @@ executable_statement_list:
 
 		$$->push_back($2);
 
-		*/ 
+		 
 	}
 |
 	assignment_statement_list goto_statement
 	{
-		/*
+		
 		if ($1 != NULL)
 			$$ = $1;
 
@@ -495,7 +568,7 @@ executable_statement_list:
 			$$ = new list<Ast *>;
 
 		$$->push_back($2);
-		*/
+		
 	}
 ;
 
@@ -503,15 +576,15 @@ executable_statement_list:
 
 assignment_statement_list:
 	{
-		/*
+		
 		$$ = NULL;
-		*/
+		
 		
 	}
 |
 	assignment_statement_list assignment_statement_or_function_call
 	{
-		/* 
+		 
 		if ($1 == NULL)
 			$$ = new list<Ast *>;
 
@@ -520,7 +593,7 @@ assignment_statement_list:
 
 		$$->push_back($2);
 		
-		*/ 
+		 
 		
 	}
 ;
@@ -528,24 +601,41 @@ assignment_statement_list:
 assignment_statement_or_function_call:
 	assignment_statement
 	{
-
+		$$ = $1;
 	}
 |
 	function_call ';'
 	{
-
+		$$ = $1;
 	}
 ;
+
+return_value:
+	and_expression
+	{
+		if(current_procedure->get_proc_name() != "main" && current_procedure->get_return_type() != $1->get_data_type()){
+			int line = get_line_number();
+			report_error("Last return statement type, of procedure, and its prototype should match", line);
+		}
+
+		$$ =  $1;
+	}
+|
+	{
+		$$ = NULL;
+	}
+;
+
 assignment_statement:
 	variable ASSIGN_OP and_expression ';'
 	{
-		/*
+		
 		$$ = new Assignment_Ast($1, $3);
 
 		int line = get_line_number();
 		$$->check_ast(line);
 		
-		*/
+		
 	}
 ;
 
@@ -555,17 +645,17 @@ if_else_statement:
 	ELSE
 		goto_statement
 	{
-		/*	 
+			 
 		$$ = new If_Else_Ast($5, $3, $7);
 		
-		*/
+		
 	}
 ;
 
 goto_statement:
 	GOTO BASIC_BLOCK ';'
 	{
-		/*
+		
 		if ($2 < 2)
 		{
 			int line = get_line_number();
@@ -573,44 +663,34 @@ goto_statement:
 		}
 		
 		$$ = new Goto_Ast($2);
-		*/
+		
 		 
 	}
 ;
 
-return_value:
-	and_expression
-	{
-
-	}
-|
-	{
-
-	}
-;
 
 not_expression:	
 	arithmetic_expression
-	{	/*
+	{	
 		$$ = $1;
-		*/
+		
 	}
 |
 	relational_expression
 	{
 		 
-		/*
+		
 		$$ = $1;
-		*/
+		
 		
 		 
 	}
 |
 	nt relational_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($2, NOT, NULL);
-		*/	
+			
 		 
 	}
 
@@ -618,18 +698,18 @@ not_expression:
 or_expression:
 	not_expression
 	{	
-		/* 
+		 
 		$$ = $1;
-		*/
+		
 		
 		 
 	}
 |
 	not_expression orTok or_expression
 	{
-		/* 
+		 
 		$$ = new Relational_Expr_Ast($1, OR, $3);
-		*/
+		
 		 
 	}
 ;
@@ -637,255 +717,242 @@ or_expression:
 and_expression:
 	or_expression
 	{
-		/*
+		
 		$$ = $1;
-		*/
+		
 	}
 |
 	or_expression andTok and_expression
 	{
-		/*
+		
 		$$ = new Relational_Expr_Ast($1, AND, $3);
-		*/
+		
 	}
 ;
 
 relational_expression:
-	relational_expression eq arithmetic_expression
+	expression eq expression
 	{
-		/*
+		
 		$$ = new Relational_Expr_Ast($1, EQ, $3);
-		*/
+		
 	}
 |
-	relational_expression ne arithmetic_expression
+	expression ne expression
 	{
-		/*
+		
 		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 	}
 |
-	relational_expression le arithmetic_expression
+	expression le expression
 	{
-		/*
+		
 		$$ = new Relational_Expr_Ast($1, LE, $3);
-		*/
+		
 	}
 |
-	relational_expression ge arithmetic_expression
+	expression ge expression
 	{
-		/*
+		
 		$$ = new Relational_Expr_Ast($1, GE, $3);
-		*/
+		
 	}
 |
-	relational_expression lt arithmetic_expression
+	expression lt expression
 	{
-		/*
+		
 		$$ = new Relational_Expr_Ast($1, LT, $3);
-		*/
+		
 	}
 |
-	relational_expression gt arithmetic_expression
+	expression gt expression
 	{
-		/*
+		
 		$$ = new Relational_Expr_Ast($1, GT, $3);
-		*/
-	}
-|
-	arithmetic_expression le arithmetic_expression
-	{	
-		/*
-		$$ = new Relational_Expr_Ast($1, LE, $3);
-		*/
-	}
-|
-	arithmetic_expression ge arithmetic_expression
-	{
-		/*
-		$$ = new Relational_Expr_Ast($1, GE, $3);
-		*/
-	}
-|
-	arithmetic_expression gt arithmetic_expression
-	{
-		/*
-		$$ = new Relational_Expr_Ast($1, GT, $3);
-		*/
-	}
-|
-	arithmetic_expression lt arithmetic_expression
-	{
-		/*
-		$$ = new Relational_Expr_Ast($1,LT, $3);
-		*/
-	}
-|
-	arithmetic_expression eq arithmetic_expression
-	{
-		/*
-		$$ = new Relational_Expr_Ast($1, EQ, $3);
-		*/
-	}
-|
-	arithmetic_expression ne arithmetic_expression
-	{
-		/*
-		$$ = new Relational_Expr_Ast($1, NE, $3);
-		*/
+		
 	}
 
 ;
 
-arithmetic_expression:
-	SUB_OP variable_or_constant_typecast
+expression:
+	arithmetic_expression
 	{
-		/*
+		$$ =  $1;
+	}
+|	
+	relational_expression
+	{
+		$$ = $1;
+	}
+
+;
+arithmetic_expression:
+	SUB_OP variable_or_constant_typecast 
+	{
+		
 		$$ = new Arithmetic_Expr_Ast($2, UMINUS, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 	arithmetic_expression ADD_OP arithmetic_expression
 	{
-		/*
+		
 		$$ = new Arithmetic_Expr_Ast($1, PLUS, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 	arithmetic_expression SUB_OP arithmetic_expression
 	{
-		/*
+		
 		$$ = new Arithmetic_Expr_Ast($1, MINUS, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 	arithmetic_expression MULT_OP arithmetic_expression
 	{
-		/*
+		
 		$$ = new Arithmetic_Expr_Ast($1, MULT, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 	arithmetic_expression DIV_OP arithmetic_expression
 	{
-		/*
+		
 		$$ = new Arithmetic_Expr_Ast($1, DIV, $3);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 	variable_or_constant_typecast
 	{
-		/*
+		
 		$$ = new Arithmetic_Expr_Ast($1, VAR, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 ;
 
 variable_or_constant_typecast:
 	'(' FLOAT ')' variable_or_constant
 	{
-		/*
+		
 		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 
 |
 	'(' DOUBLE ')' variable_or_constant
 	{
-		/*
+		
 		$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 	'(' INTEGER ')' variable_or_constant
 	{
-		/*
+		
 		$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL);
 		int line = get_line_number();
 		$$->check_ast(line);
-		*/
+		
 	}
 |
 
 	variable_or_constant
 	{
-		/*
+		
 		$$ = $1;
-		*/
+		
 	}
 ;
 
 function_call:
 	NAME '(' argument_input_list ')'
 	{
-		
+		if (program_object.get_procedure(*$1) == NULL){
+			int line = get_line_number();
+			report_error("Function is not defined",line);
+		}
+		else
+			$$ = new Function_Call_Ast(*$1,program_object.get_procedure(*$1)->get_return_type(),$3);
 	}
 |
 	NAME '(' ')'
 	{
-
+		if (program_object.get_procedure(*$1) == NULL){
+			int line = get_line_number();
+			report_error("Function is not defined",line);
+		}
+		else{
+			$$ = new Function_Call_Ast(*$1,int_data_type,NULL);
+		}
 	}
 ;
 argument_input_list:
 	argument_input_list ',' not_expression
 	{
+		if ($1 == NULL)
+			$$ = new list<Ast *>;
+		else
+			$$ = $1;
 
+		$$->push_back($3);
 	}
 |
 	not_expression
 	{
-
+		$$ = new list<Ast *>;
+		$$->push_back($1);
 	}
 ;
 
 variable_or_constant:
 	variable
 	{
-		/*
+		
 		$$ = $1;
-		*/
+		
 	}
 |
 	constant
 	{
-		/*
+		
 		$$ = $1;
-		*/
+		
 	}
 |
 	function_call
 	{
-
+		$$ = $1;
 	}
 |
 	'('arithmetic_expression')'
 	{
-		/*
+		
 		$$ = $2;
-		*/
+		
 	}
 |
 	'('relational_expression')'
 	{
-		/*
+		
 		$$ = $2;
-		*/
+		
 	}
 ;
 
@@ -893,15 +960,17 @@ variable:
 	NAME
 	{
 
-		/*
+		
 		Symbol_Table_Entry var_table_entry;
 
 		if (current_procedure->variable_in_symbol_list_check(*$1))
-			 var_table_entry = current_procedure->get_symbol_table_entry(*$1);
-
-		else if (program_object.variable_in_symbol_list_check(*$1))
+			var_table_entry = current_procedure->get_symbol_table_entry(*$1);
+		else if (current_procedure->variable_in_argument_list_check(*$1))
+			var_table_entry = current_procedure->get_argument_table_entry(*$1);
+		else if (program_object.variable_in_symbol_list_check(*$1)){
 			var_table_entry = program_object.get_symbol_table_entry(*$1);
-
+			int line = get_line_number();
+			}
 		else
 		{
 			int line = get_line_number();
@@ -911,21 +980,21 @@ variable:
 		$$ = new Name_Ast(*$1, var_table_entry);
 
 		delete $1;
-		*/
+		
 	}
 ;
 
 constant:
 	INTEGER_NUMBER
 	{
-		/*
+		
 		$$ = new Number_Ast<int>($1, int_data_type);
-		*/
+		
 	}
 |	FLOAT_NUMBER
 	{
-		/*
+		
 		$$ = new Number_Ast<float>($1, float_data_type);
-		*/
+		
 	}
 ;

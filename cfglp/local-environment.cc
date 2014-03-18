@@ -23,7 +23,7 @@
 
 #include<string>
 #include<fstream>
-
+#include <iomanip>
 using namespace std;
 
 #include"local-environment.hh"
@@ -169,7 +169,7 @@ void Local_Environment::print(ostream & file_buffer)
 				if(vi->get_result_enum() == int_result)
 					file_buffer << VAR_SPACE << (*i).first << " : " << (int) vi->get_value() << "\n";
 				else if(vi->get_result_enum() == float_result)
-					file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_value() << "\n";
+					file_buffer << VAR_SPACE << (*i).first << " : " << fixed << setprecision(2) << vi->get_value() << "\n";
 			}
 		}
 	}
@@ -178,10 +178,12 @@ void Local_Environment::print(ostream & file_buffer)
 bool Local_Environment::is_variable_defined(string name)
 {
 	Eval_Result_Value * i = variable_table[name];
-	if (i != NULL)
+	if (i != NULL){
 		return i->is_variable_defined();
-	else
+	}
+	else{
 		return false;
+	}
 }
 
 Eval_Result_Value * Local_Environment::get_variable_value(string name)
@@ -194,6 +196,7 @@ void Local_Environment::put_variable_value(Eval_Result_Value & i, string name)
 {
 	variable_table[name] = &i;
 }
+
 
 bool Local_Environment::does_variable_exist(string name)
 {

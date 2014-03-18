@@ -60,21 +60,23 @@ int Basic_Block::get_successor(){
 
 void Basic_Block::print_bb(ostream & file_buffer)
 {
-	file_buffer << BB_SPACE << "Basic_Block " << id_number << "\n";
+	file_buffer << BB_SPACE << "Basic_Block " << id_number;
 
 	list<Ast *>::iterator i;
 	for(i = statement_list.begin(); i != statement_list.end(); i++){
+		//file_buffer<<"\n";
 		(*i)->print_ast(file_buffer);
 	}
 	if(isSuccessor == 0){
 		report_internal_error("Atleast one of true, false, direct successors should be set");
 	}
+	file_buffer<<"\n";
 }
 
 Eval_Result & Basic_Block::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result * result = NULL;
-
+	//printf("\n id :: %d\n",id_number);
 	file_buffer << "\n" << BB_SPACE << "Basic Block: " << id_number << "\n";
 
 	list <Ast *>::iterator i;

@@ -79,6 +79,11 @@ void Program::variable_in_proc_map_check(string variable, int line)
 		report_error("Variable name cannot be same as procedure name", line);
 }
 
+void Program::check_procedure_predefined(string variable, int line){
+	if(procedure_map[variable] == NULL)
+		report_error("Procedure corresponding to the name is not found", line);
+}
+
 Procedure * Program::get_main_procedure(ostream & file_buffer)
 {
 	map<string, Procedure *>::iterator i;
@@ -90,7 +95,17 @@ Procedure * Program::get_main_procedure(ostream & file_buffer)
 	
 	return NULL;
 }
+Procedure * Program::get_procedure(string name){
+	map<string, Procedure *>::iterator i;
+	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	{
+		if (i->second != NULL && i->second->get_proc_name() == name)
+				return i->second;
+	}
+	
+	return NULL;
 
+}
 void Program::print_ast()
 {
 	command_options.create_ast_buffer();
@@ -98,13 +113,19 @@ void Program::print_ast()
 
 	ast_buffer << "Program:\n";
 
+
 	Procedure * main = get_main_procedure(ast_buffer);
 	if (main == NULL)
 		report_error("No main function found in the program", NOLINE);
 
 	else
 	{
-		main->print_ast(ast_buffer);
+		map<string, Procedure *>::iterator i;
+		for(i = procedure_map.begin(); i != procedure_map.end(); i++){
+			if (i->second != NULL)
+				(i->second)->print_ast(ast_buffer);
+		}
+		//main->print_ast(ast_buffer);
 	}
 }
 
@@ -121,8 +142,8 @@ Eval_Result & Program::evaluate()
 	file_buffer << "Evaluating Program\n";
 	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
 	interpreter_global_table.print(file_buffer);
-
-	Eval_Result & result = main->evaluate(file_buffer);
+	Local_Environment & eval_env = *new Local_Environment();
+	Eval_Result & result = main->evaluate(eval_env, file_buffer);
 
 	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
 	interpreter_global_table.print(file_buffer);

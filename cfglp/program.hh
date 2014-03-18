@@ -54,11 +54,13 @@ public:
 	void print_ast();
 
 	Procedure * get_main_procedure(ostream & file_buffer);
+	Procedure * get_procedure(string name);
 
 	Eval_Result & evaluate();
 
 	bool variable_in_symbol_list_check(string variable);
 	void variable_in_proc_map_check(string symbol, int line);
+	void check_procedure_predefined(string variable, int line);
 };
 
 #endif

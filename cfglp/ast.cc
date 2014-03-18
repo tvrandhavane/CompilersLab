@@ -30,10 +30,11 @@ using namespace std;
 #include"user-options.hh"
 #include"error-display.hh"
 #include"local-environment.hh"
-
 #include"symbol-table.hh"
 #include"ast.hh"
-
+#include"basic-block.hh"
+#include"procedure.hh"
+#include"program.hh"
 Ast::Ast()
 {}
 
@@ -103,7 +104,7 @@ bool Assignment_Ast::check_ast(int line)
 
 void Assignment_Ast::print_ast(ostream & file_buffer)
 {
-
+	file_buffer << "\n";
 	file_buffer << AST_SPACE << "Asgn:\n";
 
 	file_buffer << AST_NODE_SPACE << "LHS (";
@@ -113,7 +114,7 @@ void Assignment_Ast::print_ast(ostream & file_buffer)
 	file_buffer << AST_NODE_SPACE << "RHS (";
 	rhs->print_ast(file_buffer);
 
-	file_buffer << ")\n";
+	file_buffer << ")";
 }
 
 int Assignment_Ast::get_successor(){
@@ -123,9 +124,8 @@ int Assignment_Ast::get_successor(){
 Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
+	//printf("\n:: %d \n",result.is_variable_defined() );
 
-	if (result.is_variable_defined() == false)
-		report_error("Variable should be defined to be on rhs", NOLINE);
 
 	lhs->set_value_of_evaluation(eval_env, result);
 	// Print the result
@@ -172,10 +172,11 @@ bool Goto_Ast::check_ast(int line)
 
 void Goto_Ast::print_ast(ostream & file_buffer)
 {
+	file_buffer << "\n";
 	file_buffer << AST_SPACE << "Goto statement:\n";
 
 	file_buffer << AST_NODE_SPACE << "Successor: " << bb;
-	file_buffer << "\n";
+	
 }
 
 int Goto_Ast::get_successor(){
@@ -185,10 +186,10 @@ int Goto_Ast::get_successor(){
 Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	// Print the result
-	file_buffer << "\n";
 	print_ast(file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	result.set_value(bb);
+	file_buffer << "\n";
 	file_buffer << AST_SPACE << "GOTO (BB " << successor << ")\n";
 	successor = bb;
 	return result;
@@ -226,13 +227,14 @@ bool If_Else_Ast::check_ast(int line)
 
 void If_Else_Ast::print_ast(ostream & file_buffer)
 {
+	file_buffer << "\n";
 	file_buffer << AST_SPACE << "If_Else statement:";
 	condition->print_ast(file_buffer);
 	file_buffer << "\n";
 	file_buffer << AST_NODE_SPACE << "True Successor: " << gotoTrue->get_successor();
 	file_buffer << "\n";
 	file_buffer << AST_NODE_SPACE << "False Successor: " << gotoFalse ->get_successor();
-	file_buffer << "\n";
+	
 }
 
 int If_Else_Ast::get_successor(){
@@ -242,12 +244,19 @@ int If_Else_Ast::get_successor(){
 Eval_Result & If_Else_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
 	// Print the result
+	file_buffer << "\n";
+	file_buffer << AST_SPACE << "If_Else statement:";
+	condition->print_ast(file_buffer);
 	Eval_Result & conditionResult = condition->evaluate(eval_env, file_buffer);
 	int value = conditionResult.get_value();
 	Eval_Result & result = *new Eval_Result_Value_Int();
 	file_buffer << "\n";
-	print_ast(file_buffer);
+	file_buffer << AST_NODE_SPACE << "True Successor: " << gotoTrue->get_successor();
+	file_buffer << "\n";
+	file_buffer << AST_NODE_SPACE << "False Successor: " << gotoFalse ->get_successor();
+	file_buffer << "\n";
 	if(value == 1){
+
 		file_buffer << AST_SPACE << "Condition True : Goto (BB " << gotoTrue->get_successor() << ")\n";
 		successor = gotoTrue->get_successor();
 	}
@@ -283,7 +292,9 @@ bool Relational_Expr_Ast::check_ast(int line)
 {
 	if (lhs->get_data_type() == rhs->get_data_type())
 	{
-		node_data_type = lhs->get_data_type();
+
+		//change here
+		node_data_type = int_data_type;
 		return true;
 	}
 
@@ -587,22 +598,33 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 			Eval_Result & result = *new Eval_Result_Value_Int();
 			if(oper == PLUS){
-
-				result.set_value((int) (lhsResult.get_value() + rhsResult.get_value()) );
+				int lh_result = lhsResult.get_value();
+				int rh_result = rhsResult.get_value();
+				int res = lh_result + rh_result;
+				result.set_value(res);
 			}
 			if(oper == MINUS){
-				result.set_value((int) (lhsResult.get_value() - rhsResult.get_value()) );
+				int lh_result = lhsResult.get_value();
+				int rh_result = rhsResult.get_value();
+				int res = lh_result - rh_result;
+				result.set_value(res);
 			}
 			if(oper == DIV){
 				if((int) rhsResult.get_value() != 0){
-					result.set_value((int) (lhsResult.get_value() / rhsResult.get_value()));
+					int lh_result = lhsResult.get_value();
+					int rh_result = rhsResult.get_value();
+					int res = lh_result / rh_result;
+					result.set_value(res);
 				}
 				else{
 					report_error("Divided by zero", NOLINE);
 				}
 			}
-			if(oper == MULT){
-				result.set_value((int) (lhsResult.get_value() * rhsResult.get_value()) );
+			if(oper == MULT){ 
+				int lh_result = lhsResult.get_value();
+				int rh_result = rhsResult.get_value();
+				int res = lh_result * rh_result;
+				result.set_value(res);
 			}
 			return result;
 		}
@@ -665,6 +687,96 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+Function_Call_Ast::Function_Call_Ast(string name , Data_Type return_data_type, list <Ast *> * input_list){
+
+	func_name = name;
+	input_argument_list = input_list;
+	successor = -1;
+	node_data_type = return_data_type;
+
+}
+
+Function_Call_Ast::~Function_Call_Ast()
+{
+
+}
+
+Data_Type Function_Call_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Function_Call_Ast::check_ast(int line)
+{
+
+}
+
+void Function_Call_Ast::print_ast(ostream & file_buffer)
+{
+
+		file_buffer<<"\n";
+		file_buffer << AST_SPACE << "FN CALL: ";
+		list<Ast *>::iterator i;
+		if(input_argument_list != NULL){
+			//file_buffer << AST_NODE_SPACE 	;
+			file_buffer <<func_name << "(";
+			for(i = input_argument_list->begin(); i != input_argument_list->end(); i++){
+				file_buffer<<"\n";
+				file_buffer << AST_NODE_SPACE 	;
+				(*i)->print_ast(file_buffer);
+
+			}
+		}
+		else
+			file_buffer <<func_name << "(";
+		file_buffer << ")";
+
+}
+
+int Function_Call_Ast::get_successor(){
+	return successor;
+}
+Eval_Result & Function_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+
+	
+	Procedure *funct_call = program_object.get_procedure(func_name);
+	Argument_Table & arg = funct_call->get_argument_symbol_table();
+	Local_Environment & func_eval_env = *new Local_Environment();
+
+	//arg.create(func_eval_env);
+	list<Ast *>::iterator i;
+	if(input_argument_list!=NULL){
+		list<Symbol_Table_Entry *>::iterator j;
+		i = input_argument_list->begin();
+		j = arg.variable_table.begin();
+		for(;i != input_argument_list->end();i++,j++){
+			Eval_Result_Value * k;
+			string variable_name = (*j)->get_variable_name();
+			Eval_Result & result = (*i)->evaluate(eval_env, file_buffer);
+			if (result.get_result_enum() == int_result && (*j)->get_data_type() == int_data_type)
+			{
+				k = new Eval_Result_Value_Int();
+			 	k->set_value((int)result.get_value());
+				func_eval_env.put_variable_value(*k, variable_name);
+
+			}
+			else if(result.get_result_enum() == float_result && (*j)->get_data_type() == float_data_type){
+				k = new Eval_Result_Value_Float();
+			 	k->set_value(result.get_value());
+					func_eval_env.put_variable_value(*k, variable_name);
+
+			}
+			else{
+				report_error("Passed argument is not compatible",NOLINE);
+			}
+		}
+	}
+	Eval_Result & return_result = funct_call->evaluate(func_eval_env,file_buffer);
+	return return_result;
+}
 
 
 
@@ -675,11 +787,6 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 
 
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -757,7 +864,12 @@ Eval_Result & Name_Ast::get_value_of_evaluation(Local_Environment & eval_env)
 {
 	if (eval_env.does_variable_exist(variable_name))
 	{
+
 		Eval_Result * result = eval_env.get_variable_value(variable_name);
+
+		if (result->is_variable_defined() == 0)
+			report_error("Variable should be defined before its use", NOLINE);
+
 		return *result;
 	}
 
@@ -851,9 +963,13 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast()
+Return_Ast::Return_Ast(Ast * to_return)
 {
+	return_Ast = to_return;
 	successor = -2;
+	if(return_Ast == NULL){
+		node_data_type = void_data_type;
+	}
 }
 
 Return_Ast::~Return_Ast()
@@ -863,17 +979,43 @@ int Return_Ast::get_successor(){
 	return successor;
 }
 
+Data_Type Return_Ast::get_data_type()
+{
+	return node_data_type;
+}
+bool Return_Ast::check_ast(int line){
+	if(return_Ast == NULL){
+		node_data_type = void_data_type;
+	}
+}
 void Return_Ast::print_ast(ostream & file_buffer)
 {
-	file_buffer << AST_SPACE << "Return <NOTHING>\n";
+	if(return_Ast == NULL){
+		file_buffer <<"\n";
+		file_buffer << AST_SPACE << "RETURN <NOTHING>\n";
+	}
+	else{
+		file_buffer <<"\n";
+		file_buffer << AST_SPACE << "RETURN ";
+		return_Ast->print_ast(file_buffer);
+		file_buffer<<"\n";
+	}
 }
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	file_buffer << "\n";
-	print_ast(file_buffer);
-	Eval_Result & result = *new Eval_Result_Value_Int();
-	return result;
+	
+	if(return_Ast!=NULL){
+		Eval_Result & result = return_Ast->evaluate(eval_env,file_buffer);
+		print_ast(file_buffer);
+		return result;
+	}
+	else{
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		result.set_result_enum(void_result);
+		print_ast(file_buffer);
+		return result;
+	}
 }
 
 template class Number_Ast<int>;
