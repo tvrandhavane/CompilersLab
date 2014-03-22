@@ -1,0 +1,114 @@
+
+                        cfglp : A CFG Language Processor
+                        --------------------------------
+
+.................................................................................
+           About:
+
+           Implemented by Tanu  Kanvar (tanu@cse.iitb.ac.in) and Uday
+           Khedker (http://www.cse.iitb.ac.in/~uday)  for the courses
+           cs302+cs306: Language  Processors (theory and lab)  at IIT
+           Bombay.
+
+           Release  date Jan  15, 2013.  Copyrights reserved  by Uday
+           Khedker. This implemenation has been made available purely
+           for academic purposes without any warranty of any kind.
+................................................................................
+
+    Details of CFGLP (Control Flow Graph Language Processor) tool can be
+    found at http://www.cse.iitb.ac.in/~uday/cfglp
+
+    This  version  is the  interpreter-compiler  version. At the  moment
+    cfglp accepts level 0  language that  defines simple cfg constructs.
+    These have been specified on the website.
+
+    To generate test cases which can be used as input to cfglp Level-0
+    Interpreter-Compiler:
+    (Replace {cfglp} with cfglp64 or cfglp32 depending on the configuration
+    of your machine)
+
+    -- Make your current directory as level-0-32bits or level-0-64bits
+
+    -- To generate .cfg file for valid test.c file in test_files:
+         - Run
+              make -f Makefile.cfg FILE=test.c
+         - test.cs306.cfg file is generated in the test_files directory
+
+    To run the cfglp Level-0 Interpreter-Compiler, follow the steps given
+    below:
+
+    -- Make your current directory as level-0-32bits or level-0-64bits
+
+    -- To test the cfglp Level-0 Interpreter-Compiler using a valid
+       test.cs306.cfg (generated using the above steps) in test_files:
+         - Run
+              make -f Makefile.cfglp
+	 - cfglp executable is generated in the current directory
+         - Run
+              ./{cfglp} test_files/test.cs306.cfg [options]
+         - To see the command line options that cfglp executable accepts,
+           run
+              ./{cfglp} --help
+         - Observe the output
+
+    -- To test the cfglp Level-0 Interpreter-Compiler using an invalid
+       test.ecfg (pre-existing) in test_files:
+         - Run
+              make -f Makefile.cfglp
+	 - cfglp executable is generated in the current directory
+         - Run
+             ./{cfglp} test_files/test.ecfg [options]
+         - To see the command line options that cfglp executable accepts,
+           run
+             ./{cfglp} --help
+         - Observe the output
+
+    To restore the original files in the directory:
+
+    -- Run
+         make -f Makefile.cfglp clean
+
+    To restore the original files in test_files directory:
+
+    -- Run
+         make clean
+
+    cfglp help
+    ----------
+    The complete  functionality supported  by this  version of  cfglp is
+    best described by the usage printed by it:
+
+    Usage: cfglp [options] [file]
+    Options:
+	-help     Show this help
+	-parse	  Performs parsing
+	-tokens   Show the tokens in file.toks (or out.toks)
+	-ast      Show abstract syntax trees in file.ast (or out.ast)
+	-eval     Interpret the program and show a trace of the execution
+                  in file.eval (or out.eval)
+	-symtab   Show the symbol table of delcarations in file.sy, (or
+		  out.sym)
+	-program  Show the complete program read by cfglp in file.prog (or
+                  out.prog)
+		  (-program option cannot be given with -tokens, -ast, or 
+                  -symtab)
+	-compile  Compile the program and generate spim code in file.spim 
+                  (or out.spim)
+	-lra	  Do local register allocation to avoid redundant loads
+                  within a basic block
+	-icode	  Compile the program and show the intermediate code in 
+                  file.ic (or out.ic)
+		  (-eval and -icode options are mutually exclusive
+	-d        Demo version. Use stdout for the outputs instead of 
+                  files
+
+------------------------------------------------------------------------ 
+Dr. Uday Khedker
+Professor
+Department of Computer Science & Engg.
+IIT Bombay, Powai, Mumbai 400 076, India.
+Email   : 	uday@cse.iitb.ac.in
+Homepage: 	http://www.cse.iitb.ac.in/~uday
+Phone   : 	
+Office - 	91 (22) 2572 2545 x 7717, 91 (22) 2576 7717 (Direct)
+Res.   - 	91 (22) 2572 2545 x 8717, 91 (22) 2576 8717 (Direct)
