@@ -288,7 +288,7 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[seq] = new Instruction_Descriptor(seq, "seq", "seq", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[sne] = new Instruction_Descriptor(sne, "sne", "sne", "", i_r_o1_op_o2, a_op_o1_o2_r);
 
-	spim_instruction_table[goto_op] = new Instruction_Descriptor(goto_op, "goto", "goto", "", i_op_o1, a_op_o1);
+	spim_instruction_table[goto_op] = new Instruction_Descriptor(goto_op, "goto", "j", "", i_op_o1, a_op_o1);
 
 	spim_instruction_table[bne] = new Instruction_Descriptor(bne, "bne", "bne", "", i_r_o1_op_o2, a_op_o1_o2_r);
 }
