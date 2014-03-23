@@ -616,7 +616,7 @@ Code_For_Ast & If_Else_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	CHECK_INVARIANT((gotoTrue != NULL), "True Successor of If_Else_Ast cannot be null");
 	CHECK_INVARIANT((gotoFalse != NULL), "False Successor of If_Else_Ast cannot be null");
 
-	Code_For_Ast & condition_code = condition->compile();
+	Code_For_Ast & condition_code = condition->compile_and_optimize_ast(lra);
 	Register_Descriptor * condition_result_register = condition_code.get_reg();
 	condition_result_register->used_for_expr_result = true;
 
