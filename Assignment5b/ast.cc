@@ -488,6 +488,14 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 
 	Register_Descriptor * result_register = load_stmt.get_reg();
 
+	Symbol_Table_Entry *new_entry = &(lhs->get_symbol_entry());
+
+	Register_Descriptor * curr_register = new_entry->get_register();
+	if(curr_register != NULL){
+		new_entry->free_register(curr_register);
+	}
+	new_entry->update_register(result_register);
+
 	Code_For_Ast store_stmt = lhs->create_store_stmt(result_register);
 
 	list<Icode_Stmt *> ic_list;
