@@ -353,6 +353,21 @@ Register_Descriptor * Machine_Description::get_new_register()
 			return reg_desc;
 	}
 
+	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+	{
+		reg_desc = i->second;
+		if ((reg_desc->get_use_category() == gp_data) && (!reg_desc->is_symbol_list_empty()) && (reg_desc->used_for_expr_result == false))
+			reg_desc->clear_lra_symbol_list();
+	}
+
+	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+	{
+		reg_desc = i->second;
+
+		if (reg_desc->is_free())
+			return reg_desc;
+	}
+
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
 			"Error in get_new_reg or register requirements of input program cannot be met");
 }
