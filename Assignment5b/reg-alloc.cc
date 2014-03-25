@@ -70,6 +70,12 @@ void Register_Descriptor::remove_symbol_entry_from_list(Symbol_Table_Entry & sym
 	lra_symbol_list.remove(&sym_entry);
 }
 
+bool Register_Descriptor::is_unique_lra_symbol(){
+	if(lra_symbol_list.size() > 1){
+		return true;
+	}
+}
+
 bool Register_Descriptor::find_symbol_entry_in_list(Symbol_Table_Entry & sym_entry)
 {
 	list<Symbol_Table_Entry *>::iterator i;
@@ -160,6 +166,9 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		{
 			destination_symbol_entry = &(destination_memory->get_symbol_entry());
 			destination_register = destination_symbol_entry->get_register();
+			if(destination_register != NULL && destination_register->is_unique_lra_symbol()){
+				destination_register = NULL;
+			}
 		}
 
 		if (typeid(*source_memory) == typeid(Number_Ast<int>))

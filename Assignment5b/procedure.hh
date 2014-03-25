@@ -41,13 +41,13 @@ class Procedure
 	string name;
 	Symbol_Table local_symbol_table;
 	list<Basic_Block *> basic_block_list;
-
 	int lineno;
 
 public:
+	list<int> basic_block_gotos;
 	Procedure(Data_Type proc_return_type, string proc_name, int line);
 	~Procedure();
-
+	void check_valid_bb();
 	string get_proc_name();
 	void set_basic_block_list(list<Basic_Block *> & bb_list);
 	void set_local_list(Symbol_Table & new_list);

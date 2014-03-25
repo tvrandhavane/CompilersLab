@@ -71,6 +71,7 @@ program:
 		if (NOT_ONLY_PARSE)
 		{
 			CHECK_INVARIANT((current_procedure != NULL), "Current procedure cannot be null");
+			current_procedure->check_valid_bb();
 
 			program_object.set_procedure_map(current_procedure, get_line_number());
 			program_object.global_list_in_proc_map_check();
@@ -409,6 +410,7 @@ goto_statement:
 		{
 			$$ = new Goto_Ast($2, get_line_number());
 			$$->check_ast();
+			current_procedure->basic_block_gotos.push_back($2);
 		}
 	}
 ;

@@ -43,7 +43,6 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
 {
 	return_type = proc_return_type;
 	name = proc_name;
-
 	lineno = line;
 }
 
@@ -52,6 +51,19 @@ Procedure::~Procedure()
 	list<Basic_Block *>::iterator i;
 	for (i = basic_block_list.begin(); i != basic_block_list.end(); i++)
 		delete (*i);
+}
+
+void Procedure::check_valid_bb(){
+
+	list<int>::iterator i;
+	for(i = basic_block_gotos.begin(); i != basic_block_gotos.end(); i++){
+		if((*i) > (basic_block_list.size() + 1)){
+			char buff[20];
+
+			sprintf(buff, "bb %d does not exist", (*i));
+			CHECK_INVARIANT(false,buff);
+		}
+	}
 }
 
 string Procedure::get_proc_name()

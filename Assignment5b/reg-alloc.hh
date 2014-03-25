@@ -82,6 +82,7 @@ class Register_Descriptor
     ~Register_Descriptor() {}
 
     bool is_symbol_list_empty();
+    bool is_unique_lra_symbol();
     void update_symbol_information(Symbol_Table_Entry & symbol_entry);
 
     bool find_symbol_entry_in_list(Symbol_Table_Entry & symbol_entry);
