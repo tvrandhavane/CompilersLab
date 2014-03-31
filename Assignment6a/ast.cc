@@ -676,15 +676,20 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile()
 			return *arithmetic_stmt;
 		}
 		else if(lhs->get_data_type() == int_data_type){
-			Eval_Result_Value_Int & result = *new Eval_Result_Value_Int();
+			Ics_Opd * lhs_opd = new Register_Addr_Opd(lhs_register);
+
+			Register_Descriptor * result_register = machine_dscr_object.get_new_register();
+			Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
+
+			Compute_IC_Stmt *compute_stmt;
 			if(oper ==  UMINUS){
-				result.set_value(-1*lhsResult.get_int_value());
+				compute_stmt = new Compute_IC_Stmt(uminus, lhs_opd, NULL, register_opd);
 			}
 			if(oper == VAR){
-				result.set_value(lhsResult.get_int_value());
+				//result.set_value(lhsResult.get_int_value());
 			}
 			if(oper == I_NUM){
-				result.set_value(lhsResult.get_int_value());
+				compute_stmt = new Compute_IC_Stmt(mfc1, lhs_opd, NULL, register_opd);
 			}
 			return result;
 		}
