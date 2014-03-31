@@ -55,6 +55,7 @@ Register_Descriptor::Register_Descriptor(Spim_Register reg, string s, Register_V
 Register_Use_Category Register_Descriptor::get_use_category() 	{ return reg_use; }
 Spim_Register Register_Descriptor::get_register()             	{ return reg_id; }
 string Register_Descriptor::get_name()				{ return reg_name; }
+Register_Val_Type Register_Descriptor::get_value_type()		{return value_type;}
 bool Register_Descriptor::is_symbol_list_empty()         	{ return lra_symbol_list.empty(); }
 
 bool Register_Descriptor::is_free()
@@ -283,6 +284,21 @@ void Machine_Description::initialize_register_table()
 	spim_register_table[s5] = new Register_Descriptor(s5, "s5", int_num, gp_data);
 	spim_register_table[s6] = new Register_Descriptor(s6, "s6", int_num, gp_data);
 	spim_register_table[s7] = new Register_Descriptor(s7, "s7", int_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f2", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f4", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f6", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f8", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f10", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f12", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f14", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f16", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f18", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f20", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f22", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f24", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f26", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f28", float_num, gp_data);
+	spim_register_table[t8] = new Register_Descriptor(t8, "f30", float_num, gp_data);
 	spim_register_table[gp] = new Register_Descriptor(gp, "gp", int_num, pointer);
 	spim_register_table[sp] = new Register_Descriptor(sp, "sp", int_num, pointer);
 	spim_register_table[fp] = new Register_Descriptor(fp, "fp", int_num, pointer);
@@ -307,6 +323,11 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[goto_op] = new Instruction_Descriptor(goto_op, "goto", "j", "", i_op_o1, a_op_o1);
 
 	spim_instruction_table[bne] = new Instruction_Descriptor(bne, "bne", "bne", "", i_r_o1_op_o2, a_op_o1_o2_r);
+
+	spim_instruction_table[add] = new Instruction_Descriptor(add, "add", "add", "", i_r_o1_op_o2, a_op_o1_o2_r);
+	spim_instruction_table[sub] = new Instruction_Descriptor(sub, "sub", "sub", "", i_r_o1_op_o2, a_op_o1_o2_r);
+	spim_instruction_table[div_op] = new Instruction_Descriptor(div_op, "div", "div", "", i_r_o1_op_o2, a_op_o1_o2_r);
+	spim_instruction_table[mul] = new Instruction_Descriptor(mul, "mul", "mul", "", i_r_o1_op_o2, a_op_o1_o2_r);
 }
 
 void Machine_Description::validate_init_local_register_mapping()
@@ -338,6 +359,38 @@ void Machine_Description::clear_local_register_mappings()
 	consider storing all unstored values at the end of
 	a basic block.
 	*/
+}
+
+Register_Descriptor * Machine_Description::get_new_float_register()
+{
+	Register_Descriptor * reg_desc;
+
+	map<Spim_Register, Register_Descriptor *>::iterator i;
+	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+	{
+		reg_desc = i->second;
+
+		if ((reg_desc->is_free()) && (reg_desc->get_value_type() == float_num))
+			return reg_desc;
+	}
+
+	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+	{
+		reg_desc = i->second;
+		if ((reg_desc->get_use_category() == gp_data) && (reg_desc->get_value_type() == float_num) && (!reg_desc->is_symbol_list_empty()) && (reg_desc->used_for_expr_result == false))
+			reg_desc->clear_lra_symbol_list();
+	}
+
+	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
+	{
+		reg_desc = i->second;
+
+		if (reg_desc->is_free() && (reg_desc->get_value_type() == float_num))
+			return reg_desc;
+	}
+
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
+			"Error in get_new_float_reg or register requirements of input program cannot be met");
 }
 
 Register_Descriptor * Machine_Description::get_new_register()

@@ -52,6 +52,12 @@ Register_Descriptor * Ics_Opd::get_reg()
 		"The get_Reg method should not be called for a non-reg operand");
 }
 
+Data_Type Ics_Opd::get_opd_type()
+{
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
+		"The get_opd_type method should not be called");
+}
+
 Symbol_Table_Entry & Ics_Opd::get_symbol_entry()
 {
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
@@ -79,6 +85,11 @@ void Mem_Addr_Opd::print_ics_opd(ostream & file_buffer)
 	string name = symbol_entry->get_variable_name();
 
 	file_buffer << name;
+}
+
+Data_Type Mem_Addr_Opd::get_opd_type()
+{
+	return symbol_entry->get_data_type();
 }
 
 void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
@@ -113,6 +124,16 @@ Register_Addr_Opd& Register_Addr_Opd::operator=(const Register_Addr_Opd& rhs)
 	register_description = rhs.register_description ;
 
 	return *this;
+}
+
+Data_Type Register_Addr_Opd::get_opd_type()
+{
+	if(register_description->get_value_type() == int_num){
+		return int_data_type;
+	}
+	else if (register_description->get_value_type() == float_num){
+		return float_data_type;
+	}
 }
 
 void Register_Addr_Opd::print_ics_opd(ostream & file_buffer)
@@ -155,6 +176,17 @@ template <class DATA_TYPE>
 void Const_Opd<DATA_TYPE>::print_ics_opd(ostream & file_buffer)
 {
 	file_buffer << num;
+}
+
+template <class DATA_TYPE>
+Data_Type Const_Opd<DATA_TYPE>::get_opd_type()
+{
+	if(typeid(num) == typeid(int)){
+		return int_data_type;
+	}
+	else if (typeid(num) == typeid(float)){
+		return float_data_type;
+	}
 }
 
 template <class DATA_TYPE>
@@ -239,7 +271,11 @@ void Move_IC_Stmt::print_icode(ostream & file_buffer)
 	switch (ic_format)
 	{
 	case i_r_op_o1:
-			file_buffer << " " << operation_name << ":\t";
+			file_buffer << " " << operation_name
+			if((opd1.get_opd_type() == float_data_type) || (result.get_opd_type() == float_data_type)){
+				file_buffer << ".d";
+			}
+			file_buffer << ":\t";
 			result->print_ics_opd(file_buffer);
 			file_buffer << " <- ";
 			opd1->print_ics_opd(file_buffer);
@@ -321,6 +357,9 @@ void Label_IC_Stmt::print_icode(ostream & file_buffer)
 	{
 	case i_op_o1:
 			file_buffer << operation_name;
+			if(opd1.get_opd_type() == float_data_type){
+				file_buffer << ".d";
+			}
 			opd1->print_ics_opd(file_buffer);
 			file_buffer << ": \n";
 
@@ -397,6 +436,10 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 	{
 	case i_r_o1_op_o2:
 			file_buffer << " " << operation_name << ": ";
+			if((opd1.get_opd_type() == float_data_type) || (result.get_opd_type() == float_data_type) 
+				|| (opd2.get_opd_type() == float_data_type)){
+				file_buffer << ".d";
+			}
 			result->print_ics_opd(file_buffer);
 			file_buffer << " <- ";
 			opd1->print_ics_opd(file_buffer);
@@ -493,11 +536,19 @@ void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer)
 	case i_op_o1:
 			file_buffer <<" "<< operation_name;
 			file_buffer <<" label";
+			if(opd1.get_opd_type() == float_data_type){
+				file_buffer << ".d";
+			}
 			opd1->print_ics_opd(file_buffer);
 			file_buffer << "\n";
 			break;
 	case i_r_o1_op_o2:
 			file_buffer << " " << operation_name << ": ";
+			if((opd1.get_opd_type() == float_data_type) ||
+				(opd2.get_opd_type() == float_data_type) ||
+				(result.get_opd_type() == float_data_type)){
+				file_buffer << ".d";
+			}
 			opd1->print_ics_opd(file_buffer);
 			file_buffer << " , ";
 			opd2->print_ics_opd(file_buffer);
@@ -610,3 +661,4 @@ Instruction_Descriptor::Instruction_Descriptor()
 }
 
 template class Const_Opd<int>;
+template class Const_Opd<float>;

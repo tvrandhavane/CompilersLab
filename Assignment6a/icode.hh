@@ -88,6 +88,10 @@ typedef enum
 	sne,
 	goto_op,
 	bne,
+	add,
+	sub,
+	mul,
+	div_op,
 	nop
 } Tgt_Op;
 
@@ -138,7 +142,7 @@ public:
 	Opd_Category get_opd_category();
 	virtual Register_Descriptor * get_reg();
 	virtual Symbol_Table_Entry & get_symbol_entry();
-
+	virtual Data_Type get_opd_type();
 	/* Operands are printed differently in icode and assembly code */
 
 	virtual void print_ics_opd(ostream & file_buffer) = 0;
@@ -153,6 +157,7 @@ public:
 	Mem_Addr_Opd(Symbol_Table_Entry & se);
 	~Mem_Addr_Opd() {}
 
+	Data_Type get_opd_type();
 	void print_ics_opd(ostream & file_buffer);
 	void print_asm_opd(ostream & file_buffer);
 
@@ -167,6 +172,7 @@ public:
 	Register_Addr_Opd(Register_Descriptor * rd);
 	~Register_Addr_Opd() {}
 
+	Data_Type get_opd_type();
 	Register_Descriptor * get_reg();
 	void print_ics_opd(ostream & file_buffer);
 	void print_asm_opd(ostream & file_buffer);
@@ -185,7 +191,7 @@ public:
 
 	void print_ics_opd(ostream & file_buffer);
 	void print_asm_opd(ostream & file_buffer);
-
+	Data_Type get_opd_type();
 	Const_Opd & operator=(const Const_Opd & rhs);
 };
 
