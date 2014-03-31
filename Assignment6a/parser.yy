@@ -29,6 +29,7 @@
 %union
 {
 	int integer_value;
+	float float_value;
 	std::string * string_value;
 	list<Ast *> * ast_list;
 	Ast * ast;
@@ -40,10 +41,13 @@
 };
 
 %token <integer_value> INTEGER_NUMBER BBNUM
+%token <float_value> FLOAT_NUMBER
 %token <string_value> NAME
-%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP
+%token RETURN INTEGER IF ELSE GOTO ASSIGN_OP FLOAT DOUBLE
 %left ne eq
 %left lt le gt ge
+%left ADD_OP SUB_OP
+%left MULT_OP DIV_OP
 %type <symbol_table> declaration_statement_list
 %type <symbol_entry> declaration_statement
 %type <basic_block_list> basic_block_list
@@ -54,12 +58,12 @@
 %type <ast> goto_statement
 %type <ast> assignment_statement
 %type <ast> relational_expression
+%type <ast> arithmetic_expression
 %type <ast> expression
+%type <ast> variable_or_constant_typecast
 %type <ast> variable_or_constant
 %type <ast> variable
 %type <ast> constant
-
-
 
 %start program
 
@@ -466,7 +470,7 @@ relational_expression:
 ;
 
 expression:
-	variable_or_constant
+	arithmetic_expression
 	{
 		if(NOT_ONLY_PARSE)
 		{
@@ -490,6 +494,114 @@ expression:
 		}
 	}
 
+;
+
+arithmetic_expression:
+	SUB_OP variable_or_constant_typecast
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($2, UMINUS, NULL, line);
+			$$->check_ast();
+		}
+
+	}
+|
+	arithmetic_expression ADD_OP arithmetic_expression
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($1, PLUS, $3, line);
+			$$->check_ast();
+		}
+
+	}
+|
+	arithmetic_expression SUB_OP arithmetic_expression
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($1, MINUS, $3, line);
+			$$->check_ast();
+		}
+
+	}
+|
+	arithmetic_expression MULT_OP arithmetic_expression
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($1, MULT, $3, line);
+			$$->check_ast();
+		}
+	}
+|
+	arithmetic_expression DIV_OP arithmetic_expression
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($1, DIV, $3, line);
+			$$->check_ast();
+		}
+	}
+|
+	variable_or_constant_typecast
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($1, VAR, NULL, line);
+			$$->check_ast();
+		}
+
+	}
+;
+
+variable_or_constant_typecast:
+	'(' FLOAT ')' variable_or_constant
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL, line);
+			$$->check_ast();
+		}
+	}
+
+|
+	'(' DOUBLE ')' variable_or_constant
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($4, F_NUM, NULL, line);
+			$$->check_ast();
+		}
+	}
+|
+	'(' INTEGER ')' variable_or_constant
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			int line = get_line_number();
+			$$ = new Arithmetic_Expr_Ast($4, I_NUM, NULL, line);
+			$$->check_ast();
+		}
+	}
+|
+
+	variable_or_constant
+	{
+		if(NOT_ONLY_PARSE)
+		{
+			$$ = $1;
+		}
+	}
 ;
 
 variable_or_constant:
@@ -548,6 +660,14 @@ constant:
 			Ast * num_ast = new Number_Ast<int>(num, int_data_type, get_line_number());
 
 			$$ = num_ast;
+		}
+	}
+
+|	FLOAT_NUMBER
+	{
+		if (NOT_ONLY_PARSE)
+		{
+			$$ = new Number_Ast<float>($1, float_data_type, get_line_number());
 		}
 	}
 ;

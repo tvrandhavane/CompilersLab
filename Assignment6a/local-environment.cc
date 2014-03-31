@@ -39,6 +39,13 @@ int Eval_Result::get_int_value()
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
 }
 
+float Eval_Result::get_float_value()
+{
+	stringstream msg;
+	msg << "No get_value() function for " << typeid(*this).name();
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
+}
+
 void Eval_Result::set_value(int number)
 {
 	stringstream msg;
@@ -115,6 +122,48 @@ void Eval_Result_Value_Int::set_result_enum(Result_Enum res)
 }
 
 Result_Enum Eval_Result_Value_Int::get_result_enum()
+{
+	return result_type;
+}
+//////////////////////////////////////////////////////////////////////////////
+
+Eval_Result_Value_Float::Eval_Result_Value_Float()
+{
+	value = 0;
+	defined = false;
+	result_type = int_result;
+}
+
+Eval_Result_Value_Float::~Eval_Result_Value_Float()
+{ }
+
+void Eval_Result_Value_Float::set_value(float number)
+{
+	value = number;
+	defined = true;
+}
+
+float Eval_Result_Value_Float::get_float_value()
+{
+	return value;
+}
+
+void Eval_Result_Value_Float::set_variable_status(bool def)
+{
+	defined = def;
+}
+
+bool Eval_Result_Value_Float::is_variable_defined()
+{
+	return defined;
+}
+
+void Eval_Result_Value_Float::set_result_enum(Result_Enum res)
+{
+	result_type = res;
+}
+
+Result_Enum Eval_Result_Value_Float::get_result_enum()
 {
 	return result_type;
 }

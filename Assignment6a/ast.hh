@@ -38,6 +38,7 @@ using namespace std;
 
 class Ast;
 enum relational_operators{LE, LT, GT, GE, EQ, NE, AND, NOT, OR};
+enum arithmetic_operators{PLUS, MINUS, MULT, DIV, UMINUS,F_NUM, I_NUM, VAR};
 
 class Ast
 {
@@ -89,6 +90,27 @@ public:
 	bool check_ast();
 	int get_successor();
 	Data_Type get_data_type();
+	void print(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+
+	Code_For_Ast & compile();
+	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
+
+class Arithmetic_Expr_Ast:public Ast
+{
+	Ast * lhs;
+	Ast * rhs;
+	arithmetic_operators oper;
+	int successor;
+public:
+	Arithmetic_Expr_Ast(Ast * temp_lhs, arithmetic_operators temp_oper, Ast * temp_rhs, int line);
+	~Arithmetic_Expr_Ast();
+
+	Data_Type get_data_type();
+	bool check_ast();
+	int get_successor();
 	void print(ostream & file_buffer);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);

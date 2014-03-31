@@ -364,7 +364,279 @@ Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	return *relational_stmt;
 }
 ////////////////////////////////////////////////////////////////
+Arithmetic_Expr_Ast::Arithmetic_Expr_Ast(Ast * temp_lhs, arithmetic_operators temp_oper, Ast * temp_rhs, int line){
 
+	lhs = temp_lhs;
+	rhs = temp_rhs;
+	oper = temp_oper;
+	successor = -1;
+
+	ast_num_child = binary_arity;
+	node_data_type = void_data_type;
+
+	lineno = line;
+
+
+}
+
+Arithmetic_Expr_Ast::~Arithmetic_Expr_Ast()
+{
+	delete lhs;
+	delete rhs;
+}
+
+Data_Type Arithmetic_Expr_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Arithmetic_Expr_Ast::check_ast()
+{
+
+	if(rhs != NULL){
+		if (lhs->get_data_type() == rhs->get_data_type())
+		{
+			node_data_type = lhs->get_data_type();
+			return true;
+		}
+	}
+	else{
+		if(oper == UMINUS){
+			node_data_type = lhs->get_data_type();
+		}
+		else if(oper == I_NUM){
+			node_data_type = int_data_type;
+		}
+		else if(oper == F_NUM){
+			node_data_type = float_data_type;
+		}
+		else if(oper == VAR){
+			node_data_type = lhs->get_data_type();
+		}
+		return true;
+	}
+
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,"Arithmetic expression data type not compatible");
+}
+
+void Arithmetic_Expr_Ast::print(ostream & file_buffer)
+{
+	if (oper == VAR || oper == F_NUM || oper == I_NUM){
+		CHECK_INVARIANT((lhs != NULL), "Lhs of Arithmetic_Expr_Ast cannot be null");
+		lhs->print(file_buffer);
+	}
+	else{
+		file_buffer << "\n";
+		file_buffer << AST_NODE_SPACE << "Arith: ";
+		if (oper == PLUS) {
+			file_buffer << "PLUS\n";
+		}
+		else if (oper == MINUS) {
+			file_buffer << "MINUS\n";
+		}
+		else if (oper == MULT) {
+			file_buffer << "MULT\n";
+		}
+		else if (oper == DIV){
+			file_buffer << "DIV\n";
+		}
+		else if (oper == UMINUS){
+			file_buffer << "UMINUS\n";
+		}
+
+		file_buffer << AST_SUB_NODE_SPACE << "LHS (";
+		CHECK_INVARIANT((lhs != NULL), "Lhsof Arithmetic_Expr_Ast cannot be null");
+		lhs->print(file_buffer);
+		file_buffer << ")";
+		if (oper != I_NUM && oper != F_NUM && oper != UMINUS){
+			file_buffer << "\n" << AST_SUB_NODE_SPACE << "RHS (";
+			CHECK_INVARIANT((rhs != NULL), "Rhs of Arithmetic_Expr_Ast cannot be null");
+			rhs->print(file_buffer);
+			file_buffer << ")";
+		}
+	}
+}
+
+int Arithmetic_Expr_Ast::get_successor(){
+	return successor;
+}
+
+Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+	CHECK_INVARIANT((lhs != NULL), "Lhs of Arithmetic_Expr_Ast cannot be null");
+	Eval_Result & lhsResult = lhs->evaluate(eval_env, file_buffer);
+	if(rhs != NULL){
+		Eval_Result & rhsResult = rhs->evaluate(eval_env, file_buffer);
+		CHECK_INVARIANT((rhs != NULL), "Rhs of Arithmetic_Expr_Ast cannot be null");
+		if(lhs->get_data_type() == int_data_type && rhs->get_data_type() == int_data_type){
+
+			Eval_Result & result = *new Eval_Result_Value_Int();
+			if(oper == PLUS){
+				int lh_result = lhsResult.get_int_value();
+				int rh_result = rhsResult.get_int_value();
+				int res = lh_result + rh_result;
+				result.set_value(res);
+			}
+			if(oper == MINUS){
+				int lh_result = lhsResult.get_int_value();
+				int rh_result = rhsResult.get_int_value();
+				int res = lh_result - rh_result;
+				result.set_value(res);
+			}
+			if(oper == DIV){
+				if(rhsResult.get_int_value() != 0){
+					int lh_result = lhsResult.get_int_value();
+					int rh_result = rhsResult.get_int_value();
+					int res = lh_result / rh_result;
+					result.set_value(res);
+				}
+				else{
+					CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Division by zero");
+				}
+			}
+			if(oper == MULT){
+				int lh_result = lhsResult.get_int_value();
+				int rh_result = rhsResult.get_int_value();
+				int res = lh_result * rh_result;
+				result.set_value(res);
+			}
+			return result;
+		}
+		else if(lhs->get_data_type() == float_data_type && rhs->get_data_type() == float_data_type){
+
+			Eval_Result & result = *new Eval_Result_Value_Float();
+			if(oper == PLUS){
+				result.set_value(lhsResult.get_float_value() + rhsResult.get_float_value() );
+			}
+			if(oper == MINUS){
+				result.set_value(lhsResult.get_float_value() - rhsResult.get_float_value() );
+			}
+			if(oper == DIV){
+				if(rhsResult.get_float_value() != 0){
+					result.set_value(lhsResult.get_float_value() / rhsResult.get_float_value());
+				}
+				else{
+					CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Division by zero");
+				}
+			}
+			if(oper == MULT){
+				result.set_value(lhsResult.get_float_value() * rhsResult.get_float_value());
+			}
+			return result;
+		}
+	}
+	else{
+		if(oper == F_NUM){
+			Eval_Result_Value_Float & result = *new Eval_Result_Value_Float();
+			//file_buffer << fixed << setprecision(2) << lhsResult.get_value();
+			result.set_value(lhsResult.get_float_value());
+			return result;
+		}
+		else if(lhs->get_data_type() == int_data_type){
+			Eval_Result_Value_Int & result = *new Eval_Result_Value_Int();
+			if(oper ==  UMINUS){
+				result.set_value(-1*lhsResult.get_int_value());
+			}
+			if(oper == VAR){
+				result.set_value(lhsResult.get_int_value());
+			}
+			if(oper == I_NUM){
+				result.set_value(lhsResult.get_int_value());
+			}
+			return result;
+		}
+		else{
+			Eval_Result_Value_Float & result = *new Eval_Result_Value_Float();
+			if(oper ==  UMINUS){
+				result.set_value(-1*lhsResult.get_float_value());
+			}
+			if(oper == VAR){
+				result.set_value(lhsResult.get_float_value());
+			}
+			if(oper == I_NUM){
+				result.set_value(lhsResult.get_float_value());
+			}
+			return result;
+		}
+	}
+}
+
+Code_For_Ast & Arithmetic_Expr_Ast::compile()
+{
+	/*
+		An assignment x = y where y is a variable is
+		compiled as a combination of load and store statements:
+		(load) R <- y
+		(store) x <- R
+		If y is a constant, the statement is compiled as:
+		(imm_Load) R <- y
+		(store) x <- R
+		where imm_Load denotes the load immediate operation.
+	*/
+
+	// CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	// CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+	// Code_For_Ast & load_stmt = rhs->compile();
+
+	// Register_Descriptor * load_register = load_stmt.get_reg();
+
+	// Code_For_Ast store_stmt = lhs->create_store_stmt(load_register);
+
+	// // Store the statement in ic_list
+
+	// list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	// if (load_stmt.get_icode_list().empty() == false)
+	// 	ic_list = load_stmt.get_icode_list();
+
+	// if (store_stmt.get_icode_list().empty() == false)
+	// 	ic_list.splice(ic_list.end(), store_stmt.get_icode_list());
+
+	// Code_For_Ast * assign_stmt;
+	// if (ic_list.empty() == false)
+	// 	assign_stmt = new Code_For_Ast(ic_list, load_register);
+
+	// return *assign_stmt;
+}
+
+Code_For_Ast & Arithmetic_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
+{
+	// CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
+	// CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
+
+	// if(typeid(*rhs) != typeid(Relational_Expr_Ast)){
+	// 	lra.optimize_lra(mc_2m, lhs, rhs);
+	// }
+
+	// Code_For_Ast load_stmt = rhs->compile_and_optimize_ast(lra);
+
+	// Register_Descriptor * result_register = load_stmt.get_reg();
+
+	// Symbol_Table_Entry *new_entry = &(lhs->get_symbol_entry());
+
+	// Register_Descriptor * curr_register = new_entry->get_register();
+	// if(curr_register != NULL){
+	// 	new_entry->free_register(curr_register);
+	// }
+	// new_entry->update_register(result_register);
+
+	// Code_For_Ast store_stmt = lhs->create_store_stmt(result_register);
+
+	// list<Icode_Stmt *> ic_list;
+
+	// if (load_stmt.get_icode_list().empty() == false)
+	// 	ic_list = load_stmt.get_icode_list();
+
+	// if (store_stmt.get_icode_list().empty() == false)
+	// 	ic_list.splice(ic_list.end(), store_stmt.get_icode_list());
+
+	// Code_For_Ast * assign_stmt;
+	// if (ic_list.empty() == false)
+	// 	assign_stmt = new Code_For_Ast(ic_list, result_register);
+
+	// return *assign_stmt;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
 Assignment_Ast::Assignment_Ast(Ast * temp_lhs, Ast * temp_rhs, int line)
 {
 	lhs = temp_lhs;
@@ -1025,3 +1297,4 @@ Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 }
 
 template class Number_Ast<int>;
+template class Number_Ast<float>;
