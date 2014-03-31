@@ -72,7 +72,7 @@ void Register_Descriptor::remove_symbol_entry_from_list(Symbol_Table_Entry & sym
 
 bool Register_Descriptor::is_unique_lra_symbol(){
 	if(lra_symbol_list.size() > 1){
-		return true;
+		return false;
 	}
 }
 
@@ -166,7 +166,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		{
 			destination_symbol_entry = &(destination_memory->get_symbol_entry());
 			destination_register = destination_symbol_entry->get_register();
-			if(destination_register != NULL && destination_register->is_unique_lra_symbol()){
+			if(destination_register != NULL && (!destination_register->is_unique_lra_symbol())){
 				destination_register = NULL;
 			}
 		}

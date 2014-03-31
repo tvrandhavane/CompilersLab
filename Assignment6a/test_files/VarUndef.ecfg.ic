@@ -1,8 +1,0 @@
-  Procedure: main
-  Intermediate Code Statements
-
-label2: 
- load:	v0 <- a
- load:	t0 <- b
- seq: t1 <- v0 , t0
- store:	c <- t1
