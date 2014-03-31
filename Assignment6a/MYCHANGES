@@ -1,0 +1,30 @@
+
+Tanmay Randhavane	110050010
+Alok yadav			110050043
+
+My Changes:
+
+In ast.cc:
+1.	Added function compile_and_optimize_ast in Relational_Expr_Ast, If_Else_Ast and Goto_Ast
+2.	Modified the function compile_and_optimize_ast in Assignment_ast so as to not apply any optimization if RHS is relational_ast and free up a register when lhs's register is not null.
+
+In icode.cc:
+1.	Added print_assembly function to Label_IC_Stmt, Compute_IC_Stmt, Control_Flow_IC_Stmt.
+
+In parser.yy:
+1.	Added a check for valid basic block numbers in goto_statement.
+
+In procedure.cc:
+1.	Added a function to check for valid basic block numbers in goto_statement.
+
+In procedure.hh:
+1.	Added a list to store the number of basic block numbers used in goto_statement.
+2.	Added a function declaration to check for valid basic block numbers in goto_statement.
+
+In reg_alloc.cc:
+1.	Added a function is_unique_lra_symbol to check whether the register is allocated to more than one symbol.
+2.	Added an if condition for Number_ast in mc_2r case of optimize_lra to set the register to NULL in that case.
+3.	Added NULL checks for destination_register and destination_symbol_entry in optimiza_lra.
+
+In reg_alloc.hh:
+1.	Added the function declaration is_unique_lra_symbol.

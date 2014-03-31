@@ -1,0 +1,55 @@
+
+	.text 			# The .text assembler directive indicates
+	.globl main		# The following is the code (as oppose to data)
+main:				# .globl makes main know to the 
+				# outside of the program.
+# Prologue begins 
+	sw $fp, 0($sp)		# Save the frame pointer
+	sub $fp, $sp, 4		# Update the frame pointer
+
+	sub $sp, $sp, 36		# Make space for the locals
+# Prologue ends
+
+
+label2: 
+	li $v0, 3
+	sw $v0, -24($fp)
+	li $t0, 10
+	sw $t0, -20($fp)
+	li $t1, 2
+	sw $t1, -16($fp)
+	li $t2, 1
+	sw $t2, -12($fp)
+	li $t3, 4
+	sw $t3, -8($fp)
+	li $t4, 8
+	sw $t4, -4($fp)
+	li $t5, 11
+	sw $t5, 0($fp)
+	sgt $t6, $t0, $t1
+	bne $t6, $zero, label3 
+	j label4
+
+label3: 
+	lw $v0, -12($fp)
+	lw $t0, -8($fp)
+	sgt $t1, $v0, $t0
+	sw $t1, -28($fp)
+	j label5
+
+label4: 
+	lw $v0, -4($fp)
+	lw $t0, 0($fp)
+	sge $t1, $v0, $t0
+	sw $t1, -28($fp)
+
+label5: 
+	lw $v0, -28($fp)
+	sw $v0, -24($fp)
+
+# Epilogue Begins
+	add $sp, $sp, 36
+	lw $fp, 0($sp)  
+	jr        $31		# Jump back to the operating system.
+# Epilogue Ends
+
