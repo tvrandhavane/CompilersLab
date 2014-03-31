@@ -54,7 +54,7 @@ typedef enum
 
 typedef enum
 {
-	int_num
+	int_num,
   float_num
 } Register_Val_Type;
 
@@ -249,6 +249,7 @@ public:
 	void clear_local_register_mappings();
 
 	Register_Descriptor * get_new_register();
+  Register_Descriptor * get_new_float_register();
 };
 
 extern Machine_Description machine_dscr_object;

@@ -1,0 +1,6 @@
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    
+ iLoad:	v0 <- 1111111111
+ store:	a <- t0

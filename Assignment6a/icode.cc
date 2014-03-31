@@ -271,8 +271,8 @@ void Move_IC_Stmt::print_icode(ostream & file_buffer)
 	switch (ic_format)
 	{
 	case i_r_op_o1:
-			file_buffer << " " << operation_name
-			if((opd1.get_opd_type() == float_data_type) || (result.get_opd_type() == float_data_type)){
+			file_buffer << " " << operation_name;
+			if((opd1->get_opd_type() == float_data_type) || (result->get_opd_type() == float_data_type)){
 				file_buffer << ".d";
 			}
 			file_buffer << ":\t";
@@ -357,11 +357,8 @@ void Label_IC_Stmt::print_icode(ostream & file_buffer)
 	{
 	case i_op_o1:
 			file_buffer << operation_name;
-			if(opd1.get_opd_type() == float_data_type){
-				file_buffer << ".d";
-			}
 			opd1->print_ics_opd(file_buffer);
-			file_buffer << ": \n";
+			file_buffer << ":    \n";
 
 			break;
 
@@ -435,11 +432,12 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 	switch (ic_format)
 	{
 	case i_r_o1_op_o2:
-			file_buffer << " " << operation_name << ": ";
-			if((opd1.get_opd_type() == float_data_type) || (result.get_opd_type() == float_data_type) 
-				|| (opd2.get_opd_type() == float_data_type)){
+			file_buffer << " " << operation_name;
+			if((opd1->get_opd_type() == float_data_type) || (result->get_opd_type() == float_data_type) 
+				|| (opd2->get_opd_type() == float_data_type)){
 				file_buffer << ".d";
 			}
+			file_buffer << ":\t";
 			result->print_ics_opd(file_buffer);
 			file_buffer << " <- ";
 			opd1->print_ics_opd(file_buffer);
@@ -448,7 +446,14 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 			file_buffer << "\n";
 
 			break;
+	case i_r_op_o1:
+			file_buffer << " " << operation_name << ": ";
+			result->print_ics_opd(file_buffer);
+			file_buffer << " <- ";
+			opd1->print_ics_opd(file_buffer);
+			file_buffer << "\n";
 
+			break;
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
 				"Intermediate code format not supported");
 		break;
@@ -536,7 +541,7 @@ void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer)
 	case i_op_o1:
 			file_buffer <<" "<< operation_name;
 			file_buffer <<" label";
-			if(opd1.get_opd_type() == float_data_type){
+			if(opd1->get_opd_type() == float_data_type){
 				file_buffer << ".d";
 			}
 			opd1->print_ics_opd(file_buffer);
@@ -544,9 +549,9 @@ void Control_Flow_IC_Stmt::print_icode(ostream & file_buffer)
 			break;
 	case i_r_o1_op_o2:
 			file_buffer << " " << operation_name << ": ";
-			if((opd1.get_opd_type() == float_data_type) ||
-				(opd2.get_opd_type() == float_data_type) ||
-				(result.get_opd_type() == float_data_type)){
+			if((opd1->get_opd_type() == float_data_type) ||
+				(opd2->get_opd_type() == float_data_type) ||
+				(result->get_opd_type() == float_data_type)){
 				file_buffer << ".d";
 			}
 			opd1->print_ics_opd(file_buffer);

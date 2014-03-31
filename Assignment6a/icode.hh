@@ -92,6 +92,9 @@ typedef enum
 	sub,
 	mul,
 	div_op,
+	mfc1,
+	mtc1,
+	uminus,
 	nop
 } Tgt_Op;
 
