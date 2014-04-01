@@ -1,0 +1,44 @@
+Program:
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 4)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3)
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 2)
+         Asgn:
+            LHS (Name : d)
+            RHS (Num : 10)
+         If_Else statement:
+            Condition: GT
+               LHS (
+            Condition: GT
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Name : d)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 3
+
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 10)
+         Goto statement:
+            Successor: 5
+      Basic_Block 4
+
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 11)
+      Basic_Block 5
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Name : iftmp0)
+         Return <NOTHING>

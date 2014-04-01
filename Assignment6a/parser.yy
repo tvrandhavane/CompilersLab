@@ -227,8 +227,15 @@ declaration_statement:
 			CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
 			$$ = new Symbol_Table_Entry(*$2, int_data_type, get_line_number());
 		}
-
-
+	}
+|
+	FLOAT NAME ';'
+	{
+		if (NOT_ONLY_PARSE)
+		{
+			CHECK_INVARIANT(($2 != NULL), "Name cannot be null");
+			$$ = new Symbol_Table_Entry(*$2, float_data_type, get_line_number());
+		}
 	}
 ;
 
@@ -485,14 +492,6 @@ expression:
 			$$ = $1;
 		}
 	}
-|
-	'(' relational_expression ')'
-	{
-		if(NOT_ONLY_PARSE)
-		{
-			$$ = $2;
-		}
-	}
 
 ;
 
@@ -620,6 +619,20 @@ variable_or_constant:
 			$$ = $1;
 		}
 	}
+|
+	'('arithmetic_expression')'
+	{
+		if(NOT_ONLY_PARSE){
+			$$ = $2;
+		}
+	}
+|
+	'('relational_expression')'
+	{
+		if(NOT_ONLY_PARSE){
+			$$ = $2;
+		}
+	}
 ;
 
 
@@ -667,7 +680,8 @@ constant:
 	{
 		if (NOT_ONLY_PARSE)
 		{
-			$$ = new Number_Ast<float>($1, float_data_type, get_line_number());
+			float num = $1;
+			$$ = new Number_Ast<float>(num, float_data_type, get_line_number());
 		}
 	}
 ;

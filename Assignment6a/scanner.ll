@@ -128,7 +128,7 @@ goto	{
 				store_token_name("FNUM");
 
 				ParserBase::STYPE__ * val = getSval();
-				val->integer_value = atof(matched().c_str());
+				val->float_value = atof(matched().c_str());
 
 				return Parser::FLOAT_NUMBER;
 

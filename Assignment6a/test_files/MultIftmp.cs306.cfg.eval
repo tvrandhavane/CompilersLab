@@ -1,0 +1,98 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         iftmp0 : undefined
+         iftmp10 : undefined
+         iftmp11 : undefined
+         iftmp12 : undefined
+         iftmp3 : undefined
+
+
+      Basic Block: 2
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 2)
+         iftmp0 : 2
+
+
+         Asgn:
+            LHS (Name : iftmp3)
+            RHS (Num : 10)
+         iftmp3 : 10
+
+
+         Asgn:
+            LHS (Name : iftmp10)
+            RHS (Num : 11)
+         iftmp10 : 11
+
+
+         If_Else statement:
+            Condition: NE
+               LHS (Name : iftmp0)
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 4
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+         Asgn:
+            LHS (Name : iftmp12)
+            RHS (
+            Condition: GT
+               LHS (Name : iftmp3)
+               RHS (Num : 3))
+         iftmp12 : 1
+
+
+         Goto statement:
+            Successor: 5
+         GOTO (BB 5)
+
+      Basic Block: 5
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Name : iftmp12)
+         iftmp0 : 1
+
+
+         If_Else statement:
+            Condition: NE
+               LHS (Name : iftmp3)
+               RHS (Num : 0)
+            True Successor: 6
+            False Successor: 7
+         Condition True : Goto (BB 6)
+
+      Basic Block: 6
+         Asgn:
+            LHS (Name : iftmp11)
+            RHS (
+            Condition: GT
+               LHS (Name : iftmp0)
+               RHS (Name : iftmp3))
+         iftmp11 : 0
+
+
+         Goto statement:
+            Successor: 8
+         GOTO (BB 8)
+
+      Basic Block: 8
+         Asgn:
+            LHS (Name : iftmp10)
+            RHS (Name : iftmp11)
+         iftmp10 : 0
+
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         iftmp0 : 1
+         iftmp10 : 0
+         iftmp11 : 0
+         iftmp12 : 1
+         iftmp3 : 10
+   Global Variables (after evaluating):

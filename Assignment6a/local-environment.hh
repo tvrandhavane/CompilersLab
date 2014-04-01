@@ -49,7 +49,8 @@ protected:
 public:
 	virtual int get_int_value();
 	virtual float get_float_value();
-	virtual void set_value(int value);
+	virtual void set_value_int(int value);
+	virtual void set_value_float(float value);
 
 	virtual bool is_variable_defined();
 	virtual void set_variable_status(bool def);
@@ -61,7 +62,8 @@ public:
 class Eval_Result_Value:public Eval_Result
 {
 public:
-	virtual void set_value(int number);
+	virtual void set_value_int(int value);
+	virtual void set_value_float(float value);
 	virtual int get_int_value();
 
 	virtual bool is_variable_defined() = 0;
@@ -79,7 +81,7 @@ public:
 	Eval_Result_Value_Int();
 	~Eval_Result_Value_Int();
 
-	void set_value(int number);
+	void set_value_int(int number);
 	int get_int_value();
 
 	void set_variable_status(bool def);
@@ -97,7 +99,7 @@ public:
 	Eval_Result_Value_Float();
 	~Eval_Result_Value_Float();
 
-	void set_value(float number);
+	void set_value_float(float number);
 	float get_float_value();
 
 	void set_variable_status(bool def);

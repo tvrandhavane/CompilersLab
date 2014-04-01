@@ -149,11 +149,15 @@ Eval_Result & Program::evaluate()
 	ostream & file_buffer = command_options.get_output_buffer();
 	file_buffer << "Evaluating Program\n";
 	file_buffer << GLOB_SPACE << "Global Variables (before evaluating):\n";
+	file_buffer << std::fixed;
+	file_buffer << std::setprecision(2);
 	interpreter_global_table.print(file_buffer);
 
 	Eval_Result & result = main->evaluate(file_buffer);
 
 	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
+	file_buffer << std::fixed;
+	file_buffer << std::setprecision(2);
 	interpreter_global_table.print(file_buffer);
 
 	return result;

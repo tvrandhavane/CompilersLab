@@ -284,21 +284,21 @@ void Machine_Description::initialize_register_table()
 	spim_register_table[s5] = new Register_Descriptor(s5, "s5", int_num, gp_data);
 	spim_register_table[s6] = new Register_Descriptor(s6, "s6", int_num, gp_data);
 	spim_register_table[s7] = new Register_Descriptor(s7, "s7", int_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f2", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f4", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f6", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f8", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f10", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f12", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f14", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f16", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f18", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f20", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f22", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f24", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f26", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f28", float_num, gp_data);
-	spim_register_table[t8] = new Register_Descriptor(t8, "f30", float_num, gp_data);
+	spim_register_table[f2] = new Register_Descriptor(f2, "f2", float_num, gp_data);
+	spim_register_table[f4] = new Register_Descriptor(f4, "f4", float_num, gp_data);
+	spim_register_table[f6] = new Register_Descriptor(f6, "f6", float_num, gp_data);
+	spim_register_table[f8] = new Register_Descriptor(f8, "f8", float_num, gp_data);
+	spim_register_table[f10] = new Register_Descriptor(f10, "f10", float_num, gp_data);
+	spim_register_table[f12] = new Register_Descriptor(f12, "f12", float_num, gp_data);
+	spim_register_table[f14] = new Register_Descriptor(f14, "f14", float_num, gp_data);
+	spim_register_table[f16] = new Register_Descriptor(f16, "f16", float_num, gp_data);
+	spim_register_table[f18] = new Register_Descriptor(f18, "f18", float_num, gp_data);
+	spim_register_table[f20] = new Register_Descriptor(f20, "f20", float_num, gp_data);
+	spim_register_table[f22] = new Register_Descriptor(f22, "f22", float_num, gp_data);
+	spim_register_table[f24] = new Register_Descriptor(f24, "f24", float_num, gp_data);
+	spim_register_table[f26] = new Register_Descriptor(f26, "f26", float_num, gp_data);
+	spim_register_table[f28] = new Register_Descriptor(f28, "f28", float_num, gp_data);
+	spim_register_table[f30] = new Register_Descriptor(f30, "f30", float_num, gp_data);
 	spim_register_table[gp] = new Register_Descriptor(gp, "gp", int_num, pointer);
 	spim_register_table[sp] = new Register_Descriptor(sp, "sp", int_num, pointer);
 	spim_register_table[fp] = new Register_Descriptor(fp, "fp", int_num, pointer);
@@ -404,8 +404,7 @@ Register_Descriptor * Machine_Description::get_new_register()
 	for (i = spim_register_table.begin(); i != spim_register_table.end(); i++)
 	{
 		reg_desc = i->second;
-
-		if (reg_desc->is_free())
+		if (reg_desc->is_free() && (reg_desc->get_value_type() == int_num))
 			return reg_desc;
 	}
 
@@ -420,7 +419,7 @@ Register_Descriptor * Machine_Description::get_new_register()
 	{
 		reg_desc = i->second;
 
-		if (reg_desc->is_free())
+		if (reg_desc->is_free() && (reg_desc->get_value_type() == int_num))
 			return reg_desc;
 	}
 

@@ -46,10 +46,17 @@ float Eval_Result::get_float_value()
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
 }
 
-void Eval_Result::set_value(int number)
+void Eval_Result::set_value_int(int number)
 {
 	stringstream msg;
 	msg << "The set_value(int) function for " << typeid(*this).name();
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
+}
+
+void Eval_Result::set_value_float(float number)
+{
+	stringstream msg;
+	msg << "The set_value(float) function for " << typeid(*this).name();
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
 }
 
@@ -69,17 +76,24 @@ void Eval_Result::set_variable_status(bool def)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void Eval_Result_Value::set_value(int value)
+void Eval_Result_Value::set_value_float(float value)
 {
 	stringstream msg;
-	msg << "No set_value() fucntion for " << typeid(*this).name();
+	msg << "No set_value_float() fucntion for " << typeid(*this).name();
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
+}
+
+void Eval_Result_Value::set_value_int(int value)
+{
+	stringstream msg;
+	msg << "No set_value_int() fucntion for " << typeid(*this).name();
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
 }
 
 int Eval_Result_Value::get_int_value()
 {
 	stringstream msg;
-	msg << "No get_value() function for " << typeid(*this).name();
+	msg << "No get_int_value() function for " << typeid(*this).name();
 	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, msg.str());
 }
 
@@ -95,7 +109,7 @@ Eval_Result_Value_Int::Eval_Result_Value_Int()
 Eval_Result_Value_Int::~Eval_Result_Value_Int()
 { }
 
-void Eval_Result_Value_Int::set_value(int number)
+void Eval_Result_Value_Int::set_value_int(int number)
 {
 	value = number;
 	defined = true;
@@ -131,13 +145,13 @@ Eval_Result_Value_Float::Eval_Result_Value_Float()
 {
 	value = 0;
 	defined = false;
-	result_type = int_result;
+	result_type = float_result;
 }
 
 Eval_Result_Value_Float::~Eval_Result_Value_Float()
 { }
 
-void Eval_Result_Value_Float::set_value(float number)
+void Eval_Result_Value_Float::set_value_float(float number)
 {
 	value = number;
 	defined = true;
@@ -193,8 +207,12 @@ void Local_Environment::print(ostream & file_buffer)
 		
 			else
 			{
-				if (vi->get_result_enum() == int_result)
+				if (vi->get_result_enum() == int_result){
 					file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_int_value() << "\n";
+				}
+				else if(vi->get_result_enum() == float_result){
+					file_buffer << VAR_SPACE << (*i).first << " : " << vi->get_float_value() << "\n";
+				}
 			}
 		}
 	}

@@ -1,0 +1,118 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         d : undefined
+         e : undefined
+         f : undefined
+         g : undefined
+         h : undefined
+
+
+      Basic Block: 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 3)
+         a : 3
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 4)
+         b : 4
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 5)
+         c : 5
+
+
+         Asgn:
+            LHS (Name : d)
+            RHS (
+            Arith: DIV
+               LHS (Name : a)
+               RHS (
+            Arith: PLUS
+               LHS (Name : b)
+               RHS (Name : c)))
+         d : 0
+
+
+         Asgn:
+            LHS (Name : e)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: DIV
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (Name : c))
+         e : 5
+
+
+         Asgn:
+            LHS (Name : f)
+            RHS (
+            Arith: DIV
+               LHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (Name : c))
+         f : 1
+
+
+         Asgn:
+            LHS (Name : g)
+            RHS (
+            Arith: PLUS
+               LHS (
+            Arith: MINUS
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Name : a))
+         g : 2
+
+
+         Asgn:
+            LHS (Name : h)
+            RHS (
+            Arith: DIV
+               LHS (
+            Arith: MULT
+               LHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (Name : c))
+               RHS (
+            Condition: GT
+               LHS (
+            Arith: MINUS
+               LHS (Name : e)
+               RHS (Name : f))
+               RHS (
+            Arith: MINUS
+               LHS (Name : a)
+               RHS (Name : b))))
+         h : 35
+
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : 3
+         b : 4
+         c : 5
+         d : 0
+         e : 5
+         f : 1
+         g : 2
+         h : 35
+   Global Variables (after evaluating):

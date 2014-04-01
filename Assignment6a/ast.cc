@@ -182,57 +182,67 @@ Eval_Result & Relational_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 	CHECK_INPUT_AND_ABORT(lhsResult.is_variable_defined(), "Variable should be defined to be on lhs of Relational_Expr_Ast", lineno);
 	CHECK_INPUT_AND_ABORT(rhsResult.is_variable_defined(), "Variable should be defined to be on rhs of Relational_Expr_Ast", lineno);
 	Eval_Result & result = *new Eval_Result_Value_Int();
+	float lhs_val, rhs_val;
+	if(lhsResult.get_result_enum() == int_result)
+		lhs_val = lhsResult.get_int_value();
+	else
+		lhs_val = lhsResult.get_float_value();
+
+	if(rhsResult.get_result_enum() == int_result)
+		rhs_val = rhsResult.get_int_value();
+	else
+		rhs_val = rhsResult.get_float_value();
 	if(oper == GT){
-		if(lhsResult.get_int_value() > rhsResult.get_int_value()){
-			result.set_value(1);
+		if(lhs_val > rhs_val){
+			result.set_value_int(1);
 		}
 		else{
-			result.set_value(0);
+			result.set_value_int(0);
 		}
 		return result;
 	}
 	else if(oper == LT){
-		if(lhsResult.get_int_value() < rhsResult.get_int_value()){
-			result.set_value(1);
+		if(lhs_val < rhs_val){
+			result.set_value_int(1);
 		}
 		else{
-			result.set_value(0);
+			result.set_value_int(0);
 		}
 		return result;
 	}
 	else if(oper == GE){
-		if(lhsResult.get_int_value() >= rhsResult.get_int_value()){
-			result.set_value(1);
+		if(lhs_val >= rhs_val){
+			result.set_value_int(1);
 		}
 		else{
-			result.set_value(0);
+			result.set_value_int(0);
 		}
 		return result;
 	}
 	else if(oper == LE){
-		if(lhsResult.get_int_value() <= rhsResult.get_int_value()){
-			result.set_value(1);
+		if(lhs_val <= rhs_val){
+			result.set_value_int(1);
 		}
 		else{
-			result.set_value(0);
+			result.set_value_int(0);
 		}
 		return result;
 	}
 	else if(oper == EQ){
-		if(lhsResult.get_int_value() == rhsResult.get_int_value()){
-			result.set_value(1);
+		if(lhs_val == rhs_val){
+			result.set_value_int(1);
 		}
 		else{
-			result.set_value(0);
+			result.set_value_int(0);
 		}
 		return result;
 	}
 	else if(oper == NE){
-		if(lhsResult.get_int_value() != rhsResult.get_int_value()){
-			result.set_value(1);
+		if(lhs_val != rhs_val){
+			result.set_value_int(1);
 		}
 		else{
-			result.set_value(0);
+			result.set_value_int(0);
 		}
 		return result;
 	}
@@ -474,20 +484,20 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				int lh_result = lhsResult.get_int_value();
 				int rh_result = rhsResult.get_int_value();
 				int res = lh_result + rh_result;
-				result.set_value(res);
+				result.set_value_int(res);
 			}
 			if(oper == MINUS){
 				int lh_result = lhsResult.get_int_value();
 				int rh_result = rhsResult.get_int_value();
 				int res = lh_result - rh_result;
-				result.set_value(res);
+				result.set_value_int(res);
 			}
 			if(oper == DIV){
 				if(rhsResult.get_int_value() != 0){
 					int lh_result = lhsResult.get_int_value();
 					int rh_result = rhsResult.get_int_value();
 					int res = lh_result / rh_result;
-					result.set_value(res);
+					result.set_value_int(res);
 				}
 				else{
 					CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Division by zero");
@@ -497,7 +507,7 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 				int lh_result = lhsResult.get_int_value();
 				int rh_result = rhsResult.get_int_value();
 				int res = lh_result * rh_result;
-				result.set_value(res);
+				result.set_value_int(res);
 			}
 			return result;
 		}
@@ -505,55 +515,64 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 
 			Eval_Result & result = *new Eval_Result_Value_Float();
 			if(oper == PLUS){
-				result.set_value(lhsResult.get_float_value() + rhsResult.get_float_value() );
+				result.set_value_float(lhsResult.get_float_value() + rhsResult.get_float_value() );
 			}
 			if(oper == MINUS){
-				result.set_value(lhsResult.get_float_value() - rhsResult.get_float_value() );
+				result.set_value_float(lhsResult.get_float_value() - rhsResult.get_float_value() );
 			}
 			if(oper == DIV){
 				if(rhsResult.get_float_value() != 0){
-					result.set_value(lhsResult.get_float_value() / rhsResult.get_float_value());
+					result.set_value_float(lhsResult.get_float_value() / rhsResult.get_float_value());
 				}
 				else{
 					CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Division by zero");
 				}
 			}
 			if(oper == MULT){
-				result.set_value(lhsResult.get_float_value() * rhsResult.get_float_value());
+				result.set_value_float(lhsResult.get_float_value() * rhsResult.get_float_value());
 			}
 			return result;
 		}
 	}
 	else{
 		if(oper == F_NUM){
-			Eval_Result_Value_Float & result = *new Eval_Result_Value_Float();
-			//file_buffer << fixed << setprecision(2) << lhsResult.get_value();
-			result.set_value(lhsResult.get_float_value());
-			return result;
+			if(lhs->get_data_type() == int_data_type){
+				Eval_Result_Value_Float & result = *new Eval_Result_Value_Float();
+				//file_buffer << fixed << setprecision(2) << lhsResult.get_value();
+				result.set_value_float((float)lhsResult.get_int_value());
+				return result;
+			}
+			else{
+				return lhsResult;
+			}
+		}
+		else if(oper == I_NUM){
+			if(lhs->get_data_type() == float_data_type){
+				Eval_Result_Value_Int & result = *new Eval_Result_Value_Int();
+				result.set_value_int((int)lhsResult.get_float_value());
+				return result;
+			}
+			else{
+				return lhsResult;
+			}
 		}
 		else if(lhs->get_data_type() == int_data_type){
 			Eval_Result_Value_Int & result = *new Eval_Result_Value_Int();
 			if(oper ==  UMINUS){
-				result.set_value(-1*lhsResult.get_int_value());
+				result.set_value_int(-1*lhsResult.get_int_value());
 			}
 			if(oper == VAR){
-				result.set_value(lhsResult.get_int_value());
-			}
-			if(oper == I_NUM){
-				result.set_value(lhsResult.get_int_value());
+				result.set_value_int(lhsResult.get_int_value());
 			}
 			return result;
 		}
 		else{
 			Eval_Result_Value_Float & result = *new Eval_Result_Value_Float();
 			if(oper ==  UMINUS){
-				result.set_value(-1*lhsResult.get_float_value());
+				result.set_value_float(-1*lhsResult.get_float_value());
 			}
 			if(oper == VAR){
-				result.set_value(lhsResult.get_float_value());
-			}
-			if(oper == I_NUM){
-				result.set_value(lhsResult.get_float_value());
+				result.set_value_float(lhsResult.get_float_value());
 			}
 			return result;
 		}
@@ -653,27 +672,66 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile()
 	}
 	else{
 		if(oper == F_NUM){
-			Ics_Opd * lhs_opd = new Register_Addr_Opd(lhs_register);
+			if(lhs_register->get_value_type() == float_num){
+				lhs_register->used_for_expr_result = false;
+				return lhs_stmt;
+			}
+			else{
+				Ics_Opd * lhs_opd = new Register_Addr_Opd(lhs_register);
 
-			Register_Descriptor * result_register = machine_dscr_object.get_new_float_register();
-			Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
+				Register_Descriptor * result_register = machine_dscr_object.get_new_float_register();
+				Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
 
-			Compute_IC_Stmt *compute_stmt;
-			compute_stmt = new Compute_IC_Stmt(mtc1, lhs_opd, NULL, register_opd);
+				Compute_IC_Stmt *compute_stmt;
+				compute_stmt = new Compute_IC_Stmt(mtc1, lhs_opd, NULL, register_opd);
 
-			list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+				list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
-			if (lhs_stmt.get_icode_list().empty() == false)
-				ic_list = lhs_stmt.get_icode_list();
+				if (lhs_stmt.get_icode_list().empty() == false)
+					ic_list = lhs_stmt.get_icode_list();
 
-			ic_list.push_back(compute_stmt);
+				ic_list.push_back(compute_stmt);
 
-			Code_For_Ast * arithmetic_stmt;
-			if (ic_list.empty() == false)
-				arithmetic_stmt = new Code_For_Ast(ic_list, result_register);
+				Code_For_Ast * arithmetic_stmt;
+				if (ic_list.empty() == false)
+					arithmetic_stmt = new Code_For_Ast(ic_list, result_register);
 
+				lhs_register->used_for_expr_result = false;
+				return *arithmetic_stmt;
+			}
+		}
+		else if(oper == I_NUM){
+			if(lhs_register->get_value_type() == int_num){
+				lhs_register->used_for_expr_result = false;
+				return lhs_stmt;
+			}
+			else{
+				Ics_Opd * lhs_opd = new Register_Addr_Opd(lhs_register);
+
+				Register_Descriptor * result_register = machine_dscr_object.get_new_register();
+				Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
+
+				Compute_IC_Stmt *compute_stmt;
+				compute_stmt = new Compute_IC_Stmt(mfc1, lhs_opd, NULL, register_opd);
+
+				list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+				if (lhs_stmt.get_icode_list().empty() == false)
+					ic_list = lhs_stmt.get_icode_list();
+
+				ic_list.push_back(compute_stmt);
+
+				Code_For_Ast * arithmetic_stmt;
+				if (ic_list.empty() == false)
+					arithmetic_stmt = new Code_For_Ast(ic_list, result_register);
+
+				lhs_register->used_for_expr_result = false;
+				return *arithmetic_stmt;
+			}
+		}
+		else if(oper == VAR){
 			lhs_register->used_for_expr_result = false;
-			return *arithmetic_stmt;
+			return lhs_stmt;
 		}
 		else {
 			Register_Descriptor * result_register;
@@ -686,15 +744,7 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile()
 			Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
 
 			Compute_IC_Stmt *compute_stmt;
-			if(oper ==  UMINUS){
-				compute_stmt = new Compute_IC_Stmt(uminus, lhs_opd, NULL, register_opd);
-			}
-			if(oper == VAR){
-				compute_stmt = NULL;
-			}
-			if(oper == I_NUM){
-				compute_stmt = new Compute_IC_Stmt(mfc1, lhs_opd, NULL, register_opd);
-			}
+			compute_stmt = new Compute_IC_Stmt(uminus, lhs_opd, NULL, register_opd);
 
 			list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
@@ -807,27 +857,66 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	}
 	else{
 		if(oper == F_NUM){
-			Ics_Opd * lhs_opd = new Register_Addr_Opd(lhs_register);
+			if(lhs_register->get_value_type() == float_num){
+				lhs_register->used_for_expr_result = false;
+				return lhs_stmt;
+			}
+			else{
+				Ics_Opd * lhs_opd = new Register_Addr_Opd(lhs_register);
 
-			Register_Descriptor * result_register = machine_dscr_object.get_new_float_register();
-			Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
+				Register_Descriptor * result_register = machine_dscr_object.get_new_float_register();
+				Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
 
-			Compute_IC_Stmt *compute_stmt;
-			compute_stmt = new Compute_IC_Stmt(mtc1, lhs_opd, NULL, register_opd);
+				Compute_IC_Stmt *compute_stmt;
+				compute_stmt = new Compute_IC_Stmt(mtc1, lhs_opd, NULL, register_opd);
 
-			list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+				list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
-			if (lhs_stmt.get_icode_list().empty() == false)
-				ic_list = lhs_stmt.get_icode_list();
+				if (lhs_stmt.get_icode_list().empty() == false)
+					ic_list = lhs_stmt.get_icode_list();
 
-			ic_list.push_back(compute_stmt);
+				ic_list.push_back(compute_stmt);
 
-			Code_For_Ast * arithmetic_stmt;
-			if (ic_list.empty() == false)
-				arithmetic_stmt = new Code_For_Ast(ic_list, result_register);
+				Code_For_Ast * arithmetic_stmt;
+				if (ic_list.empty() == false)
+					arithmetic_stmt = new Code_For_Ast(ic_list, result_register);
 
+				lhs_register->used_for_expr_result = false;
+				return *arithmetic_stmt;
+			}
+		}
+		else if(oper == I_NUM){
+			if(lhs_register->get_value_type() == int_num){
+				lhs_register->used_for_expr_result = false;
+				return lhs_stmt;
+			}
+			else{
+				Ics_Opd * lhs_opd = new Register_Addr_Opd(lhs_register);
+
+				Register_Descriptor * result_register = machine_dscr_object.get_new_register();
+				Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
+
+				Compute_IC_Stmt *compute_stmt;
+				compute_stmt = new Compute_IC_Stmt(mfc1, lhs_opd, NULL, register_opd);
+
+				list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+				if (lhs_stmt.get_icode_list().empty() == false)
+					ic_list = lhs_stmt.get_icode_list();
+
+				ic_list.push_back(compute_stmt);
+
+				Code_For_Ast * arithmetic_stmt;
+				if (ic_list.empty() == false)
+					arithmetic_stmt = new Code_For_Ast(ic_list, result_register);
+
+				lhs_register->used_for_expr_result = false;
+				return *arithmetic_stmt;
+			}
+		}
+		else if(oper == VAR){
 			lhs_register->used_for_expr_result = false;
-			return *arithmetic_stmt;
+			return lhs_stmt;
 		}
 		else {
 			Register_Descriptor * result_register;
@@ -840,15 +929,7 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 			Ics_Opd * register_opd = new Register_Addr_Opd(result_register);
 
 			Compute_IC_Stmt *compute_stmt;
-			if(oper ==  UMINUS){
-				compute_stmt = new Compute_IC_Stmt(uminus, lhs_opd, NULL, register_opd);
-			}
-			if(oper == VAR){
-				compute_stmt = NULL;
-			}
-			if(oper == I_NUM){
-				compute_stmt = new Compute_IC_Stmt(mfc1, lhs_opd, NULL, register_opd);
-			}
+			compute_stmt = new Compute_IC_Stmt(uminus, lhs_opd, NULL, register_opd);
 
 			list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
@@ -923,19 +1004,16 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 {
 	CHECK_INVARIANT((rhs != NULL), "Rhs of Assignment_Ast cannot be null");
 	Eval_Result & result = rhs->evaluate(eval_env, file_buffer);
-
 	CHECK_INPUT_AND_ABORT(result.is_variable_defined(), "Variable should be defined to be on rhs of Assignment_Ast", lineno);
 
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
-
 	lhs->set_value_of_evaluation(eval_env, result);
-
 	// Print the result
 
 	print(file_buffer);
 
-	lhs->print_value(eval_env, file_buffer);
 
+	lhs->print_value(eval_env, file_buffer);
 	return result;
 }
 
@@ -958,8 +1036,6 @@ Code_For_Ast & Assignment_Ast::compile()
 	Code_For_Ast & load_stmt = rhs->compile();
 
 	Register_Descriptor * load_register = load_stmt.get_reg();
-	cout << load_register->get_name() << endl;
-
 	Code_For_Ast store_stmt = lhs->create_store_stmt(load_register);
 
 	// Store the statement in ic_list
@@ -1083,7 +1159,7 @@ Eval_Result & If_Else_Ast::evaluate(Local_Environment & eval_env, ostream & file
 		CHECK_INVARIANT((gotoFalse != NULL), "False Successor of If_Else_Ast cannot be null");
 		successor = gotoFalse->get_successor();
 	}
-	result.set_value(successor);
+	result.set_value_int(successor);
 	return result;
 }
 
@@ -1193,7 +1269,7 @@ Eval_Result & Goto_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 	// Print the result
 	print(file_buffer);
 	Eval_Result & result = *new Eval_Result_Value_Int();
-	result.set_value(bb);
+	result.set_value_int(bb);
 	file_buffer << "\n";
 	file_buffer << AST_SPACE << "GOTO (BB " << successor << ")\n";
 	successor = bb;
@@ -1340,9 +1416,9 @@ void Name_Ast::set_value_of_evaluation(Local_Environment & eval_env, Eval_Result
 		CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, "Type of a name can be int/float only", lineno);
 
 	if (result.get_result_enum() == int_result)
-	 	i->set_value(result.get_int_value());
+	 	i->set_value_int(result.get_int_value());
 	else if (result.get_result_enum() == float_result)
-		i->set_value(result.get_float_value());
+		i->set_value_float(result.get_float_value());
 	else
 		CHECK_INPUT_AND_ABORT(CONTROL_SHOULD_NOT_REACH, "Type of a name can be int/float only", lineno);
 
@@ -1460,15 +1536,14 @@ Eval_Result & Number_Ast<DATA_TYPE>::evaluate(Local_Environment & eval_env, ostr
 	if (node_data_type == int_data_type)
 	{
 		Eval_Result & result = *new Eval_Result_Value_Int();
-		result.set_value(constant);
+		result.set_value_int(constant);
 
 		return result;
 	}
 	else if(node_data_type == float_data_type)
 	{
 		Eval_Result & result = *new Eval_Result_Value_Float();
-		result.set_value(constant);
-
+		result.set_value_float(constant);
 		return result;
 	}
 }
