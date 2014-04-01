@@ -11,7 +11,7 @@ main:				# .globl makes main know to the
 # Prologue ends
 
 
-label2: 
+label2:    	
 	li $f2, 2.34
 	sw $f2, 4($fp)
 	li $f2, 2.1
@@ -20,19 +20,25 @@ label2:
 	sw $f2, 0($fp)
 	lw $f2, 2($fp)
 	lw $f4, 0($fp)
+	div $f6, $f2, $f4
 	lw $f2, 4($fp)
+	div $f4, $f6, $f2
 	lw $f2, 2($fp)
+	mul $f6, $f4, $f2
 	lw $f2, 4($fp)
+	add $f4, $f6, $f2
 	li $f2, 0
+	sne $v0, $f4, $f2
 	bne $v0, $zero, label3 
 	j label4
 
-label3: 
+label3:    	
 	lw $f2, 4($fp)
 	li $f4, 1
+	sub $f6, $f2, $f4
 	sw $f6, 4($fp)
 
-label4: 
+label4:    	
 
 #Epilogue Begins
 	add $sp, $sp, 4

@@ -11,7 +11,7 @@ main:				# .globl makes main know to the
 # Prologue ends
 
 
-label2: 
+label2:    	
 	li $v0, 3
 	sw $v0, 4($fp)
 	li $f2, 2.4

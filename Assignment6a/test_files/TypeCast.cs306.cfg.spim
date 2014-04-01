@@ -11,13 +11,16 @@ main:				# .globl makes main know to the
 # Prologue ends
 
 
-label2: 
+label2:    	
 	li $v0, 3
 	sw $v0, -14($fp)
 	li $f2, 2.3
 	sw $f2, 0($fp)
 	lw $v0, -14($fp)
+	mtc1:    	$f2 <- $v0
 	lw $f4, 0($fp)
+	div $f6, $f2, $f4
+	mfc1:    	$v0 <- $f6
 	sw $v0, -18($fp)
 
 # Epilogue Begins

@@ -11,7 +11,7 @@ main:				# .globl makes main know to the
 # Prologue ends
 
 
-label2: 
+label2:    	
 	li $v0, 3
 	sw $v0, -12($fp)
 	li $v0, 5
@@ -20,59 +20,65 @@ label2:
 	sw $v0, -4($fp)
 	lw $v0, -12($fp)
 	li $t0, 0
+	sne $t1, $v0, $t0
 	bne $t1, $zero, label3 
 	j label12
 
-label3: 
+label3:    	
 	lw $v0, -8($fp)
 	li $t0, 0
+	sne $t1, $v0, $t0
 	bne $t1, $zero, label4 
 	j label12
 
-label4: 
+label4:    	
 	lw $v0, -4($fp)
 	li $t0, 0
+	sne $t1, $v0, $t0
 	bne $t1, $zero, label5 
 	j label12
 
-label5: 
+label5:    	
 	lw $v0, -12($fp)
 	lw $t0, -8($fp)
+	sge $t1, $v0, $t0
 	bne $t1, $zero, label6 
 	j label9
 
-label6: 
+label6:    	
 	lw $v0, -12($fp)
 	lw $t0, -4($fp)
+	sge $t1, $v0, $t0
 	bne $t1, $zero, label7 
 	j label8
 
-label7: 
+label7:    	
 	lw $v0, -12($fp)
 	sw $v0, 0($fp)
 	j label12
 
-label8: 
+label8:    	
 	lw $v0, -4($fp)
 	sw $v0, 0($fp)
 	j label12
 
-label9: 
+label9:    	
 	lw $v0, -8($fp)
 	lw $t0, -4($fp)
+	sge $t1, $v0, $t0
 	bne $t1, $zero, label10 
 	j label11
 
-label10: 
+label10:    	
 	lw $v0, -8($fp)
 	sw $v0, 0($fp)
 	j label12
 
-label11: 
+label11:    	
 	lw $v0, -4($fp)
 	sw $v0, 0($fp)
 
-label12: 
+label12:    	
 
 # Epilogue Begins
 	add $sp, $sp, 20

@@ -14,7 +14,7 @@ main:				# .globl makes main know to the
 # Prologue ends
 
 
-label2: 
+label2:    	
 
 # Epilogue Begins
 	add $sp, $sp, 8

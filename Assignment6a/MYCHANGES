@@ -4,27 +4,63 @@ Alok yadav			110050043
 
 My Changes:
 
-In ast.cc:
-1.	Added function compile_and_optimize_ast in Relational_Expr_Ast, If_Else_Ast and Goto_Ast
-2.	Modified the function compile_and_optimize_ast in Assignment_ast so as to not apply any optimization if RHS is relational_ast and free up a register when lhs's register is not null.
+In symbol-table.hh:
+1.	Added an enum Data-Type float_data_type for float.
 
-In icode.cc:
-1.	Added print_assembly function to Label_IC_Stmt, Compute_IC_Stmt, Control_Flow_IC_Stmt.
+In symbol-table.cc:
+1.	Modified create function to create symbol tables for float variables.
+
+In scanner.ll:
+1.	Added grammar for float and double keywords
+2.	Added grammar for float numbers
+3.	Added grammar for arithmetic operators, +, -, * and /
+
+In reg-alloc.hh:
+1.	Added float registers, {f2, f4, f6, ..., f30}
+2.	Added register value type enum to have float register type
+3.	Added a function declaration to get value type of a register.
+4.	Added a function declaration to get a new float register.
+
+In reg-alloc.cc:
+1.	Added a function definition to get value type of a register.
+2.	Added initialization for float registers.
+3.	Added instructions for add, sub, mul, div_op, mfc1, mtc1, uminus
+4.	Added a function definition to get a new float register.
+
+In program.cc:
+1.	Modified print to print float variables correctly.
 
 In parser.yy:
-1.	Added a check for valid basic block numbers in goto_statement.
+1.	Added grammar rule for float variable declaration
+2.	Added grammar for arithmetic_expression
+3.	Added grammar for typecasted variables or constants
 
-In procedure.cc:
-1.	Added a function to check for valid basic block numbers in goto_statement.
+In local-environment.hh:
+1.	Added an enum Result-enum float_result for float.
+2.	Added a class declaration for Eval_Result_Value_Float
+3.	Declared functions to get and set int values and float values as per required.
 
-In procedure.hh:
-1.	Added a list to store the number of basic block numbers used in goto_statement.
-2.	Added a function declaration to check for valid basic block numbers in goto_statement.
+In local-environment.cc:
+1.	Added a class definition for Eval_Result_Value_Float
+2.	Defined functions to get and set int values and float values as per required.
+3.	Modified print to print float variables correctly.
 
-In reg_alloc.cc:
-1.	Added a function is_unique_lra_symbol to check whether the register is allocated to more than one symbol.
-2.	Added an if condition for Number_ast in mc_2r case of optimize_lra to set the register to NULL in that case.
-3.	Added NULL checks for destination_register and destination_symbol_entry in optimiza_lra.
+In icode.hh:
+1.	Added enum for new instructions for add, sub, mul, div_op, mfc1, mtc1, uminus
+2.	In Ics_opd, added function declaration to get opd_type (float or int)
 
-In reg_alloc.hh:
-1.	Added the function declaration is_unique_lra_symbol.
+In icode.cc:
+1.	In Ics_opd, added function definition to get opd_type (float or int)
+2.	Added a case of 1 operand,1 result in Compute_IC_Stmt for unary operators.
+
+In ast.hh:
+1.	Added enum for arithmetic operators
+2.	Added declaration for arithmetic_expr_ast class
+
+In ast.cc:
+1.	Modified relational_expr_ast to compare float numbers
+2.	Added definition for arithmetic_expr_ast class
+3.	Modified the print, set_value_of_evaluation and compile functions of name ast to print float numbers
+4.	Modified the evaluate and compile functions of number ast to print float numbers
+5.	Added definition for float number ast
+
