@@ -1,0 +1,145 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+
+
+      Basic Block: 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 1)
+         a : 1
+
+
+      Basic Block: 3
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 4
+            False Successor: 5
+         Condition False : Goto (BB 5)
+
+      Basic Block: 5
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : 1))
+         a : 2
+
+
+         Goto statement:
+            Successor: 3
+         GOTO (BB 3)
+
+      Basic Block: 3
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 4
+            False Successor: 5
+         Condition False : Goto (BB 5)
+
+      Basic Block: 5
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : 1))
+         a : 3
+
+
+         Goto statement:
+            Successor: 3
+         GOTO (BB 3)
+
+      Basic Block: 3
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 4
+            False Successor: 5
+         Condition False : Goto (BB 5)
+
+      Basic Block: 5
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : 1))
+         a : 4
+
+
+         Goto statement:
+            Successor: 3
+         GOTO (BB 3)
+
+      Basic Block: 3
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 4
+            False Successor: 5
+         Condition False : Goto (BB 5)
+
+      Basic Block: 5
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : 1))
+         a : 5
+
+
+         Goto statement:
+            Successor: 3
+         GOTO (BB 3)
+
+      Basic Block: 3
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 4
+            False Successor: 5
+         Condition False : Goto (BB 5)
+
+      Basic Block: 5
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : 1))
+         a : 6
+
+
+         Goto statement:
+            Successor: 3
+         GOTO (BB 3)
+
+      Basic Block: 3
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 4
+            False Successor: 5
+         Condition True : Goto (BB 4)
+
+      Basic Block: 4
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : 6
+   Global Variables (after evaluating):

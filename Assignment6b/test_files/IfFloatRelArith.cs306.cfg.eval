@@ -1,0 +1,125 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         d : undefined
+         e : undefined
+         iftmp0 : undefined
+         iftmp1 : undefined
+
+
+      Basic Block: 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2.30)
+         a : 2.30
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3.40)
+         b : 3.40
+
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 4.50)
+         c : 4.50
+
+
+         Asgn:
+            LHS (Name : d)
+            RHS (Num : 5.60)
+         d : 5.60
+
+
+         Asgn:
+            LHS (Name : e)
+            RHS (Num : 6.70)
+         e : 6.70
+
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: LE
+               LHS (
+            Arith: PLUS
+               LHS (Name : b)
+               RHS (Name : c))
+               RHS (Name : a))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 4
+         Condition False : Goto (BB 4)
+
+      Basic Block: 4
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 0.00)
+         iftmp0 : 0.00
+
+
+      Basic Block: 5
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GT
+               LHS (Name : iftmp0)
+               RHS (Name : d))
+               RHS (Num : 0)
+            True Successor: 6
+            False Successor: 7
+         Condition False : Goto (BB 7)
+
+      Basic Block: 7
+         Asgn:
+            LHS (Name : iftmp1)
+            RHS (Num : 0.00)
+         iftmp1 : 0.00
+
+
+      Basic Block: 8
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GT
+               LHS (Name : iftmp1)
+               RHS (
+            Arith: DIV
+               LHS (
+            Arith: MULT
+               LHS (Name : e)
+               RHS (Name : d))
+               RHS (Name : c)))
+               RHS (Num : 0)
+            True Successor: 9
+            False Successor: 10
+         Condition False : Goto (BB 10)
+
+      Basic Block: 10
+         Asgn:
+            LHS (Name : e)
+            RHS (
+            Arith: PLUS
+               LHS (Name : e)
+               RHS (Name : d))
+         e : 12.30
+
+
+      Basic Block: 11
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : 2.30
+         b : 3.40
+         c : 4.50
+         d : 5.60
+         e : 12.30
+         iftmp0 : 0.00
+         iftmp1 : 0.00
+   Global Variables (after evaluating):

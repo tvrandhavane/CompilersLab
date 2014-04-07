@@ -1,0 +1,92 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure main
+      Local Variables (before evaluating):
+         a : undefined
+         b : undefined
+         c : undefined
+         iftmp0 : undefined
+         iftmp1 : undefined
+
+
+      Basic Block: 2
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2.30)
+         a : 2.30
+
+
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3.40)
+         b : 3.40
+
+
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: GE
+               LHS (
+            Arith: MULT
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (Name : a))
+               RHS (Num : 0)
+            True Successor: 3
+            False Successor: 4
+         Condition True : Goto (BB 3)
+
+      Basic Block: 3
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 1.00)
+         iftmp0 : 1.00
+
+
+         Goto statement:
+            Successor: 5
+         GOTO (BB 5)
+
+      Basic Block: 5
+         If_Else statement:
+            Condition: NE
+               LHS (
+            Condition: LT
+               LHS (Name : iftmp0)
+               RHS (
+            Arith: MULT
+               LHS (Name : b)
+               RHS (Num : 2.00)))
+               RHS (Num : 0)
+            True Successor: 6
+            False Successor: 7
+         Condition True : Goto (BB 6)
+
+      Basic Block: 6
+         Asgn:
+            LHS (Name : iftmp1)
+            RHS (Num : 1.00)
+         iftmp1 : 1.00
+
+
+         Goto statement:
+            Successor: 8
+         GOTO (BB 8)
+
+      Basic Block: 8
+         Asgn:
+            LHS (Name : c)
+            RHS (Name : iftmp1)
+         c : 1.00
+
+
+         Return <NOTHING>
+
+
+      Local Variables (after evaluating):
+         a : 2.30
+         b : 3.40
+         c : 1.00
+         iftmp0 : 1.00
+         iftmp1 : 1.00
+   Global Variables (after evaluating):
