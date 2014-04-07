@@ -7,30 +7,30 @@ main:				# .globl makes main know to the
 	sw $fp, 0($sp)		# Save the frame pointer
 	sub $fp, $sp, 4		# Update the frame pointer
 
-	sub $sp, $sp, 6		# Make space for the locals
+	sub $sp, $sp, 16		# Make space for the locals
 # Prologue ends
 
 
 label2:    	
 	li $v0, 3
-	sw $v0, 2($fp)
-	li $f2, 2.3
-	sw $f2, 0($fp)
-	lw $v0, 2($fp)
+	sw $v0, -8($fp)
+	li.d $f2, 2.30
+	s.d $f2, 0($fp)
+	lw $v0, -8($fp)
 	li $t0, 0
 	seq $t1, $v0, $t0
 	bne $t1, $zero, label3 
 	j label4
 
 label3:    	
-	lw $f2, 0($fp)
-	mfc1:    	$v0 <- $f2
-	sw $v0, 2($fp)
+	l.d $f2, 0($fp)
+	mfc1 $v0, $f2
+	sw $v0, -8($fp)
 	j label7
 
 label4:    	
-	lw $f2, 0($fp)
-	li $f4, 0
+	l.d $f2, 0($fp)
+	li.d $f4, 0.00
 	sgt $v0, $f2, $f4
 	li $t0, 0
 	sne $t1, $v0, $t0
@@ -38,27 +38,27 @@ label4:
 	j label6
 
 label5:    	
-	lw $v0, 2($fp)
-	mtc1:    	$f2 <- $v0
-	sw $f2, 0($fp)
+	lw $v0, -8($fp)
+	mtc1 $f2, $v0
+	s.d $f2, 0($fp)
 	j label7
 
 label6:    	
-	lw $v0, 2($fp)
-	mtc1:    	$f2 <- $v0
-	lw $f4, 0($fp)
-	add $f6, $f2, $f4
-	mfc1:    	$v0 <- $f6
-	sw $v0, 2($fp)
-	lw $f2, 0($fp)
-	li $f4, 1
-	add $f6, $f2, $f4
-	sw $f6, 0($fp)
+	lw $v0, -8($fp)
+	mtc1 $f2, $v0
+	l.d $f4, 0($fp)
+	add.d $f6, $f2, $f4
+	mfc1 $v0, $f6
+	sw $v0, -8($fp)
+	l.d $f2, 0($fp)
+	li.d $f4, 1.00
+	add.d $f6, $f2, $f4
+	s.d $f6, 0($fp)
 
 label7:    	
 
 # Epilogue Begins
-	add $sp, $sp, 6
+	add $sp, $sp, 16
 	lw $fp, 0($sp)  
 	jr        $31		# Jump back to the operating system.
 # Epilogue Ends

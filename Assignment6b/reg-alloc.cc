@@ -62,8 +62,9 @@ bool Register_Descriptor::is_free()
 {
 	if ((reg_use == gp_data) && (lra_symbol_list.empty()) && (used_for_expr_result == false))
 		return true;
-	else
+	else{
 		return false;
+	}
 }
 
 void Register_Descriptor::remove_symbol_entry_from_list(Symbol_Table_Entry & sym_entry)
@@ -74,6 +75,9 @@ void Register_Descriptor::remove_symbol_entry_from_list(Symbol_Table_Entry & sym
 bool Register_Descriptor::is_unique_lra_symbol(){
 	if(lra_symbol_list.size() > 1){
 		return false;
+	}
+	else{
+		return true;
 	}
 }
 
@@ -101,8 +105,9 @@ void Register_Descriptor::clear_lra_symbol_list()
 
 void Register_Descriptor::update_symbol_information(Symbol_Table_Entry & sym_entry)
 {
-	if (find_symbol_entry_in_list(sym_entry) == false)
+	if (find_symbol_entry_in_list(sym_entry) == false){
 		lra_symbol_list.push_back(&sym_entry);
+	}
 }
 
 //////////////////////////////// Lra_Outcome //////////////////////////////////////////
@@ -161,18 +166,22 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		CHECK_INVARIANT(source_memory,
 			"Sourse ast pointer cannot be NULL for m2m scenario in lra");
 
-		if (typeid(*destination_memory) == typeid(Number_Ast<int>))
+		if ((typeid(*destination_memory) == typeid(Number_Ast<int>)) ||
+			(typeid(*destination_memory) == typeid(Number_Ast<float>)))
 			destination_register = NULL;
 		else
 		{
 			destination_symbol_entry = &(destination_memory->get_symbol_entry());
 			destination_register = destination_symbol_entry->get_register();
-			if(destination_register != NULL && (!destination_register->is_unique_lra_symbol())){
-				destination_register = NULL;
+			if (destination_register != NULL){
+				if(destination_register->is_unique_lra_symbol() == false){
+					destination_register = NULL;
+				}
 			}
 		}
 
-		if (typeid(*source_memory) == typeid(Number_Ast<int>))
+		if ((typeid(*source_memory) == typeid(Number_Ast<int>)) ||
+			(typeid(*source_memory) == typeid(Number_Ast<float>)))
 			source_register = NULL;
 		else
 		{
@@ -194,7 +203,10 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		}
 		else
 		{
-			result_register = machine_dscr_object.get_new_register();
+			if(destination_memory->get_data_type() == int_data_type)
+				result_register = machine_dscr_object.get_new_register();
+			else
+				result_register = machine_dscr_object.get_new_float_register();
 			is_a_new_register = true;
 			load_needed = true;
 		}
@@ -203,7 +215,8 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 
 	case mc_2r:
 		CHECK_INVARIANT(source_memory, "Sourse ast pointer cannot be NULL for m2r scenario in lra");
-		if (typeid(*source_memory) == typeid(Number_Ast<int>))
+		if ((typeid(*source_memory) == typeid(Number_Ast<int>)) ||
+			(typeid(*source_memory) == typeid(Number_Ast<float>)))
 			source_register = NULL;
 		else
 		{
@@ -219,7 +232,10 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 		}
 		else
 		{
-			result_register = machine_dscr_object.get_new_register();
+			if(source_memory->get_data_type() == int_data_type)
+				result_register = machine_dscr_object.get_new_register();
+			else
+				result_register = machine_dscr_object.get_new_float_register();
 			is_a_new_register = true;
 			load_needed = true;
 		}
@@ -247,7 +263,7 @@ void Lra_Outcome::optimize_lra(Lra_Scenario lcase, Ast * destination_memory, Ast
 	CHECK_INVARIANT ((result_register != NULL), "Inconsistent information in lra");
 	register_description = result_register;
 
-	if ((destination_register != NULL) && (destination_symbol_entry != NULL))
+	if (destination_register != NULL)
 		destination_symbol_entry->free_register(destination_register);
 
 	if(destination_symbol_entry != NULL){
@@ -330,7 +346,7 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[mul] = new Instruction_Descriptor(mul, "mul", "mul", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[mfc1] = new Instruction_Descriptor(mfc1, "mfc1", "mfc1", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[mtc1] = new Instruction_Descriptor(mtc1, "mtc1", "mtc1", "", i_r_op_o1, a_op_r_o1);
-	spim_instruction_table[uminus] = new Instruction_Descriptor(uminus, "uminus", "uminus", "", i_r_op_o1, a_op_r_o1);
+	spim_instruction_table[uminus] = new Instruction_Descriptor(uminus, "uminus", "neg", "", i_r_op_o1, a_op_r_o1);
 }
 
 void Machine_Description::validate_init_local_register_mapping()

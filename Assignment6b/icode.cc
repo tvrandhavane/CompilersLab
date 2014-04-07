@@ -298,10 +298,25 @@ void Move_IC_Stmt::print_assembly(ostream & file_buffer)
 	string op_name = op_desc.get_mnemonic();
 
 	Assembly_Format assem_format = op_desc.get_assembly_format();
+	file_buffer << std::fixed;
+	file_buffer << std::setprecision(2);
 	switch (assem_format)
 	{
 	case a_op_r_o1:
-			file_buffer << "\t" << op_name << " ";
+			file_buffer << "\t";
+			if((opd1->get_opd_type() == float_data_type) || (result->get_opd_type() == float_data_type)){
+				if(op_name == "lw"){
+					file_buffer << op_name[0];
+				}
+				else{
+					file_buffer << op_name;
+				}
+				file_buffer << ".d";
+			}
+			else{
+				file_buffer << op_name;
+			}
+			file_buffer << " ";
 			result->print_asm_opd(file_buffer);
 			file_buffer << ", ";
 			opd1->print_asm_opd(file_buffer);
@@ -310,7 +325,14 @@ void Move_IC_Stmt::print_assembly(ostream & file_buffer)
 			break;
 
 	case a_op_o1_r:
-			file_buffer << "\t" << op_name << " ";
+			file_buffer << "\t" ;
+			if((opd1->get_opd_type() == float_data_type) || (result->get_opd_type() == float_data_type)){
+				file_buffer << op_name[0] << ".d";
+			}
+			else{
+				file_buffer << op_name;
+			}
+			file_buffer << " ";
 			opd1->print_asm_opd(file_buffer);
 			file_buffer << ", ";
 			result->print_asm_opd(file_buffer);
@@ -475,7 +497,11 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 	{
 	case a_op_o1_o2_r:
 			CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a compute IC Stmt");
-			file_buffer << "\t" << op_name << " ";
+			file_buffer << "\t" << op_name;
+			if(result->get_opd_type() == float_data_type){
+				file_buffer << ".d";
+			}
+			file_buffer << " ";
 			result->print_asm_opd(file_buffer);
 			file_buffer << ", ";
 			opd1->print_asm_opd(file_buffer);
@@ -484,9 +510,13 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 			file_buffer << "\n";
 			break;
 	case a_op_r_o1:
-			file_buffer << "\t" << op_name << ":    \t";
+			file_buffer << "\t" << op_name;
+			if((result->get_opd_type() == float_data_type) && (op_name != "mfc1") &&  (op_name != "mtc1")){
+				file_buffer << ".d";
+			}
+			file_buffer << " ";
 			result->print_asm_opd(file_buffer);
-			file_buffer << " <- ";
+			file_buffer << ", ";
 			opd1->print_asm_opd(file_buffer);
 			file_buffer << "\n";
 			break;

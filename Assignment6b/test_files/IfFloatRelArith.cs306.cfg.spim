@@ -7,25 +7,25 @@ main:				# .globl makes main know to the
 	sw $fp, 0($sp)		# Save the frame pointer
 	sub $fp, $sp, 4		# Update the frame pointer
 
-	sub $sp, $sp, 4		#Make space for the locals
+	sub $sp, $sp, 60		# Make space for the locals
 # Prologue ends
 
 
 label2:    	
-	li $f2, 2.3
-	sw $f2, 8($fp)
-	li $f2, 3.4
-	sw $f2, 6($fp)
-	li $f2, 4.5
-	sw $f2, 4($fp)
-	li $f2, 5.6
-	sw $f2, 2($fp)
-	li $f2, 6.7
-	sw $f2, 0($fp)
-	lw $f2, 6($fp)
-	lw $f4, 4($fp)
-	add $f6, $f2, $f4
-	lw $f2, 8($fp)
+	li.d $f2, 2.30
+	s.d $f2, -32($fp)
+	li.d $f2, 3.40
+	s.d $f2, -24($fp)
+	li.d $f2, 4.50
+	s.d $f2, -16($fp)
+	li.d $f2, 5.60
+	s.d $f2, -8($fp)
+	li.d $f2, 6.70
+	s.d $f2, 0($fp)
+	l.d $f2, -24($fp)
+	l.d $f4, -16($fp)
+	add.d $f6, $f2, $f4
+	l.d $f2, -32($fp)
 	sle $v0, $f6, $f2
 	li $t0, 0
 	sne $t1, $v0, $t0
@@ -33,17 +33,17 @@ label2:
 	j label4
 
 label3:    	
-	li $f2, 1
-	sw $f2, 10($fp)
+	li.d $f2, 1.00
+	s.d $f2, -40($fp)
 	j label5
 
 label4:    	
-	li $f2, 0
-	sw $f2, 10($fp)
+	li.d $f2, 0.00
+	s.d $f2, -40($fp)
 
 label5:    	
-	lw $f2, 10($fp)
-	lw $f4, 2($fp)
+	l.d $f2, -40($fp)
+	l.d $f4, -8($fp)
 	sgt $v0, $f2, $f4
 	li $t0, 0
 	sne $t1, $v0, $t0
@@ -51,21 +51,21 @@ label5:
 	j label7
 
 label6:    	
-	li $f2, 1
-	sw $f2, 12($fp)
+	li.d $f2, 1.00
+	s.d $f2, -48($fp)
 	j label8
 
 label7:    	
-	li $f2, 0
-	sw $f2, 12($fp)
+	li.d $f2, 0.00
+	s.d $f2, -48($fp)
 
 label8:    	
-	lw $f2, 12($fp)
-	lw $f4, 0($fp)
-	lw $f6, 2($fp)
-	mul $f8, $f4, $f6
-	lw $f4, 4($fp)
-	div $f6, $f8, $f4
+	l.d $f2, -48($fp)
+	l.d $f4, 0($fp)
+	l.d $f6, -8($fp)
+	mul.d $f8, $f4, $f6
+	l.d $f4, -16($fp)
+	div.d $f6, $f8, $f4
 	sgt $v0, $f2, $f6
 	li $t0, 0
 	sne $t1, $v0, $t0
@@ -73,24 +73,24 @@ label8:
 	j label10
 
 label9:    	
-	lw $f2, 8($fp)
-	lw $f4, 2($fp)
-	mul $f6, $f2, $f4
-	lw $f2, 0($fp)
-	div $f4, $f6, $f2
-	sw $f4, 8($fp)
+	l.d $f2, -32($fp)
+	l.d $f4, -8($fp)
+	mul.d $f6, $f2, $f4
+	l.d $f2, 0($fp)
+	div.d $f4, $f6, $f2
+	s.d $f4, -32($fp)
 	j label11
 
 label10:    	
-	lw $f2, 0($fp)
-	lw $f4, 2($fp)
-	add $f6, $f2, $f4
-	sw $f6, 0($fp)
+	l.d $f2, 0($fp)
+	l.d $f4, -8($fp)
+	add.d $f6, $f2, $f4
+	s.d $f6, 0($fp)
 
 label11:    	
 
-#Epilogue Begins
-	add $sp, $sp, 4
+# Epilogue Begins
+	add $sp, $sp, 60
 	lw $fp, 0($sp)  
 	jr        $31		# Jump back to the operating system.
 # Epilogue Ends

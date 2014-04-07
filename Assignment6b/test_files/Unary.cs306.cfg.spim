@@ -22,7 +22,7 @@ label2:
 	lw $t0, 0($fp)
 	mul $t1, $v0, $t0
 	lw $v0, -8($fp)
-	uminus:    	$t0 <- $v0
+	neg $t0, $v0
 	div $v0, $t1, $t0
 	lw $t0, -8($fp)
 	add $t1, $v0, $t0

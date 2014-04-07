@@ -7,27 +7,27 @@ main:				# .globl makes main know to the
 	sw $fp, 0($sp)		# Save the frame pointer
 	sub $fp, $sp, 4		# Update the frame pointer
 
-	sub $sp, $sp, 4		#Make space for the locals
+	sub $sp, $sp, 28		# Make space for the locals
 # Prologue ends
 
 
 label2:    	
-	li $f2, 3.23
-	sw $f2, 2($fp)
-	li $f2, 5.68
-	sw $f2, 0($fp)
-	lw $f2, 0($fp)
-	uminus:    	$f4 <- $f2
-	lw $f2, 2($fp)
-	mul $f6, $f4, $f2
-	lw $f2, 2($fp)
-	div $f4, $f6, $f2
-	lw $f2, 0($fp)
-	sub $f6, $f4, $f2
-	sw $f6, 2($fp)
-	lw $f2, 0($fp)
-	uminus:    	$f4 <- $f2
-	lw $f2, 2($fp)
+	li.d $f2, 3.23
+	s.d $f2, -8($fp)
+	li.d $f2, 5.68
+	s.d $f2, 0($fp)
+	l.d $f2, 0($fp)
+	neg.d $f4, $f2
+	l.d $f2, -8($fp)
+	mul.d $f6, $f4, $f2
+	l.d $f2, -8($fp)
+	div.d $f4, $f6, $f2
+	l.d $f2, 0($fp)
+	sub.d $f6, $f4, $f2
+	s.d $f6, -8($fp)
+	l.d $f2, 0($fp)
+	neg.d $f4, $f2
+	l.d $f2, -8($fp)
 	sle $v0, $f4, $f2
 	li $t0, 0
 	sne $t1, $v0, $t0
@@ -35,18 +35,18 @@ label2:
 	j label4
 
 label3:    	
-	li $f2, 1
-	sw $f2, 4($fp)
+	li.d $f2, 1.00
+	s.d $f2, -16($fp)
 	j label5
 
 label4:    	
-	li $f2, 0
-	sw $f2, 4($fp)
+	li.d $f2, 0.00
+	s.d $f2, -16($fp)
 
 label5:    	
-	lw $f2, 4($fp)
-	lw $f4, 2($fp)
-	uminus:    	$f6 <- $f4
+	l.d $f2, -16($fp)
+	l.d $f4, -8($fp)
+	neg.d $f6, $f4
 	slt $v0, $f2, $f6
 	li $t0, 0
 	sne $t1, $v0, $t0
@@ -54,23 +54,23 @@ label5:
 	j label7
 
 label6:    	
-	lw $f2, 2($fp)
-	li $f4, 1
-	add $f6, $f2, $f4
-	sw $f6, 2($fp)
+	l.d $f2, -8($fp)
+	li.d $f4, 1.00
+	add.d $f6, $f2, $f4
+	s.d $f6, -8($fp)
 	j label8
 
 label7:    	
-	lw $f2, 2($fp)
-	uminus:    	$f4 <- $f2
-	li $f2, 1
-	sub $f6, $f4, $f2
-	sw $f6, 0($fp)
+	l.d $f2, -8($fp)
+	neg.d $f4, $f2
+	li.d $f2, 1.00
+	sub.d $f6, $f4, $f2
+	s.d $f6, 0($fp)
 
 label8:    	
 
-#Epilogue Begins
-	add $sp, $sp, 4
+# Epilogue Begins
+	add $sp, $sp, 28
 	lw $fp, 0($sp)  
 	jr        $31		# Jump back to the operating system.
 # Epilogue Ends

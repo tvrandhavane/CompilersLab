@@ -554,8 +554,7 @@ arithmetic_expression:
 		if(NOT_ONLY_PARSE)
 		{
 			int line = get_line_number();
-			$$ = new Arithmetic_Expr_Ast($1, VAR, NULL, line);
-			$$->check_ast();
+			$$ = $1;
 		}
 
 	}

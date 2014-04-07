@@ -312,7 +312,7 @@ Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Relational_Expr_Ast cannot be null");
 
 
-	if(typeid(*lhs) != typeid(Relational_Expr_Ast)){
+	if((typeid(*lhs) != typeid(Relational_Expr_Ast)) && (typeid(*lhs) != typeid(Arithmetic_Expr_Ast))){
 		lra.optimize_lra(mc_2r, NULL, lhs);
 	}
 
@@ -320,7 +320,7 @@ Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	Register_Descriptor * lhs_register = lhs_stmt.get_reg();
 	lhs_register->used_for_expr_result = true;
 
-	if(typeid(*rhs) != typeid(Relational_Expr_Ast)){
+	if((typeid(*rhs) != typeid(Relational_Expr_Ast)) && (typeid(*rhs) != typeid(Arithmetic_Expr_Ast))){
 		lra.optimize_lra(mc_2r, NULL, rhs);
 	}
 
@@ -420,9 +420,6 @@ bool Arithmetic_Expr_Ast::check_ast()
 		else if(oper == F_NUM){
 			node_data_type = float_data_type;
 		}
-		else if(oper == VAR){
-			node_data_type = lhs->get_data_type();
-		}
 		return true;
 	}
 
@@ -431,7 +428,7 @@ bool Arithmetic_Expr_Ast::check_ast()
 
 void Arithmetic_Expr_Ast::print(ostream & file_buffer)
 {
-	if (oper == VAR || oper == F_NUM || oper == I_NUM){
+	if (oper == F_NUM || oper == I_NUM){
 		CHECK_INVARIANT((lhs != NULL), "Lhs of Arithmetic_Expr_Ast cannot be null");
 		lhs->print(file_buffer);
 	}
@@ -561,18 +558,12 @@ Eval_Result & Arithmetic_Expr_Ast::evaluate(Local_Environment & eval_env, ostrea
 			if(oper ==  UMINUS){
 				result.set_value_int(-1*lhsResult.get_int_value());
 			}
-			if(oper == VAR){
-				result.set_value_int(lhsResult.get_int_value());
-			}
 			return result;
 		}
 		else{
 			Eval_Result_Value_Float & result = *new Eval_Result_Value_Float();
 			if(oper ==  UMINUS){
 				result.set_value_float(-1*lhsResult.get_float_value());
-			}
-			if(oper == VAR){
-				result.set_value_float(lhsResult.get_float_value());
 			}
 			return result;
 		}
@@ -729,10 +720,6 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile()
 				return *arithmetic_stmt;
 			}
 		}
-		else if(oper == VAR){
-			lhs_register->used_for_expr_result = false;
-			return lhs_stmt;
-		}
 		else {
 			Register_Descriptor * result_register;
 			if(lhs->get_data_type() == int_data_type)
@@ -768,14 +755,22 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Arithmetic_Expr_Ast cannot be null");
 
-	Code_For_Ast & lhs_stmt = lhs->compile();
+	if((typeid(*lhs) != typeid(Relational_Expr_Ast)) && (typeid(*lhs) != typeid(Arithmetic_Expr_Ast))){
+		lra.optimize_lra(mc_2r, NULL, lhs);
+	}
+
+	Code_For_Ast & lhs_stmt = lhs->compile_and_optimize_ast(lra);
 	Register_Descriptor * lhs_register = lhs_stmt.get_reg();
 	lhs_register->used_for_expr_result = true;
 
 	if(rhs != NULL){
 		CHECK_INVARIANT((rhs != NULL), "Rhs of Arithmetic_Expr_Ast cannot be null");
 
-		Code_For_Ast & rhs_stmt = rhs->compile();
+		if((typeid(*rhs) != typeid(Relational_Expr_Ast)) && (typeid(*rhs) != typeid(Arithmetic_Expr_Ast))){
+			lra.optimize_lra(mc_2r, NULL, rhs);
+		}
+
+		Code_For_Ast & rhs_stmt = rhs->compile_and_optimize_ast(lra);
 		Register_Descriptor * rhs_register = rhs_stmt.get_reg();
 		rhs_register->used_for_expr_result = true;
 
@@ -913,10 +908,6 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 				lhs_register->used_for_expr_result = false;
 				return *arithmetic_stmt;
 			}
-		}
-		else if(oper == VAR){
-			lhs_register->used_for_expr_result = false;
-			return lhs_stmt;
 		}
 		else {
 			Register_Descriptor * result_register;
@@ -1060,7 +1051,7 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
 	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
 
-	if(typeid(*rhs) != typeid(Relational_Expr_Ast)){
+	if((typeid(*rhs) != typeid(Relational_Expr_Ast)) && (typeid(*rhs) != typeid(Arithmetic_Expr_Ast))){
 		lra.optimize_lra(mc_2m, lhs, rhs);
 	}
 
@@ -1579,7 +1570,11 @@ Code_For_Ast & Number_Ast<DATA_TYPE>::compile_and_optimize_ast(Lra_Outcome & lra
 {
 	CHECK_INVARIANT((lra.get_register() != NULL), "Register assigned through optimize_lra cannot be null");
 	Ics_Opd * load_register = new Register_Addr_Opd(lra.get_register());
-	Ics_Opd * opd = new Const_Opd<int>(constant);
+	Ics_Opd * opd;
+	if(node_data_type == int_data_type)
+		opd = new Const_Opd<int>(constant);
+	else
+		opd = new Const_Opd<float>(constant);
 
 	Icode_Stmt * load_stmt = new Move_IC_Stmt(imm_load, opd, load_register);
 

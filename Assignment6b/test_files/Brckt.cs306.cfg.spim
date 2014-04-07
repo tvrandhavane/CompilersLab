@@ -21,7 +21,7 @@ label2:
 	lw $v0, 0($fp)
 	lw $t0, -4($fp)
 	mul $t1, $v0, $t0
-	uminus:    	$v0 <- $t1
+	neg $v0, $t1
 	sw $v0, -8($fp)
 
 # Epilogue Begins

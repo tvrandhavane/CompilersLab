@@ -155,6 +155,7 @@ void Symbol_Table::print(ostream & file_buffer)
 		switch(dt)
 		{
 		case int_data_type: file_buffer << " Type: INT"; break;
+		case float_data_type: file_buffer << " Type: FLOAT"; break;
 		defualt: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable data type can only be int");
 		} 
 

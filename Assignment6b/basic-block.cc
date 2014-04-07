@@ -103,7 +103,6 @@ void Basic_Block::compile()
 	for (i = statement_list.begin(); i != statement_list.end(); i++)
 	{
 		Ast * ast = *i;
-
 		if (typeid(*ast) != typeid(Return_Ast))
 		{
 			if (command_options.is_do_lra_selected() == true)

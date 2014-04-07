@@ -38,7 +38,7 @@ using namespace std;
 
 class Ast;
 enum relational_operators{LE, LT, GT, GE, EQ, NE, AND, NOT, OR};
-enum arithmetic_operators{PLUS, MINUS, MULT, DIV, UMINUS,F_NUM, I_NUM, VAR};
+enum arithmetic_operators{PLUS, MINUS, MULT, DIV, UMINUS,F_NUM, I_NUM};
 
 class Ast
 {
