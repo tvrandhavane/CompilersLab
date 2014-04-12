@@ -4,63 +4,23 @@ Alok yadav			110050043
 
 My Changes:
 
-In symbol-table.hh:
-1.	Added an enum Data-Type float_data_type for float.
-
 In symbol-table.cc:
-1.	Modified create function to create symbol tables for float variables.
-
-In scanner.ll:
-1.	Added grammar for float and double keywords
-2.	Added grammar for float numbers
-3.	Added grammar for arithmetic operators, +, -, * and /
-
-In reg-alloc.hh:
-1.	Added float registers, {f2, f4, f6, ..., f30}
-2.	Added register value type enum to have float register type
-3.	Added a function declaration to get value type of a register.
-4.	Added a function declaration to get a new float register.
+1.	Added a case to print type of variable in symtab
+2.	Modified get_size_of_value_type to return the correct value for float variable.
 
 In reg-alloc.cc:
-1.	Added a function definition to get value type of a register.
-2.	Added initialization for float registers.
-3.	Added instructions for add, sub, mul, div_op, mfc1, mtc1, uminus
-4.	Added a function definition to get a new float register.
-
-In program.cc:
-1.	Modified print to print float variables correctly.
+1.	Added check for float number data type in optimize_lra
 
 In parser.yy:
-1.	Added grammar rule for float variable declaration
-2.	Added grammar for arithmetic_expression
-3.	Added grammar for typecasted variables or constants
-
-In local-environment.hh:
-1.	Added an enum Result-enum float_result for float.
-2.	Added a class declaration for Eval_Result_Value_Float
-3.	Declared functions to get and set int values and float values as per required.
-
-In local-environment.cc:
-1.	Added a class definition for Eval_Result_Value_Float
-2.	Defined functions to get and set int values and float values as per required.
-3.	Modified print to print float variables correctly.
-
-In icode.hh:
-1.	Added enum for new instructions for add, sub, mul, div_op, mfc1, mtc1, uminus
-2.	In Ics_opd, added function declaration to get opd_type (float or int)
+1.	Modified the grammar so that variable_or_constant is not of Arithmetic_Expr_Ast.
 
 In icode.cc:
-1.	In Ics_opd, added function definition to get opd_type (float or int)
-2.	Added a case of 1 operand,1 result in Compute_IC_Stmt for unary operators.
+1.	Modified printing of a command to add '.d' in the end of command name.
 
 In ast.hh:
-1.	Added enum for arithmetic operators
-2.	Added declaration for arithmetic_expr_ast class
+1.	Removed enum for VAR which was used for making variable of type Arithmetic_Expr_Ast.
 
 In ast.cc:
-1.	Modified relational_expr_ast to compare float numbers
-2.	Added definition for arithmetic_expr_ast class
-3.	Modified the print, set_value_of_evaluation and compile functions of name ast to print float numbers
-4.	Modified the evaluate and compile functions of number ast to print float numbers
-5.	Added definition for float number ast
+1.	Removed usage of VAR enum.
+2. 	Added condition in compile_and_optimize_ast function to optimize lra when lhs and/or rhs is not of the type Relational_Expr_Ast and Arithmetic_Expr_Ast.
 
