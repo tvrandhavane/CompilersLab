@@ -1,0 +1,26 @@
+
+Tanmay Randhavane	110050010
+Alok yadav			110050043
+
+My Changes:
+
+In symbol-table.cc:
+1.	Added a case to print type of variable in symtab
+2.	Modified get_size_of_value_type to return the correct value for float variable.
+
+In reg-alloc.cc:
+1.	Added check for float number data type in optimize_lra
+
+In parser.yy:
+1.	Modified the grammar so that variable_or_constant is not of Arithmetic_Expr_Ast.
+
+In icode.cc:
+1.	Modified printing of a command to add '.d' in the end of command name.
+
+In ast.hh:
+1.	Removed enum for VAR which was used for making variable of type Arithmetic_Expr_Ast.
+
+In ast.cc:
+1.	Removed usage of VAR enum.
+2. 	Added condition in compile_and_optimize_ast function to optimize lra when lhs and/or rhs is not of the type Relational_Expr_Ast and Arithmetic_Expr_Ast.
+

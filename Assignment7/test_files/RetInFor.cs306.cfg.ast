@@ -1,0 +1,30 @@
+Program:
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 1)
+      Basic_Block 3
+
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 4
+            False Successor: 5
+      Basic_Block 4
+
+         Return <NOTHING>
+
+      Basic_Block 5
+
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : 1))
+         Goto statement:
+            Successor: 3
