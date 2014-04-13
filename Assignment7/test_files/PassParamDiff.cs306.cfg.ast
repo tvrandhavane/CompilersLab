@@ -1,0 +1,17 @@
+Program:
+   Procedure: fn, Return Type: int
+
+      Basic_Block 2
+
+         RETURN Name : b
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10)
+         FN CALL: fn(
+            Name : a
+            Num : 10.00)
+         RETURN <NOTHING>

@@ -20,4 +20,4 @@ Program:
             Arith: MULT
                LHS (Name : c)
                RHS (Name : b)))
-         Return <NOTHING>
+         RETURN <NOTHING>

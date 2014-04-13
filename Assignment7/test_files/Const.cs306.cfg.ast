@@ -33,4 +33,4 @@ Program:
             Arith: PLUS
                LHS (Name : a)
                RHS (Num : 5))
-         Return <NOTHING>
+         RETURN <NOTHING>

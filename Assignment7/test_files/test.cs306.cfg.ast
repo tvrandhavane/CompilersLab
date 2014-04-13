@@ -1,4 +1,12 @@
 Program:
+   Procedure: fn, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : c)
+            RHS (Num : 4)
+         RETURN <NOTHING>
    Procedure: main, Return Type: void
 
       Basic_Block 2
@@ -8,8 +16,6 @@ Program:
             RHS (Num : 3)
          Asgn:
             LHS (Name : b)
-            RHS (Num : 2.40)
-         Asgn:
-            LHS (Name : c)
-            RHS (Num : 3.00)
-         Return <NOTHING>
+            RHS (Num : 5)
+         FN CALL: fn()
+         RETURN <NOTHING>

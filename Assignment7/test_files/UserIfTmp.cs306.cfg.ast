@@ -32,4 +32,4 @@ Program:
             RHS (Name : iftmp0)
       Basic_Block 5
 
-         Return <NOTHING>
+         RETURN <NOTHING>

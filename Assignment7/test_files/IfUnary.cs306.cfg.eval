@@ -1,6 +1,6 @@
 Evaluating Program
    Global Variables (before evaluating):
-   Evaluating Procedure main
+   Evaluating Procedure << main >>
       Local Variables (before evaluating):
          a : undefined
          b : undefined
@@ -51,10 +51,10 @@ Evaluating Program
          GOTO (BB 5)
 
       Basic Block: 5
-         Return <NOTHING>
+         RETURN <NOTHING>
 
 
-      Local Variables (after evaluating):
+      Local Variables (after evaluating) Function: << main >>
          a : 3
          b : 4
          d : 10

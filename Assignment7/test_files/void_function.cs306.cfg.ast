@@ -1,0 +1,25 @@
+Program:
+   Procedure: f, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : x)
+            RHS (Num : 3)
+         Asgn:
+            LHS (Name : x)
+            RHS (
+            Arith: PLUS
+               LHS (Name : x)
+               RHS (Name : a))
+         RETURN <NOTHING>
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 8)
+         FN CALL: f(
+            Name : a)
+         RETURN <NOTHING>

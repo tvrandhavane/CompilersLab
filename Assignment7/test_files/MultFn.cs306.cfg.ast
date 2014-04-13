@@ -1,0 +1,36 @@
+Program:
+   Procedure: fn1, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : d)
+            RHS (Num : 10)
+         FN CALL: fn3()
+         RETURN <NOTHING>
+   Procedure: fn2, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : t)
+            RHS (Num : 2)
+         RETURN <NOTHING>
+   Procedure: fn3, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : y)
+            RHS (Num : 0)
+         RETURN <NOTHING>
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10)
+         FN CALL: fn1()
+         FN CALL: fn2()
+         RETURN <NOTHING>

@@ -16,7 +16,7 @@ Program:
             False Successor: 5
       Basic_Block 4
 
-         Return <NOTHING>
+         RETURN <NOTHING>
 
       Basic_Block 5
 

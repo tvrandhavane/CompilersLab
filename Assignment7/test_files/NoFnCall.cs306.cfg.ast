@@ -1,0 +1,17 @@
+Program:
+   Procedure: fn, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 20)
+         RETURN <NOTHING>
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10)
+         RETURN <NOTHING>

@@ -1,0 +1,26 @@
+Program:
+   Procedure: add, Return Type: float
+
+      Basic_Block 2
+
+         RETURN 
+            Arith: PLUS
+               LHS (Name : a1)
+               RHS (Name : b1)
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2.00)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3.00)
+         Asgn:
+            LHS (Name : c)
+            RHS (
+         FN CALL: add(
+            Name : a
+            Name : b))
+         RETURN <NOTHING>

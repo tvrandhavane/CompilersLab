@@ -26,4 +26,4 @@ Program:
             Arith: UMINUS
                LHS (Name : a)))
                RHS (Name : a))
-         Return <NOTHING>
+         RETURN <NOTHING>

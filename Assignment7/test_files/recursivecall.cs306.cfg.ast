@@ -1,0 +1,55 @@
+Program:
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : x)
+            RHS (Num : 5)
+         Asgn:
+            LHS (Name : y)
+            RHS (
+         FN CALL: r(
+            Name : x))
+         Asgn:
+            LHS (Name : z)
+            RHS (
+         FN CALL: r(
+            Num : 3))
+         RETURN <NOTHING>
+   Procedure: r, Return Type: int
+
+      Basic_Block 2
+
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : a)
+               RHS (Num : 1)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 3
+
+         Asgn:
+            LHS (Name : D1234)
+            RHS (Num : 1)
+         Goto statement:
+            Successor: 5
+      Basic_Block 4
+
+         Asgn:
+            LHS (Name : i)
+            RHS (
+         FN CALL: r(
+            
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Num : -1)))
+         Asgn:
+            LHS (Name : D1234)
+            RHS (
+            Arith: PLUS
+               LHS (Name : i)
+               RHS (Num : 1))
+      Basic_Block 5
+
+         RETURN Name : D1234

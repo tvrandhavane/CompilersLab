@@ -69,4 +69,4 @@ Program:
             Arith: MINUS
                LHS (Name : a)
                RHS (Name : b))))
-         Return <NOTHING>
+         RETURN <NOTHING>

@@ -1,0 +1,12 @@
+Program:
+   Procedure: fn, Return Type: void
+
+      Basic_Block 2
+
+         RETURN <NOTHING>
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         FN CALL: fn()
+         RETURN <NOTHING>

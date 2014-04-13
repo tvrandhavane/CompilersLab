@@ -88,6 +88,19 @@ public:
 	void print_assembly(ostream & file_buffer);
 };
 
+class Argument_Table {
+
+	public:
+		list<Symbol_Table_Entry *> variable_table;
+		Argument_Table();
+		~Argument_Table();
+		void push_symbol(Symbol_Table_Entry * variable);
+		void symbol_table_entry_check(list<Symbol_Table_Entry *> & var_table);
+		bool variable_in_symbol_list_check(string variable);
+		Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
+
+};
+
 class Symbol_Table_Entry
 {
 	string variable_name;

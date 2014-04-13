@@ -18,4 +18,4 @@ Program:
             Arith: DIV
                LHS (Name : b)
                RHS (Name : a)))
-         Return <NOTHING>
+         RETURN <NOTHING>

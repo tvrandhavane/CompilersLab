@@ -19,4 +19,4 @@ Program:
             RHS (
             Arith: UMINUS
                LHS (Name : a))
-         Return <NOTHING>
+         RETURN <NOTHING>

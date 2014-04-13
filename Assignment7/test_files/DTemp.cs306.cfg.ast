@@ -1,0 +1,32 @@
+Program:
+   Procedure: main, Return Type: int
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2)
+         Asgn:
+            LHS (Name : D1234)
+            RHS (Num : 3)
+         If_Else statement:
+            Condition: GT
+               LHS (Name : a)
+               RHS (Num : 5)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 3
+
+         Asgn:
+            LHS (Name : D1235)
+            RHS (Num : 10)
+         Goto statement:
+            Successor: 5
+      Basic_Block 4
+
+         Asgn:
+            LHS (Name : D1235)
+            RHS (Name : a)
+      Basic_Block 5
+
+         RETURN Name : D1235

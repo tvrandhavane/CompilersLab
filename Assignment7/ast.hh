@@ -182,6 +182,27 @@ public:
 	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
 };
 
+class Function_Call_Ast:public Ast
+{
+
+	string func_name;
+	list <Ast *> * input_argument_list;
+	int successor;
+	//int print_enter;
+public:
+	Function_Call_Ast(string name , Data_Type return_data_type, list <Ast *> * input_list, int line);
+	~Function_Call_Ast();
+
+	Data_Type get_data_type();
+	bool check_ast();
+	int get_successor();
+	void print(ostream & file_buffer);
+
+	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
+
+	Code_For_Ast & compile();
+	Code_For_Ast & compile_and_optimize_ast(Lra_Outcome & lra);
+};
 
 class Name_Ast:public Ast
 {
@@ -227,14 +248,16 @@ public:
 
 class Return_Ast:public Ast
 {
-private:
+	Ast * return_Ast;
 	int successor;
 public:
-	Return_Ast(int line);
+	Return_Ast(Ast *to_return, int line);
 	~Return_Ast();
 
-	void print(ostream & file_buffer);
 	int get_successor();
+	bool check_ast();
+	Data_Type get_data_type();
+	void print(ostream & file_buffer);
 
 	Eval_Result & evaluate(Local_Environment & eval_env, ostream & file_buffer);
 

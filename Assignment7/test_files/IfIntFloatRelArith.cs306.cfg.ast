@@ -77,4 +77,4 @@ Program:
                RHS (Num : 1.00))
       Basic_Block 5
 
-         Return <NOTHING>
+         RETURN <NOTHING>

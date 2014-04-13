@@ -41,6 +41,11 @@ double	{
 			return Parser::DOUBLE;
 		}
 
+void	{
+			store_token_name("VOID");
+			return Parser::VOID;
+		}
+
 return	{
 			store_token_name("RETURN");
 			return Parser::RETURN;
@@ -91,7 +96,7 @@ goto	{
 			return Parser::ASSIGN_OP;
 		}
 
-[:{}();]	{
+[:{}();,]	{
 			store_token_name("META CHAR");
 			return matched()[0];
 		}

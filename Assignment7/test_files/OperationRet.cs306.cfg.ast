@@ -1,0 +1,37 @@
+Program:
+   Procedure: fn, Return Type: int
+
+      Basic_Block 2
+
+         RETURN 
+            Condition: NE
+               LHS (
+            Condition: LE
+               LHS (
+            Arith: MINUS
+               LHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Name : b))
+               RHS (Name : c))
+               RHS (Name : d))
+               RHS (
+            Arith: MULT
+               LHS (Name : a)
+               RHS (Name : c))
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 10)
+         Asgn:
+            LHS (Name : a)
+            RHS (
+         FN CALL: fn(
+            Num : 1
+            Num : 2.30
+            Name : a
+            Num : 3.60))
+         RETURN <NOTHING>

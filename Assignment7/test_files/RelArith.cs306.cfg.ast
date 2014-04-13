@@ -21,4 +21,4 @@ Program:
                RHS (Name : a))
                RHS (Name : a))
                RHS (Name : b))
-         Return <NOTHING>
+         RETURN <NOTHING>

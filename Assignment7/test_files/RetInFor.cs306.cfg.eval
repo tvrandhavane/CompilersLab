@@ -1,6 +1,6 @@
 Evaluating Program
    Global Variables (before evaluating):
-   Evaluating Procedure main
+   Evaluating Procedure << main >>
       Local Variables (before evaluating):
          a : undefined
 
@@ -137,9 +137,9 @@ Evaluating Program
          Condition True : Goto (BB 4)
 
       Basic Block: 4
-         Return <NOTHING>
+         RETURN <NOTHING>
 
 
-      Local Variables (after evaluating):
+      Local Variables (after evaluating) Function: << main >>
          a : 6
    Global Variables (after evaluating):

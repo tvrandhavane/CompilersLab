@@ -27,6 +27,7 @@
 #include<string>
 #include<map>
 #include<list>
+#include<vector>
 
 #define GLOB_SPACE "   "
 
@@ -54,12 +55,15 @@ public:
 	void print();
 
 	Procedure * get_main_procedure(ostream & file_buffer);
+	Procedure * get_procedure(string name);
 
 	Eval_Result & evaluate();
 
 	bool variable_in_proc_map_check(string symbol);
 	bool variable_in_symbol_list_check(string variable);
 	void global_list_in_proc_map_check();
+
+	void check_procedure_predefined(string variable);
 
 	// compile
 	void compile();

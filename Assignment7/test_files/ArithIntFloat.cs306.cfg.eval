@@ -1,6 +1,6 @@
 Evaluating Program
    Global Variables (before evaluating):
-   Evaluating Procedure main
+   Evaluating Procedure << main >>
       Local Variables (before evaluating):
          a : undefined
          b : undefined
@@ -32,10 +32,10 @@ Evaluating Program
          c : 3.70
 
 
-         Return <NOTHING>
+         RETURN <NOTHING>
 
 
-      Local Variables (after evaluating):
+      Local Variables (after evaluating) Function: << main >>
          a : 2
          b : 3.40
          c : 3.70

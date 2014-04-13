@@ -1,6 +1,6 @@
 Evaluating Program
    Global Variables (before evaluating):
-   Evaluating Procedure main
+   Evaluating Procedure << main >>
       Local Variables (before evaluating):
          a : undefined
          iftmp0 : undefined
@@ -86,10 +86,10 @@ Evaluating Program
          GOTO (BB 8)
 
       Basic Block: 8
-         Return <NOTHING>
+         RETURN <NOTHING>
 
 
-      Local Variables (after evaluating):
+      Local Variables (after evaluating) Function: << main >>
          a : -10.36
          iftmp0 : 0.00
          j : 5.68

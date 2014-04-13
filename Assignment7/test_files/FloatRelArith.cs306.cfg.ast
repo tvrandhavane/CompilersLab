@@ -64,4 +64,4 @@ Program:
          Asgn:
             LHS (Name : c)
             RHS (Name : iftmp1)
-         Return <NOTHING>
+         RETURN <NOTHING>

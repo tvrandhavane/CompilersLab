@@ -44,6 +44,8 @@
 bool bb_repeat_check(list<Basic_Block *> * bb_list, int bb_number);
 
 Procedure * current_procedure;
+vector <string> function_body_defined;
+vector <string> functionCall;
 
 //////////////////////////////////////////////////////////////////////
 

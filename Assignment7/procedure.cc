@@ -39,11 +39,13 @@ using namespace std;
 #include"procedure.hh"
 #include"program.hh"
 
-Procedure::Procedure(Data_Type proc_return_type, string proc_name, int line)
+Procedure::Procedure(Data_Type proc_return_type, string proc_name,Argument_Table & argument_list, int line)
 {
 	return_type = proc_return_type;
+	argument_symbol_table = argument_list;
 	name = proc_name;
 	lineno = line;
+	return_flag = 0;
 }
 
 Procedure::~Procedure()
@@ -65,6 +67,15 @@ void Procedure::check_valid_bb(){
 		}
 	}
 }
+
+void Procedure::set_return_flag(int ret){
+	return_flag = ret;
+}
+
+int Procedure::get_return_flag(){
+	return return_flag;
+}
+
 
 string Procedure::get_proc_name()
 {
@@ -92,23 +103,65 @@ bool Procedure::variable_in_symbol_list_check(string variable)
 	return local_symbol_table.variable_in_symbol_list_check(variable);
 }
 
+bool Procedure::variable_in_argument_list_check(string variable)
+{
+	return argument_symbol_table.variable_in_symbol_list_check(variable);
+}
+
 Symbol_Table_Entry & Procedure::get_symbol_table_entry(string variable_name)
 {
 	return local_symbol_table.get_symbol_table_entry(variable_name);
 }
 
+
+Symbol_Table_Entry & Procedure::get_argument_table_entry(string variable_name)
+{
+	return argument_symbol_table.get_symbol_table_entry(variable_name);
+}
+
+Argument_Table & Procedure::get_argument_symbol_table(){
+
+	return argument_symbol_table;
+}
+
+bool Procedure::is_body_defined(){
+
+	if(basic_block_list.size() > 0)
+		return true;
+	else 
+		return false;
+}
+
+bool Procedure ::check_parameter_local_var(){
+
+	list<Symbol_Table_Entry *>::iterator i;
+	for (i = argument_symbol_table.variable_table.begin(); i != argument_symbol_table.variable_table.end(); i++)
+	{
+		if(local_symbol_table.variable_in_symbol_list_check((*i)->get_variable_name())){
+			return true;
+		}
+
+	}
+	return false;
+
+}
+
 void Procedure::print(ostream & file_buffer)
 {
-	CHECK_INVARIANT((return_type == void_data_type), "Only void return type of funtion is allowed");
-
-	file_buffer << PROC_SPACE << "Procedure: " << name << ", Return Type: void\n";
+	file_buffer << PROC_SPACE << "Procedure: " << name << ", Return Type: ";
+	if(return_type == void_data_type)
+		file_buffer << "void";
+	else if(return_type == float_data_type)
+		file_buffer << "float";
+	else
+		file_buffer << "int";
+	file_buffer << "\n";
 
 	if ((command_options.is_show_symtab_selected()) || (command_options.is_show_program_selected()))
 	{
 		file_buffer << "   Local Declarartions\n";
 		local_symbol_table.print(file_buffer);
 	}
-
 	if ((command_options.is_show_program_selected()) || (command_options.is_show_ast_selected()))
 	{
 		list<Basic_Block *>::iterator i;
@@ -156,18 +209,65 @@ Basic_Block * Procedure::get_next_bb(Basic_Block & current_bb)
 	return NULL;
 }
 
+Eval_Result & Procedure::evaluate(Local_Environment & eval_env , ostream & file_buffer)
+{
+	local_symbol_table.create(eval_env);
+	Eval_Result * result = NULL;
+
+	file_buffer << PROC_SPACE << "Evaluating Procedure << " << name << " >>\n";
+	file_buffer << LOC_VAR_SPACE << "Local Variables (before evaluating):\n";
+	eval_env.print(file_buffer);
+	file_buffer << "\n";
+
+	Basic_Block * current_bb = &(get_start_basic_block());
+
+	while (current_bb)
+	{
+		result = &(current_bb->evaluate(eval_env, file_buffer));
+		current_bb = get_next_bb(*current_bb);
+	}
+
+	file_buffer << "\n\n";
+	file_buffer << LOC_VAR_SPACE << "Local Variables (after evaluating) Function: << " << name << " >>\n";
+	string var_return = "return";
+	if(result->get_result_enum() != void_result ){
+		if(result->get_result_enum() == int_result){
+			Eval_Result_Value_Int * j = new Eval_Result_Value_Int();
+			j->set_value_int(result->get_int_value());
+			eval_env.put_variable_value(*j,var_return);
+		}
+		else if(result->get_result_enum() == float_result){
+			Eval_Result_Value_Float * j = new Eval_Result_Value_Float();
+			j->set_value_float(result->get_float_value());
+			eval_env.put_variable_value(*j,var_return);
+		}
+
+	}
+	//else if(return_type != void_return_type)
+
+	eval_env.print(file_buffer);
+	/*if(result->get_result_enum() != void_result ){
+		if(result->get_result_enum() == int_result)
+			file_buffer << VAR_SPACE << "return : " << (int) result->get_value()<<"\n";
+		else if(result->get_result_enum() == float_result)
+			file_buffer << VAR_SPACE << "return : " << result->get_value()<<"\n";
+	}*/
+
+	return *result;
+}
+/*
 Eval_Result & Procedure::evaluate(ostream & file_buffer)
 {
 	Local_Environment & eval_env = *new Local_Environment();
 	local_symbol_table.create(eval_env);
-	
+
 	Eval_Result * result = NULL;
 
 	file_buffer << PROC_SPACE << "Evaluating Procedure " << name << "\n";
 	file_buffer << LOC_VAR_SPACE << "Local Variables (before evaluating):\n";
 	eval_env.print(file_buffer);
 	file_buffer << "\n";
-	
+
 	Basic_Block * current_bb = &(get_start_basic_block());
 	while (current_bb)
 	{
@@ -181,7 +281,7 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 
 	return *result;
 }
-
+*/
 void Procedure::compile()
 {
 	// assign offsets to local symbol table

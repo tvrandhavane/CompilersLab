@@ -9,4 +9,4 @@ Program:
          Asgn:
             LHS (Name : g)
             RHS (Num : 10.00)
-         Return <NOTHING>
+         RETURN <NOTHING>

@@ -18,4 +18,4 @@ Program:
                LHS (Name : a)
                RHS (Name : b))
                RHS (Name : a))
-         Return <NOTHING>
+         RETURN <NOTHING>

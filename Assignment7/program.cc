@@ -85,6 +85,21 @@ bool Program::variable_in_proc_map_check(string symbol)
 	return true;
 }
 
+void Program::check_procedure_predefined(string variable){
+	CHECK_INVARIANT(procedure_map[variable] != NULL, "Procedure corresponding to the name is not found");
+}
+
+Procedure * Program::get_procedure(string name){
+	map<string, Procedure *>::iterator i;
+	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
+	{
+		if (i->second != NULL && i->second->get_proc_name() == name)
+				return i->second;
+	}
+	return NULL;
+
+}
+
 void Program::global_list_in_proc_map_check()
 {
 	global_symbol_table.global_list_in_proc_map_check();
@@ -98,7 +113,6 @@ Procedure * Program::get_main_procedure(ostream & file_buffer)
 		if (i->second != NULL && i->second->get_proc_name() == "main")
 				return i->second;
 	}
-	
 	return NULL;
 }
 
@@ -153,7 +167,9 @@ Eval_Result & Program::evaluate()
 	file_buffer << std::setprecision(2);
 	interpreter_global_table.print(file_buffer);
 
-	Eval_Result & result = main->evaluate(file_buffer);
+	Local_Environment & eval_env = *new Local_Environment();
+	Eval_Result & result = main->evaluate(eval_env, file_buffer);
+	//Eval_Result & result = main->evaluate(file_buffer);
 
 	file_buffer << GLOB_SPACE << "Global Variables (after evaluating):\n";
 	file_buffer << std::fixed;

@@ -1,0 +1,56 @@
+Program:
+   Procedure: fun, Return Type: int
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Num : 2.30)
+         Asgn:
+            LHS (Name : b)
+            RHS (Num : 3.20)
+         Asgn:
+            LHS (Name : a)
+            RHS (
+            Arith: MINUS
+               LHS (
+            Arith: DIV
+               LHS (Name : b)
+               RHS (Num : 2.10))
+               RHS (Name : a))
+         RETURN Name : a
+   Procedure: main, Return Type: void
+
+      Basic_Block 2
+
+         Asgn:
+            LHS (Name : b)
+            RHS (
+         FN CALL: fun())
+         If_Else statement:
+            Condition: EQ
+               LHS (Name : b)
+               RHS (Num : 3)
+            True Successor: 3
+            False Successor: 4
+      Basic_Block 3
+
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (
+            Arith: PLUS
+               LHS (Name : b)
+               RHS (Num : -2))
+         Goto statement:
+            Successor: 5
+      Basic_Block 4
+
+         Asgn:
+            LHS (Name : iftmp0)
+            RHS (Num : 1)
+      Basic_Block 5
+
+         Asgn:
+            LHS (Name : a)
+            RHS (Name : iftmp0)
+         RETURN <NOTHING>

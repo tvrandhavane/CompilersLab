@@ -1,0 +1,64 @@
+Evaluating Program
+   Global Variables (before evaluating):
+   Evaluating Procedure << main >>
+      Local Variables (before evaluating):
+         x : undefined
+         y : undefined
+         z : undefined
+
+
+      Basic Block: 2
+         Asgn:
+            LHS (Name : x)
+            RHS (Num : 8.10)
+         x : 8.10
+
+
+         Asgn:
+            LHS (Name : y)
+            RHS (Num : 10.40)
+         y : 10.40
+
+   Evaluating Procedure << sum >>
+      Local Variables (before evaluating):
+         a : 8.10
+         b : 10.40
+         x : undefined
+
+
+      Basic Block: 2
+         Asgn:
+            LHS (Name : x)
+            RHS (
+            Arith: PLUS
+               LHS (Name : a)
+               RHS (Name : b))
+         x : 18.50
+
+
+         RETURN Name : x
+
+
+      Local Variables (after evaluating) Function: << sum >>
+         a : 8.10
+         b : 10.40
+         return : 18.50
+         x : 18.50
+
+         Asgn:
+            LHS (Name : z)
+            RHS (
+         FN CALL: sum(
+            Name : x
+            Name : y))
+         z : 18.50
+
+
+         RETURN <NOTHING>
+
+
+      Local Variables (after evaluating) Function: << main >>
+         x : 8.10
+         y : 10.40
+         z : 18.50
+   Global Variables (after evaluating):

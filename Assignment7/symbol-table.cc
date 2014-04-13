@@ -222,7 +222,47 @@ void Symbol_Table::print_assembly(ostream & file_buffer)
 			file_buffer << (*i)->get_variable_name() << ":\t.word 0\n";
 	}
 }
+//////////////////////////////////////////////////////////////
+Argument_Table::Argument_Table()
+{}
 
+Argument_Table::~Argument_Table()
+{}
+
+void Argument_Table::push_symbol(Symbol_Table_Entry * variable)
+{
+	variable_table.push_back(variable);
+}
+bool Argument_Table::variable_in_symbol_list_check(string variable)
+{
+	list<Symbol_Table_Entry *>::iterator i;
+	for (i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		if ((*i)->get_variable_name() == variable)
+			return true;
+	}
+
+	return false;
+}
+void Argument_Table::symbol_table_entry_check(list<Symbol_Table_Entry *> & var_table){
+	list<Symbol_Table_Entry *>::iterator i;
+	list<Symbol_Table_Entry *>::iterator j;
+	CHECK_INVARIANT(variable_table.size() == var_table.size(), "Number of the parameters of the procedure and its prototypes aren't same");
+	for (i = variable_table.begin(),j= var_table.begin(); i != variable_table.end(); i++,j++)
+	{
+		CHECK_INVARIANT((*i)->get_variable_name() == (*j)->get_variable_name(), "Variable name of one of the parameters of the procedure and its prototypes doesn't match");
+	}
+}
+Symbol_Table_Entry & Argument_Table::get_symbol_table_entry(string variable_name)
+{
+	list<Symbol_Table_Entry *>::iterator i;
+	for (i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		if ((*i)->get_variable_name() == variable_name)
+			return **i;
+	}
+	CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable symbol entry doesn't exist");
+}
 /////////////////////////////////////////////////////////////
 
 Symbol_Table_Entry::Symbol_Table_Entry()

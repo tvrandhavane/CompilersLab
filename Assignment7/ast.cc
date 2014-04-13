@@ -999,10 +999,10 @@ Eval_Result & Assignment_Ast::evaluate(Local_Environment & eval_env, ostream & f
 
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Assignment_Ast cannot be null");
 	lhs->set_value_of_evaluation(eval_env, result);
+
 	// Print the result
 
 	print(file_buffer);
-
 
 	lhs->print_value(eval_env, file_buffer);
 	return result;
@@ -1306,7 +1306,112 @@ Code_For_Ast & Goto_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 
 	return *goto_code_stmt;
 }
+///////////////////////////////////////////////////////////////////////////////
+Function_Call_Ast::Function_Call_Ast(string name , Data_Type return_data_type, list <Ast *> * input_list, int line){
 
+	func_name = name;
+	input_argument_list = input_list;
+	successor = -1;
+	node_data_type = return_data_type;
+	lineno = line;
+}
+
+Function_Call_Ast::~Function_Call_Ast()
+{
+
+}
+
+Data_Type Function_Call_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Function_Call_Ast::check_ast()
+{
+
+}
+
+void Function_Call_Ast::print(ostream & file_buffer)
+{
+
+		Procedure *funct_call = program_object.get_procedure(func_name);
+		CHECK_INVARIANT(funct_call->is_body_defined() == true, "Procedure Body is not defined");
+
+		file_buffer<<"\n";
+		file_buffer << AST_SPACE << "FN CALL: ";
+		list<Ast *>::iterator i;
+		if(input_argument_list != NULL){
+			//file_buffer << AST_NODE_SPACE 	;
+			file_buffer <<func_name << "(";
+			for(i = input_argument_list->begin(); i != input_argument_list->end(); i++){
+				file_buffer<<"\n";
+				file_buffer << AST_NODE_SPACE 	;
+				(*i)->print(file_buffer);
+
+			}
+		}
+		else
+			file_buffer <<func_name << "(";
+		file_buffer << ")";
+
+}
+
+int Function_Call_Ast::get_successor(){
+	return successor;
+}
+
+Eval_Result & Function_Call_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer){
+	Procedure *funct_call = program_object.get_procedure(func_name);
+	CHECK_INVARIANT(funct_call->is_body_defined() == true, "Procedure Body is not defined");
+
+	Argument_Table & arg = funct_call->get_argument_symbol_table();
+	Local_Environment & func_eval_env = *new Local_Environment();
+
+	//arg.create(func_eval_env);
+	list<Ast *>::iterator i;
+	if(input_argument_list!=NULL){
+		list<Symbol_Table_Entry *>::iterator j;
+		i = input_argument_list->begin();
+		j = arg.variable_table.begin();
+		for(;i != input_argument_list->end();i++,j++){
+			Eval_Result_Value * k;
+			string variable_name = (*j)->get_variable_name();
+			Eval_Result & result = (*i)->evaluate(eval_env, file_buffer);
+			if (result.get_result_enum() == int_result && (*j)->get_data_type() == int_data_type)
+			{
+				k = new Eval_Result_Value_Int();
+			 	k->set_value_int((int)result.get_int_value());
+				func_eval_env.put_variable_value(*k, variable_name);
+
+			}
+			else if(result.get_result_enum() == float_result && (*j)->get_data_type() == float_data_type){
+				k = new Eval_Result_Value_Float();
+			 	k->set_value_float(result.get_float_value());
+					func_eval_env.put_variable_value(*k, variable_name);
+
+			}
+			else{
+				CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Passed argument is not compatible");
+			}
+		}
+	}
+	Eval_Result & return_result = funct_call->evaluate(func_eval_env,file_buffer);
+	return return_result;
+}
+
+Code_For_Ast & Function_Call_Ast::compile()
+{
+	Code_For_Ast * goto_code_stmt;
+
+	return *goto_code_stmt;
+}
+
+Code_For_Ast & Function_Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
+{
+	Code_For_Ast * goto_code_stmt;
+
+	return *goto_code_stmt;
+}
 /////////////////////////////////////////////////////////////////
 Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line)
 {
@@ -1588,20 +1693,44 @@ Code_For_Ast & Number_Ast<DATA_TYPE>::compile_and_optimize_ast(Lra_Outcome & lra
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast(int line)
+Return_Ast::Return_Ast(Ast * to_return, int line)
 {
+	return_Ast = to_return;
 	lineno = line;
-	node_data_type = void_data_type;
 	ast_num_child = zero_arity;
 	successor = -2;
+
+	if(return_Ast == NULL){
+		node_data_type = void_data_type;
+	}
 }
 
 Return_Ast::~Return_Ast()
 {}
 
+Data_Type Return_Ast::get_data_type()
+{
+	return node_data_type;
+}
+
+bool Return_Ast::check_ast(){
+	if(return_Ast == NULL){
+		node_data_type = void_data_type;
+	}
+}
+
 void Return_Ast::print(ostream & file_buffer)
 {
-	file_buffer << "\n" << AST_SPACE << "Return <NOTHING>\n";
+	if(return_Ast == NULL){
+		file_buffer <<"\n";
+		file_buffer << AST_SPACE << "RETURN <NOTHING>\n";
+	}
+	else{
+		file_buffer <<"\n";
+		file_buffer << AST_SPACE << "RETURN ";
+		return_Ast->print(file_buffer);
+		file_buffer<<"\n";
+	}
 }
 
 int Return_Ast::get_successor(){
@@ -1610,9 +1739,17 @@ int Return_Ast::get_successor(){
 
 Eval_Result & Return_Ast::evaluate(Local_Environment & eval_env, ostream & file_buffer)
 {
-	print(file_buffer);
-	Eval_Result & result = *new Eval_Result_Value_Int();
-	return result;
+	if(return_Ast!=NULL){
+		Eval_Result & result = return_Ast->evaluate(eval_env,file_buffer);
+		print(file_buffer);
+		return result;
+	}
+	else{
+		Eval_Result & result = *new Eval_Result_Value_Int();
+		result.set_result_enum(void_result);
+		print(file_buffer);
+		return result;
+	}
 }
 
 Code_For_Ast & Return_Ast::compile()
