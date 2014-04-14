@@ -95,6 +95,9 @@ typedef enum
 	mfc1,
 	mtc1,
 	uminus,
+	return_op,
+	move_op,
+	call,
 	nop
 } Tgt_Op;
 
@@ -232,9 +235,11 @@ class Move_IC_Stmt: public Icode_Stmt
 {
 	Ics_Opd * opd1;
 	Ics_Opd * result;
+	string fn_name;
 
 public:
 	Move_IC_Stmt(Tgt_Op inst_op, Ics_Opd * opd1, Ics_Opd * result);
+	Move_IC_Stmt(Tgt_Op op, string name);
 	~Move_IC_Stmt() {}
 	Move_IC_Stmt & operator=(const Move_IC_Stmt & rhs);
 
@@ -267,6 +272,21 @@ public:
 
 	Ics_Opd * get_result();
 	void set_result(Ics_Opd * io);
+
+	void print_icode(ostream & file_buffer);
+	void print_assembly(ostream & file_buffer);
+};
+
+class Return_IC_Stmt: public Icode_Stmt
+{
+	Ics_Opd * result;
+
+public:
+	Return_IC_Stmt(Tgt_Op op);
+	~Return_IC_Stmt() {}
+	Return_IC_Stmt & operator=(const Return_IC_Stmt & rhs);
+
+	Instruction_Descriptor & get_inst_op_of_ics();
 
 	void print_icode(ostream & file_buffer);
 	void print_assembly(ostream & file_buffer);

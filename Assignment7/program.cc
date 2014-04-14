@@ -195,6 +195,7 @@ void Program::compile()
 	for(i = procedure_map.begin(); i != procedure_map.end(); i++)
 	{
 		i->second->compile();
+		
 		if(command_options.is_show_ic_selected())
 		{
 			ostream * file_buffer;

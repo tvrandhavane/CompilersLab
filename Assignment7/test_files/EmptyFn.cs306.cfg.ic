@@ -1,0 +1,11 @@
+  Procedure: fn
+  Intermediate Code Statements
+
+label2:    	
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	call fn
+	return

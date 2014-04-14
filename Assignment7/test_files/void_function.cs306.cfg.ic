@@ -1,0 +1,21 @@
+  Procedure: f
+  Intermediate Code Statements
+
+label2:    	
+	iLoad:    	v0 <- 3
+	store:    	x <- v0
+	load:    	v0 <- x
+	load:    	t0 <- a
+	add:    	t1 <- v0 , t0
+	store:    	x <- t1
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	iLoad:    	v0 <- 8
+	store:    	a <- v0
+	load:    	v0 <- a
+	store:    	a <- v0
+	call f
+	return

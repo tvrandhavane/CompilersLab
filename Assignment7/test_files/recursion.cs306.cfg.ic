@@ -1,0 +1,51 @@
+  Procedure: fact
+  Intermediate Code Statements
+
+label2:    	
+	load:    	v0 <- n1
+	iLoad:    	t0 <- 1
+	seq:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label4
+	goto label3
+
+label3:    	
+	load:    	v0 <- n1
+	iLoad:    	t0 <- 0
+	seq:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label4
+	goto label5
+
+label4:    	
+	iLoad:    	v0 <- 1
+	store:    	D1234 <- v0
+	goto label6
+
+label5:    	
+	load:    	v0 <- n1
+	iLoad:    	t0 <- -1
+	add:    	t1 <- v0 , t0
+	store:    	n1 <- t1
+	call fact
+	move:    	v0 <- v1
+	load:    	t0 <- n1
+	mul:    	t1 <- v0 , t0
+	store:    	D1234 <- t1
+
+label6:    	
+	load:    	v0 <- D1234
+	move:    	v1 <- v0
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	iLoad:    	v0 <- 1
+	store:    	b <- v0
+	iLoad:    	v0 <- 5
+	store:    	n <- v0
+	load:    	v0 <- n
+	store:    	n1 <- v0
+	call fact
+	move:    	v0 <- v1
+	store:    	f <- v0
+	return

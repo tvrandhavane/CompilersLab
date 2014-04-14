@@ -229,6 +229,95 @@ Argument_Table::Argument_Table()
 Argument_Table::~Argument_Table()
 {}
 
+void Argument_Table::set_table_scope(Table_Scope list_scope)
+{
+	scope = list_scope;
+
+	list<Symbol_Table_Entry *>::iterator i;
+	for(i = variable_table.begin(); i != variable_table.end(); i++)
+		(*i)->set_symbol_scope(list_scope);
+}
+
+Table_Scope Argument_Table::get_table_scope()
+{
+	return scope;
+}
+
+int Argument_Table::get_size_of_value_type(Data_Type dt)
+{
+	switch(dt)
+	{
+	case int_data_type: return -4; break;
+	case void_data_type: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Attempt to seek size of type void");
+	case float_data_type: return -8; break;
+	defualt: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Data type not supperted");
+	}
+}
+
+void Argument_Table::set_start_offset_of_first_symbol(int n)
+{
+	start_offset_of_first_symbol = n;
+}
+
+int Argument_Table::get_start_offset_of_first_symbol()
+{
+	return start_offset_of_first_symbol;
+}
+
+void Argument_Table::assign_offsets()
+{
+	list<Symbol_Table_Entry *>::iterator i;
+	int temp = start_offset_of_first_symbol;
+	for (i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		int size = get_size_of_value_type((*i)->get_data_type());
+		temp = temp - size;
+		(*i)->set_start_offset(temp);
+		size_in_bytes += size;
+		(*i)->set_end_offset(temp + size);
+
+	}
+}
+
+void Argument_Table::set_size(int n)
+{
+	size_in_bytes;
+}
+
+int Argument_Table::get_size()
+{
+	return size_in_bytes;
+}
+
+void Argument_Table::print(ostream & file_buffer)
+{
+	list<Symbol_Table_Entry *>::iterator i;
+
+	for(i = variable_table.begin(); i != variable_table.end(); i++)
+	{
+		string name = (*i)->get_variable_name();
+		Data_Type dt = (*i)->get_data_type();
+		int start_off = (*i)->get_start_offset();
+		int end_off = (*i)->get_end_offset();
+
+		file_buffer << "   Name: " << name;
+
+		switch(dt)
+		{
+		case int_data_type: file_buffer << " Type: INT"; break;
+		case float_data_type: file_buffer << " Type: FLOAT"; break;
+		defualt: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Variable data type can only be int");
+		}
+
+		file_buffer << " Entity Type: VAR";
+
+		if (start_off == end_off)
+			file_buffer << " (No offset assigned yet)\n";
+		else
+			file_buffer << " Start Offset: " << start_off << " End Offset: " << end_off << "\n";
+	}
+}
+
 void Argument_Table::push_symbol(Symbol_Table_Entry * variable)
 {
 	variable_table.push_back(variable);
@@ -253,6 +342,7 @@ void Argument_Table::symbol_table_entry_check(list<Symbol_Table_Entry *> & var_t
 		CHECK_INVARIANT((*i)->get_variable_name() == (*j)->get_variable_name(), "Variable name of one of the parameters of the procedure and its prototypes doesn't match");
 	}
 }
+
 Symbol_Table_Entry & Argument_Table::get_symbol_table_entry(string variable_name)
 {
 	list<Symbol_Table_Entry *>::iterator i;

@@ -1,0 +1,14 @@
+  Procedure: fn
+  Intermediate Code Statements
+
+label2:    	
+	iLoad:    	v0 <- 20
+	store:    	a <- v0
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	iLoad:    	v0 <- 10
+	store:    	a <- v0
+	return

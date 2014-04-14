@@ -89,15 +89,38 @@ public:
 };
 
 class Argument_Table {
+		Table_Scope scope;
 
+		// compile
+		int size_in_bytes;		// size of list
+		int start_offset_of_first_symbol;
 	public:
 		list<Symbol_Table_Entry *> variable_table;
 		Argument_Table();
 		~Argument_Table();
+
+		void print(ostream & file_buffer);
+
+		Table_Scope get_table_scope();
+		void set_table_scope(Table_Scope list_scope);
+
 		void push_symbol(Symbol_Table_Entry * variable);
 		void symbol_table_entry_check(list<Symbol_Table_Entry *> & var_table);
 		bool variable_in_symbol_list_check(string variable);
 		Symbol_Table_Entry & get_symbol_table_entry(string variable_name);
+
+	// compile
+private:
+	int get_size_of_value_type(Data_Type dt);
+
+public:
+	void set_start_offset_of_first_symbol(int n);
+	int get_start_offset_of_first_symbol();
+
+	void assign_offsets();
+
+	int get_size();
+	void set_size(int n);
 
 };
 

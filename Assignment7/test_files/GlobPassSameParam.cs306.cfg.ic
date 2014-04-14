@@ -1,0 +1,19 @@
+  Procedure: fn
+  Intermediate Code Statements
+
+label2:    	
+	load:    	v0 <- c
+	store:    	a <- v0
+	load.d:    	f2 <- d
+	store.d:    	b <- f2
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	load.d:    	f2 <- b
+	store.d:    	d <- f2
+	load:    	v0 <- a
+	store:    	c <- v0
+	call fn
+	return

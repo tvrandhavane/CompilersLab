@@ -1,0 +1,24 @@
+Program:
+
+Global Declarations:
+   Procedure: fn, Return Type: INT
+   Fromal Parameter List
+   Name: a Type: INT Entity Type: VAR (No offset assigned yet)
+   Name: b Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Local Declarartions
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: a Type: INT Entity Type: VAR (No offset assigned yet)
+Program:
+
+Global Declarations:
+   Procedure: fn, Return Type: INT
+   Fromal Parameter List
+   Name: a Type: INT Entity Type: VAR Start Offset: 12 End Offset: 8
+   Name: b Type: FLOAT Entity Type: VAR Start Offset: 20 End Offset: 12
+   Local Declarartions
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: a Type: INT Entity Type: VAR Start Offset: 0 End Offset: 4

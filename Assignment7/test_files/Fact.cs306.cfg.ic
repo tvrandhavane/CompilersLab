@@ -1,0 +1,40 @@
+  Procedure: fact
+  Intermediate Code Statements
+
+label2:    	
+	load:    	v0 <- a
+	iLoad:    	t0 <- 1
+	seq:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label3
+	goto label4
+
+label3:    	
+	iLoad:    	v0 <- 1
+	move:    	v1 <- v0
+	return
+
+label4:    	
+	load:    	v0 <- prod
+	load:    	t0 <- a
+	mul:    	t1 <- v0 , t0
+	store:    	prod <- t1
+	load:    	v0 <- a
+	iLoad:    	t0 <- -1
+	add:    	t1 <- v0 , t0
+	store:    	a <- t1
+	call fact
+	move:    	v0 <- v1
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	iLoad:    	v0 <- 10
+	store:    	a <- v0
+	iLoad:    	v0 <- 1
+	store:    	prod <- v0
+	load:    	v0 <- a
+	store:    	a <- v0
+	call fact
+	move:    	v0 <- v1
+	return

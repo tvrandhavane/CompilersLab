@@ -1,0 +1,18 @@
+Program:
+
+Global Declarations:
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: d Type: INT Entity Type: VAR (No offset assigned yet)
+   Name: b Type: INT Entity Type: VAR (No offset assigned yet)
+   Name: a Type: INT Entity Type: VAR (No offset assigned yet)
+Program:
+
+Global Declarations:
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: d Type: INT Entity Type: VAR Start Offset: 0 End Offset: 4
+   Name: b Type: INT Entity Type: VAR Start Offset: 4 End Offset: 8
+   Name: a Type: INT Entity Type: VAR Start Offset: 8 End Offset: 12

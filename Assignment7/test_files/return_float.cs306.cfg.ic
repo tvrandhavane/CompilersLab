@@ -1,0 +1,27 @@
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	iLoad.d:    	f2 <- 8.10
+	store.d:    	x <- f2
+	iLoad.d:    	f2 <- 10.40
+	store.d:    	y <- f2
+	load.d:    	f2 <- y
+	store.d:    	b <- f2
+	load.d:    	f2 <- x
+	store.d:    	a <- f2
+	call sum
+	move.d:    	f2 <- f0
+	store.d:    	z <- f2
+	return
+  Procedure: sum
+  Intermediate Code Statements
+
+label2:    	
+	load.d:    	f2 <- a
+	load.d:    	f4 <- b
+	add.d:    	f6 <- f2 , f4
+	store.d:    	x <- f6
+	load.d:    	f2 <- x
+	move.d:    	f0 <- f2
+	return

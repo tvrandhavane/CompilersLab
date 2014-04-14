@@ -1,0 +1,30 @@
+Program:
+
+Global Declarations:
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: z Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: y Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: x Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Procedure: sum, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: b Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Local Declarartions
+   Name: x Type: FLOAT Entity Type: VAR (No offset assigned yet)
+Program:
+
+Global Declarations:
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: z Type: FLOAT Entity Type: VAR Start Offset: 0 End Offset: 8
+   Name: y Type: FLOAT Entity Type: VAR Start Offset: 8 End Offset: 16
+   Name: x Type: FLOAT Entity Type: VAR Start Offset: 16 End Offset: 24
+   Procedure: sum, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a Type: FLOAT Entity Type: VAR Start Offset: 16 End Offset: 8
+   Name: b Type: FLOAT Entity Type: VAR Start Offset: 24 End Offset: 16
+   Local Declarartions
+   Name: x Type: FLOAT Entity Type: VAR Start Offset: 0 End Offset: 8

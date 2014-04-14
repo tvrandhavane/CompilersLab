@@ -1,0 +1,37 @@
+  Procedure: fn
+  Intermediate Code Statements
+
+label2:    	
+	load:    	v0 <- a
+	mtc1:    	f2 <- v0
+	load.d:    	f4 <- b
+	add.d:    	f6 <- f2 , f4
+	load:    	v0 <- c
+	mtc1:    	f2 <- v0
+	sub.d:    	f4 <- f6 , f2
+	load.d:    	f2 <- d
+	sle:    	v0 <- f4 , f2
+	load:    	t0 <- a
+	load:    	t1 <- c
+	mul:    	t2 <- t0 , t1
+	sne:    	t0 <- v0 , t2
+	move:    	v1 <- t0
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	iLoad:    	v0 <- 10
+	store:    	a <- v0
+	iLoad.d:    	f2 <- 3.60
+	store.d:    	d <- f2
+	load:    	v0 <- a
+	store:    	c <- v0
+	iLoad.d:    	f2 <- 2.30
+	store.d:    	b <- f2
+	iLoad:    	v0 <- 1
+	store:    	a <- v0
+	call fn
+	move:    	v0 <- v1
+	store:    	a <- v0
+	return

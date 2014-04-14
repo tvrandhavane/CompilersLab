@@ -1,0 +1,46 @@
+  Procedure: fun
+  Intermediate Code Statements
+
+label2:    	
+	iLoad.d:    	f2 <- 2.30
+	store.d:    	a <- f2
+	iLoad.d:    	f2 <- 3.20
+	store.d:    	b <- f2
+	load.d:    	f2 <- b
+	iLoad.d:    	f4 <- 2.10
+	div.d:    	f6 <- f2 , f4
+	load.d:    	f2 <- a
+	sub.d:    	f4 <- f6 , f2
+	store.d:    	a <- f4
+	load.d:    	f2 <- a
+	mfc1:    	v0 <- f2
+	move:    	v1 <- v0
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	call fun
+	move:    	v0 <- v1
+	store:    	b <- v0
+	load:    	v0 <- b
+	iLoad:    	t0 <- 3
+	seq:    	t1 <- v0 , t0
+	bne:    	t1 , zero : goto label3
+	goto label4
+
+label3:    	
+	load:    	v0 <- b
+	iLoad:    	t0 <- -2
+	add:    	t1 <- v0 , t0
+	store:    	iftmp0 <- t1
+	goto label5
+
+label4:    	
+	iLoad:    	v0 <- 1
+	store:    	iftmp0 <- v0
+
+label5:    	
+	load:    	v0 <- iftmp0
+	store:    	a <- v0
+	return

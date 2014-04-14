@@ -1,0 +1,64 @@
+Program:
+
+Global Declarations:
+   Procedure: add, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a1 Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: b1 Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Local Declarartions
+   Procedure: div, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a1 Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: b1 Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Local Declarartions
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: f Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: e Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: d Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: c Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: b Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: a Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Procedure: mul, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a1 Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: b1 Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Local Declarartions
+   Procedure: sub, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a1 Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: b1 Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Local Declarartions
+Program:
+
+Global Declarations:
+   Procedure: add, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a1 Type: FLOAT Entity Type: VAR Start Offset: 16 End Offset: 8
+   Name: b1 Type: FLOAT Entity Type: VAR Start Offset: 24 End Offset: 16
+   Local Declarartions
+   Procedure: div, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a1 Type: FLOAT Entity Type: VAR Start Offset: 16 End Offset: 8
+   Name: b1 Type: FLOAT Entity Type: VAR Start Offset: 24 End Offset: 16
+   Local Declarartions
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: f Type: FLOAT Entity Type: VAR Start Offset: 0 End Offset: 8
+   Name: e Type: FLOAT Entity Type: VAR Start Offset: 8 End Offset: 16
+   Name: d Type: FLOAT Entity Type: VAR Start Offset: 16 End Offset: 24
+   Name: c Type: FLOAT Entity Type: VAR Start Offset: 24 End Offset: 32
+   Name: b Type: FLOAT Entity Type: VAR Start Offset: 32 End Offset: 40
+   Name: a Type: FLOAT Entity Type: VAR Start Offset: 40 End Offset: 48
+   Procedure: mul, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a1 Type: FLOAT Entity Type: VAR Start Offset: 16 End Offset: 8
+   Name: b1 Type: FLOAT Entity Type: VAR Start Offset: 24 End Offset: 16
+   Local Declarartions
+   Procedure: sub, Return Type: FLOAT
+   Fromal Parameter List
+   Name: a1 Type: FLOAT Entity Type: VAR Start Offset: 16 End Offset: 8
+   Name: b1 Type: FLOAT Entity Type: VAR Start Offset: 24 End Offset: 16
+   Local Declarartions

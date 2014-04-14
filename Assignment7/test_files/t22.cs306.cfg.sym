@@ -1,0 +1,28 @@
+Program:
+
+Global Declarations:
+   Procedure: fun, Return Type: INT
+   Fromal Parameter List
+   Local Declarartions
+   Name: b Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Name: a Type: FLOAT Entity Type: VAR (No offset assigned yet)
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: a Type: INT Entity Type: VAR (No offset assigned yet)
+   Name: b Type: INT Entity Type: VAR (No offset assigned yet)
+   Name: iftmp0 Type: INT Entity Type: VAR (No offset assigned yet)
+Program:
+
+Global Declarations:
+   Procedure: fun, Return Type: INT
+   Fromal Parameter List
+   Local Declarartions
+   Name: b Type: FLOAT Entity Type: VAR Start Offset: 0 End Offset: 8
+   Name: a Type: FLOAT Entity Type: VAR Start Offset: 8 End Offset: 16
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: a Type: INT Entity Type: VAR Start Offset: 0 End Offset: 4
+   Name: b Type: INT Entity Type: VAR Start Offset: 4 End Offset: 8
+   Name: iftmp0 Type: INT Entity Type: VAR Start Offset: 8 End Offset: 12

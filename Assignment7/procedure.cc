@@ -43,6 +43,7 @@ Procedure::Procedure(Data_Type proc_return_type, string proc_name,Argument_Table
 {
 	return_type = proc_return_type;
 	argument_symbol_table = argument_list;
+	argument_symbol_table.set_table_scope(local);
 	name = proc_name;
 	lineno = line;
 	return_flag = 0;
@@ -150,15 +151,17 @@ void Procedure::print(ostream & file_buffer)
 {
 	file_buffer << PROC_SPACE << "Procedure: " << name << ", Return Type: ";
 	if(return_type == void_data_type)
-		file_buffer << "void";
+		file_buffer << "VOID";
 	else if(return_type == float_data_type)
-		file_buffer << "float";
+		file_buffer << "FLOAT";
 	else
-		file_buffer << "int";
+		file_buffer << "INT";
 	file_buffer << "\n";
 
 	if ((command_options.is_show_symtab_selected()) || (command_options.is_show_program_selected()))
 	{
+		file_buffer << "   Fromal Parameter List\n";
+		argument_symbol_table.print(file_buffer);
 		file_buffer << "   Local Declarartions\n";
 		local_symbol_table.print(file_buffer);
 	}
@@ -285,14 +288,21 @@ Eval_Result & Procedure::evaluate(ostream & file_buffer)
 void Procedure::compile()
 {
 	// assign offsets to local symbol table
+	argument_symbol_table.set_start_offset_of_first_symbol(8);
+	argument_symbol_table.set_size(4);
+	argument_symbol_table.assign_offsets();
+
+	// assign offsets to local symbol table
 	local_symbol_table.set_start_offset_of_first_symbol(4);
 	local_symbol_table.set_size(4);
 	local_symbol_table.assign_offsets();
 
 	// compile the program by visiting each basic block
 	list<Basic_Block *>::iterator i;
-	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++)
+	for(i = basic_block_list.begin(); i != basic_block_list.end(); i++){
 		(*i)->compile();
+	}
+
 }
 
 void Procedure::print_icode(ostream & file_buffer)

@@ -1,0 +1,16 @@
+Program:
+
+Global Declarations:
+   Name: Removing Type: INT Entity Type: VAR (No offset assigned yet)
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: a Type: INT Entity Type: VAR (No offset assigned yet)
+Program:
+
+Global Declarations:
+   Name: Removing Type: INT Entity Type: VAR Start Offset: 0 End Offset: 4
+   Procedure: main, Return Type: VOID
+   Fromal Parameter List
+   Local Declarartions
+   Name: a Type: INT Entity Type: VAR Start Offset: 0 End Offset: 4

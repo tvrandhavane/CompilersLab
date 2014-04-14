@@ -873,7 +873,7 @@ function_call:
 			functionCall.push_back(*$1);
 
 			CHECK_INVARIANT(program_object.get_procedure(*$1) != NULL, "Function is not defined");
-			$$ = new Function_Call_Ast(*$1,program_object.get_procedure(*$1)->get_return_type(),$3, get_line_number());
+			$$ = new Function_Call_Ast(*$1, program_object.get_procedure(*$1)->get_return_type(),$3, get_line_number());
 		}
 	}
 |
@@ -884,22 +884,22 @@ function_call:
 			functionCall.push_back(*$1);
 
 			CHECK_INVARIANT(program_object.get_procedure(*$1) != NULL, "Function is not defined");
-			$$ = new Function_Call_Ast(*$1,int_data_type,NULL, get_line_number());
+			$$ = new Function_Call_Ast(*$1,program_object.get_procedure(*$1)->get_return_type(),NULL, get_line_number());
 		}
 	}
 ;
 
 argument_input_list:
-	argument_input_list ',' expression
+	expression ',' argument_input_list
 	{
 		if(NOT_ONLY_PARSE)
 		{
-			if ($1 == NULL)
+			if ($3 == NULL)
 				$$ = new list<Ast *>;
 			else
-				$$ = $1;
+				$$ = $3;
 
-			$$->push_back($3);
+			$$->push_back($1);
 		}
 	}
 |

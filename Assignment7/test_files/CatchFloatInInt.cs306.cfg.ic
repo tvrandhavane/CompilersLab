@@ -1,0 +1,16 @@
+  Procedure: fn
+  Intermediate Code Statements
+
+label2:    	
+	iLoad.d:    	f2 <- 2.30
+	move.d:    	f0 <- f2
+	return
+  Procedure: main
+  Intermediate Code Statements
+
+label2:    	
+	call fn
+	move.d:    	f2 <- f0
+	mfc1:    	v0 <- f2
+	store:    	a <- v0
+	return
