@@ -13,11 +13,9 @@ label2:
 label2:    	
 	iLoad.d:    	f2 <- 2.00
 	store.d:    	a <- f2
-	iLoad.d:    	f2 <- 3.00
-	store.d:    	b <- f2
-	load.d:    	f2 <- b
-	store.d:    	b1 <- f2
-	load.d:    	f2 <- a
+	iLoad.d:    	f4 <- 3.00
+	store.d:    	b <- f4
+	store.d:    	b1 <- f4
 	store.d:    	a1 <- f2
 	call add
 	move.d:    	f2 <- f0

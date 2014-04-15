@@ -11,7 +11,6 @@ label2:
 label2:    	
 	iLoad:    	v0 <- 10
 	store:    	a <- v0
-	load:    	v0 <- a
 	store:    	b <- v0
 	call fn
 	return

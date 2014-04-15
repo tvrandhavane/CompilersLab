@@ -16,7 +16,6 @@ label2:
 	l.d $f2, 20($fp)
 	mfc1 $v0, $f2
 	sw $v0, 12($fp)
-	lw $v0, 12($fp)
 	move $v1, $v0
 	j epilogue_fn
 
@@ -47,7 +46,6 @@ label2:
 	sw $v0, 0($fp)
 	li.d $f2, 1.40
 	s.d $f2, 0($sp)
-	lw $v0, 0($fp)
 	sw $v0, -8($sp)
 	sub $sp, $sp, 12
 	jal fn

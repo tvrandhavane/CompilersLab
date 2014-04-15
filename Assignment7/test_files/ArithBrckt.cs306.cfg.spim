@@ -15,48 +15,29 @@ main:				# .globl makes main know to the
 label2:    	
 	li $v0, 3
 	sw $v0, -28($fp)
-	li $v0, 4
-	sw $v0, -24($fp)
-	li $v0, 5
-	sw $v0, -20($fp)
-	lw $v0, -28($fp)
-	lw $t0, -24($fp)
-	lw $t1, -20($fp)
+	li $t0, 4
+	sw $t0, -24($fp)
+	li $t1, 5
+	sw $t1, -20($fp)
 	add $t2, $t0, $t1
-	div $t0, $v0, $t2
-	sw $t0, -16($fp)
-	lw $v0, -28($fp)
-	lw $t0, -24($fp)
-	div $t1, $v0, $t0
-	lw $v0, -20($fp)
-	add $t0, $t1, $v0
-	sw $t0, -12($fp)
-	lw $v0, -28($fp)
-	lw $t0, -24($fp)
-	add $t1, $v0, $t0
-	lw $v0, -20($fp)
-	div $t0, $t1, $v0
-	sw $t0, -8($fp)
-	lw $v0, -24($fp)
-	lw $t0, -20($fp)
-	sub $t1, $v0, $t0
-	lw $v0, -28($fp)
-	add $t0, $t1, $v0
-	sw $t0, -4($fp)
-	lw $v0, -28($fp)
-	lw $t0, -24($fp)
-	add $t1, $v0, $t0
-	lw $v0, -20($fp)
-	mul $t0, $t1, $v0
-	lw $v0, -12($fp)
-	lw $t1, -8($fp)
-	sub $t2, $v0, $t1
-	lw $v0, -28($fp)
-	lw $t1, -24($fp)
-	sub $t3, $v0, $t1
-	sgt $v0, $t2, $t3
-	div $t1, $t0, $v0
-	sw $t1, 0($fp)
+	div $t3, $v0, $t2
+	sw $t3, -16($fp)
+	div $t2, $v0, $t0
+	add $t4, $t2, $t1
+	sw $t4, -12($fp)
+	add $t2, $v0, $t0
+	div $t5, $t2, $t1
+	sw $t5, -8($fp)
+	sub $t2, $t0, $t1
+	add $t6, $t2, $v0
+	sw $t6, -4($fp)
+	add $t2, $v0, $t0
+	mul $t7, $t2, $t1
+	sub $t2, $t4, $t5
+	sub $t8, $v0, $t0
+	sgt $t9, $t2, $t8
+	div $t2, $t7, $t9
+	sw $t2, 0($fp)
 	j epilogue_main
 
 # Epilogue Begins

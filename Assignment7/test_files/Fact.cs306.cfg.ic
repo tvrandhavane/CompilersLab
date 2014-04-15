@@ -20,8 +20,8 @@ label4:
 	store:    	prod <- t1
 	load:    	v0 <- a
 	iLoad:    	t0 <- -1
-	add:    	t1 <- v0 , t0
-	store:    	a <- t1
+	add:    	t2 <- v0 , t0
+	store:    	a <- t2
 	call fact
 	move:    	v0 <- v1
 	return
@@ -31,9 +31,8 @@ label4:
 label2:    	
 	iLoad:    	v0 <- 10
 	store:    	a <- v0
-	iLoad:    	v0 <- 1
-	store:    	prod <- v0
-	load:    	v0 <- a
+	iLoad:    	t0 <- 1
+	store:    	prod <- t0
 	store:    	a <- v0
 	call fact
 	move:    	v0 <- v1

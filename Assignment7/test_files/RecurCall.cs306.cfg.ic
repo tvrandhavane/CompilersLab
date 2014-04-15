@@ -4,10 +4,10 @@
 label2:    	
 	load:    	v0 <- d
 	store:    	c <- v0
-	load:    	v0 <- d
-	iLoad:    	t0 <- 0
-	seq:    	t1 <- v0 , t0
-	bne:    	t1 , zero : goto label3
+	load:    	t0 <- d
+	iLoad:    	t1 <- 0
+	seq:    	t2 <- t0 , t1
+	bne:    	t2 , zero : goto label3
 	goto label4
 
 label3:    	
@@ -32,9 +32,8 @@ label5:
 label2:    	
 	iLoad:    	v0 <- 2
 	store:    	a <- v0
-	iLoad:    	v0 <- 5
-	store:    	b <- v0
-	load:    	v0 <- a
+	iLoad:    	t0 <- 5
+	store:    	b <- t0
 	store:    	d <- v0
 	call fn
 	return

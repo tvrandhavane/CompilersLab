@@ -15,7 +15,6 @@ fn2:				# .globl makes main know to the
 label2:    	
 	li $v0, 2
 	sw $v0, 16($fp)
-	lw $v0, 16($fp)
 	move $v1, $v0
 	j epilogue_fn2
 
@@ -44,9 +43,7 @@ main:				# .globl makes main know to the
 label2:    	
 	li $v0, 3
 	sw $v0, 0($fp)
-	lw $v0, 0($fp)
 	sw $v0, 0($sp)
-	lw $v0, 0($fp)
 	sw $v0, -4($sp)
 	sub $sp, $sp, 8
 	jal fn2

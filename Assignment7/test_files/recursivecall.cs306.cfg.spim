@@ -15,15 +15,14 @@ main:				# .globl makes main know to the
 label2:    	
 	li $v0, 5
 	sw $v0, -8($fp)
-	lw $v0, -8($fp)
 	sw $v0, 0($sp)
 	sub $sp, $sp, 4
 	jal r
 	add $sp, $sp, 4
 	move $v0, $v1
 	sw $v0, -4($fp)
-	li $v0, 3
-	sw $v0, 0($sp)
+	li $t0, 3
+	sw $t0, 0($sp)
 	sub $sp, $sp, 4
 	jal r
 	add $sp, $sp, 4
@@ -75,7 +74,6 @@ label4:
 	add $sp, $sp, 4
 	move $v0, $v1
 	sw $v0, 0($fp)
-	lw $v0, 0($fp)
 	li $t0, 1
 	add $t1, $v0, $t0
 	sw $t1, -4($fp)

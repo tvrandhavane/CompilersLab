@@ -15,7 +15,6 @@ f:				# .globl makes main know to the
 label2:    	
 	li $v0, 3
 	sw $v0, 0($fp)
-	lw $v0, 0($fp)
 	lw $t0, 12($fp)
 	add $t1, $v0, $t0
 	sw $t1, 0($fp)
@@ -46,7 +45,6 @@ main:				# .globl makes main know to the
 label2:    	
 	li $v0, 8
 	sw $v0, 0($fp)
-	lw $v0, 0($fp)
 	sw $v0, 0($sp)
 	sub $sp, $sp, 4
 	jal f

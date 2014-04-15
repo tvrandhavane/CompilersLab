@@ -25,12 +25,11 @@ label2:
 	store:    	a <- v0
 	iLoad.d:    	f2 <- 3.60
 	store.d:    	d <- f2
-	load:    	v0 <- a
 	store:    	c <- v0
 	iLoad.d:    	f2 <- 2.30
 	store.d:    	b <- f2
-	iLoad:    	v0 <- 1
-	store:    	a <- v0
+	iLoad:    	t0 <- 1
+	store:    	a <- t0
 	call fn
 	move:    	v0 <- v1
 	store:    	a <- v0

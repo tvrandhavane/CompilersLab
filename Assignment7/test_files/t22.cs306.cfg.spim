@@ -15,16 +15,13 @@ fun:				# .globl makes main know to the
 label2:    	
 	li.d $f2, 2.30
 	s.d $f2, -8($fp)
-	li.d $f2, 3.20
-	s.d $f2, 0($fp)
-	l.d $f2, 0($fp)
-	li.d $f4, 2.10
-	div.d $f6, $f2, $f4
-	l.d $f2, -8($fp)
-	sub.d $f4, $f6, $f2
-	s.d $f4, -8($fp)
-	l.d $f2, -8($fp)
-	mfc1 $v0, $f2
+	li.d $f4, 3.20
+	s.d $f4, 0($fp)
+	li.d $f6, 2.10
+	div.d $f8, $f4, $f6
+	sub.d $f6, $f8, $f2
+	s.d $f6, -8($fp)
+	mfc1 $v0, $f6
 	move $v1, $v0
 	j epilogue_fun
 
@@ -54,7 +51,6 @@ label2:
 	jal fun
 	move $v0, $v1
 	sw $v0, -4($fp)
-	lw $v0, -4($fp)
 	li $t0, 3
 	seq $t1, $v0, $t0
 	bne $t1, $zero, label3 

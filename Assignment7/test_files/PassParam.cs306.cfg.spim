@@ -42,7 +42,6 @@ main:				# .globl makes main know to the
 label2:    	
 	li $v0, 10
 	sw $v0, 0($fp)
-	lw $v0, 0($fp)
 	sw $v0, 0($sp)
 	sub $sp, $sp, 4
 	jal fn

@@ -312,7 +312,9 @@ Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Relational_Expr_Ast cannot be null");
 
 
-	if((typeid(*lhs) != typeid(Relational_Expr_Ast)) && (typeid(*lhs) != typeid(Arithmetic_Expr_Ast))){
+	if((typeid(*lhs) != typeid(Relational_Expr_Ast)) && 
+		(typeid(*lhs) != typeid(Arithmetic_Expr_Ast)) &&
+		(typeid(*lhs) != typeid(Function_Call_Ast))){
 		lra.optimize_lra(mc_2r, NULL, lhs);
 	}
 
@@ -320,7 +322,9 @@ Code_For_Ast & Relational_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	Register_Descriptor * lhs_register = lhs_stmt.get_reg();
 	lhs_register->used_for_expr_result = true;
 
-	if((typeid(*rhs) != typeid(Relational_Expr_Ast)) && (typeid(*rhs) != typeid(Arithmetic_Expr_Ast))){
+	if((typeid(*rhs) != typeid(Relational_Expr_Ast)) && 
+		(typeid(*rhs) != typeid(Arithmetic_Expr_Ast)) &&
+		(typeid(*rhs) != typeid(Function_Call_Ast))){
 		lra.optimize_lra(mc_2r, NULL, rhs);
 	}
 
@@ -755,7 +759,9 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
 	CHECK_INVARIANT((lhs != NULL), "Lhs of Arithmetic_Expr_Ast cannot be null");
 
-	if((typeid(*lhs) != typeid(Relational_Expr_Ast)) && (typeid(*lhs) != typeid(Arithmetic_Expr_Ast))){
+	if((typeid(*lhs) != typeid(Relational_Expr_Ast)) &&
+		(typeid(*lhs) != typeid(Arithmetic_Expr_Ast)) &&
+		(typeid(*lhs) != typeid(Function_Call_Ast))){
 		lra.optimize_lra(mc_2r, NULL, lhs);
 	}
 
@@ -766,7 +772,9 @@ Code_For_Ast & Arithmetic_Expr_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	if(rhs != NULL){
 		CHECK_INVARIANT((rhs != NULL), "Rhs of Arithmetic_Expr_Ast cannot be null");
 
-		if((typeid(*rhs) != typeid(Relational_Expr_Ast)) && (typeid(*rhs) != typeid(Arithmetic_Expr_Ast))){
+		if((typeid(*rhs) != typeid(Relational_Expr_Ast)) &&
+			(typeid(*rhs) != typeid(Arithmetic_Expr_Ast)) &&
+			(typeid(*rhs) != typeid(Function_Call_Ast))){
 			lra.optimize_lra(mc_2r, NULL, rhs);
 		}
 
@@ -1051,7 +1059,9 @@ Code_For_Ast & Assignment_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	CHECK_INVARIANT((lhs != NULL), "Lhs cannot be null");
 	CHECK_INVARIANT((rhs != NULL), "Rhs cannot be null");
 
-	if((typeid(*rhs) != typeid(Relational_Expr_Ast)) && (typeid(*rhs) != typeid(Arithmetic_Expr_Ast))){
+	if((typeid(*rhs) != typeid(Relational_Expr_Ast)) &&
+		(typeid(*rhs) != typeid(Arithmetic_Expr_Ast)) &&
+		(typeid(*rhs) != typeid(Function_Call_Ast))){
 		lra.optimize_lra(mc_2m, lhs, rhs);
 	}
 
@@ -1504,9 +1514,115 @@ Code_For_Ast & Function_Call_Ast::compile()
 
 Code_For_Ast & Function_Call_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
-	Code_For_Ast * goto_code_stmt;
+		Procedure *funct_call = program_object.get_procedure(func_name);
+	CHECK_INVARIANT(funct_call->is_body_defined() == true, "Procedure Body is not defined");
 
-	return *goto_code_stmt;
+	Argument_Table & arg = funct_call->get_argument_symbol_table();
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	list<Ast *>::iterator i;
+	int offset = 0;
+	if(input_argument_list != NULL){
+		list<Symbol_Table_Entry *>::iterator j;
+		j = arg.variable_table.end();
+		j--;
+		for(i = input_argument_list->begin(); i != input_argument_list->end(); i++, j--){
+			if((typeid(**i) != typeid(Relational_Expr_Ast)) &&
+				(typeid(**i) != typeid(Arithmetic_Expr_Ast)) &&
+				(typeid(**i) != typeid(Function_Call_Ast))){
+				lra.optimize_lra(mc_2r, NULL, *i);
+			}
+			Code_For_Ast & arg_stmt = (*i)->compile_and_optimize_ast(lra);
+
+			if (arg_stmt.get_icode_list().empty() == false)
+				ic_list.splice(ic_list.end(), arg_stmt.get_icode_list());
+
+			Register_Descriptor * store_register = arg_stmt.get_reg();
+			CHECK_INVARIANT((store_register != NULL), "Store register cannot be null");
+
+			Ics_Opd * register_opd = new Register_Addr_Opd(store_register);
+
+			Ics_Opd * opd = new Mem_Addr_Opd((**j), offset);
+
+			if((*j)->get_data_type() == int_data_type){
+				offset += 4;
+			}
+			else{
+				offset += 8;
+			}
+
+			Register_Descriptor * new_register;
+			new_register = machine_dscr_object.get_new_register();
+
+			Icode_Stmt * store_stmt = new Move_IC_Stmt(store, register_opd, opd);
+
+			(*j)->free_register(store_register);
+
+			ic_list.push_back(store_stmt);
+		}
+	}
+	if(offset > 0){
+		Register_Descriptor * stack_register = machine_dscr_object.spim_register_table[sp];
+		Ics_Opd * stack_opd = new Register_Addr_Opd(stack_register);
+		Ics_Opd * offset_opd = new Const_Opd<int>(offset);
+		Compute_IC_Stmt * stack_sub_stmt = new Compute_IC_Stmt(stack_sub, stack_opd, offset_opd, stack_opd);
+		ic_list.push_back(stack_sub_stmt);
+	}
+
+	//call statement
+	Move_IC_Stmt * funcion_call_stmt = new Move_IC_Stmt(call, func_name);
+	ic_list.push_back(funcion_call_stmt);
+
+	if(offset > 0){
+		Register_Descriptor * stack_register = machine_dscr_object.spim_register_table[sp];
+		Ics_Opd * stack_opd = new Register_Addr_Opd(stack_register);
+		Ics_Opd * offset_opd = new Const_Opd<int>(offset);
+		Compute_IC_Stmt * stack_add_stmt = new Compute_IC_Stmt(stack_add, stack_opd, offset_opd, stack_opd);
+		ic_list.push_back(stack_add_stmt);
+	}
+
+	machine_dscr_object.clear_local_register_mappings();
+
+	//move statement
+	Ics_Opd * opd;
+	Ics_Opd * register_opd;
+	Register_Descriptor * new_res_register;
+	if(funct_call->get_return_type() == int_data_type){
+		Register_Descriptor * fn_result_register = machine_dscr_object.spim_register_table[v1];
+		opd = new Register_Addr_Opd(fn_result_register);
+
+		Register_Descriptor * result_register;
+
+		result_register = machine_dscr_object.get_new_register();
+		register_opd = new Register_Addr_Opd(result_register);
+
+		new_res_register = machine_dscr_object.get_new_register();
+
+		Move_IC_Stmt * move_stmt = new Move_IC_Stmt(move_op, opd, register_opd);
+		ic_list.push_back(move_stmt);
+	}
+	else if(funct_call->get_return_type() == float_data_type){
+		Register_Descriptor * fn_result_register = machine_dscr_object.spim_register_table[f0];
+		opd = new Register_Addr_Opd(fn_result_register);
+
+		Register_Descriptor * result_register;
+		result_register = machine_dscr_object.get_new_float_register();
+		register_opd = new Register_Addr_Opd(result_register);
+
+		new_res_register = machine_dscr_object.get_new_float_register();
+
+		Move_IC_Stmt * move_stmt = new Move_IC_Stmt(move_op, opd, register_opd);
+		ic_list.push_back(move_stmt);
+	}
+	else{
+		new_res_register = machine_dscr_object.get_new_register();
+	}
+
+	Code_For_Ast * fn_stmt;
+	if (ic_list.empty() == false)
+		fn_stmt = new Code_For_Ast(ic_list, new_res_register);
+
+	return *fn_stmt;
 }
 /////////////////////////////////////////////////////////////////
 Name_Ast::Name_Ast(string & name, Symbol_Table_Entry & var_entry, int line)
@@ -1897,8 +2013,53 @@ Code_For_Ast & Return_Ast::compile()
 
 Code_For_Ast & Return_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 {
-	Code_For_Ast & ret_code = *new Code_For_Ast();
-	return ret_code;
+	Register_Descriptor * return_value_register;
+
+	Register_Descriptor * result_register = machine_dscr_object.get_new_register();
+	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
+
+	Return_IC_Stmt * ret_stmt;
+	Code_For_Ast * ret_code;
+
+	if(return_Ast!=NULL){
+		if((typeid(*return_Ast) != typeid(Relational_Expr_Ast)) && 
+			(typeid(*return_Ast) != typeid(Arithmetic_Expr_Ast)) &&
+			(typeid(*return_Ast) != typeid(Function_Call_Ast))){
+			lra.optimize_lra(mc_2r, NULL, return_Ast);
+		}
+		Code_For_Ast & return_value = return_Ast->compile_and_optimize_ast(lra);
+		return_value_register = return_value.get_reg();
+		return_value_register->used_for_expr_result = true;
+
+		ic_list = return_value.get_icode_list();
+
+		//move statement
+		Register_Descriptor * fn_result_register;
+		if(return_Ast->get_data_type() == int_data_type)
+			fn_result_register = machine_dscr_object.spim_register_table[v1];
+		else
+			fn_result_register = machine_dscr_object.spim_register_table[f0];
+		Ics_Opd * opd = new Register_Addr_Opd(fn_result_register);
+
+		Ics_Opd * register_opd = new Register_Addr_Opd(return_value_register);
+
+		Move_IC_Stmt * move_stmt = new Move_IC_Stmt(move_op, register_opd, opd);
+		ic_list.push_back(move_stmt);
+
+		ret_stmt = new Return_IC_Stmt(return_op, fn_name);
+		ic_list.push_back(ret_stmt);
+
+		if (ic_list.empty() == false)
+			ret_code = new Code_For_Ast(ic_list, result_register);
+		return_value_register->used_for_expr_result = false;
+	}
+	else{
+		ret_stmt = new Return_IC_Stmt(return_op, fn_name);
+		ic_list.push_back(ret_stmt);
+		if (ic_list.empty() == false)
+			ret_code = new Code_For_Ast(ic_list, result_register);
+	}
+	return *ret_code;
 }
 
 template class Number_Ast<int>;

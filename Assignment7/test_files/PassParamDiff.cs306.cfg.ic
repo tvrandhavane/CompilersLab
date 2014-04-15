@@ -14,7 +14,6 @@ label2:
 	store:    	a <- v0
 	iLoad.d:    	f2 <- 10.00
 	store.d:    	c <- f2
-	load:    	v0 <- a
 	mtc1:    	f2 <- v0
 	store.d:    	b <- f2
 	call fn

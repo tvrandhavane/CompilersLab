@@ -45,7 +45,6 @@ label2:
 	sw $v0, 0($fp)
 	li.d $f2, 10.00
 	s.d $f2, 0($sp)
-	lw $v0, 0($fp)
 	mtc1 $f2, $v0
 	s.d $f2, -8($sp)
 	sub $sp, $sp, 16

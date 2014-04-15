@@ -41,10 +41,9 @@ label6:
 label2:    	
 	iLoad:    	v0 <- 1
 	store:    	b <- v0
-	iLoad:    	v0 <- 5
-	store:    	n <- v0
-	load:    	v0 <- n
-	store:    	n1 <- v0
+	iLoad:    	t0 <- 5
+	store:    	n <- t0
+	store:    	n1 <- t0
 	call fact
 	move:    	v0 <- v1
 	store:    	f <- v0

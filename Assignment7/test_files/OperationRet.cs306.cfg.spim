@@ -56,12 +56,11 @@ label2:
 	sw $v0, 0($fp)
 	li.d $f2, 3.60
 	s.d $f2, 0($sp)
-	lw $v0, 0($fp)
 	sw $v0, -8($sp)
 	li.d $f2, 2.30
 	s.d $f2, -12($sp)
-	li $v0, 1
-	sw $v0, -20($sp)
+	li $t0, 1
+	sw $t0, -20($sp)
 	sub $sp, $sp, 24
 	jal fn
 	add $sp, $sp, 24

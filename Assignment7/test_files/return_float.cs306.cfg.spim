@@ -15,11 +15,9 @@ main:				# .globl makes main know to the
 label2:    	
 	li.d $f2, 8.10
 	s.d $f2, -16($fp)
-	li.d $f2, 10.40
-	s.d $f2, -8($fp)
-	l.d $f2, -8($fp)
-	s.d $f2, 0($sp)
-	l.d $f2, -16($fp)
+	li.d $f4, 10.40
+	s.d $f4, -8($fp)
+	s.d $f4, 0($sp)
 	s.d $f2, -8($sp)
 	sub $sp, $sp, 16
 	jal sum
@@ -55,8 +53,7 @@ label2:
 	l.d $f4, 24($fp)
 	add.d $f6, $f2, $f4
 	s.d $f6, 0($fp)
-	l.d $f2, 0($fp)
-	move.d $f0, $f2
+	move.d $f0, $f6
 	j epilogue_sum
 
 # Epilogue Begins

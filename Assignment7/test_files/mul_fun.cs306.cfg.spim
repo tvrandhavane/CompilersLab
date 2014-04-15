@@ -73,39 +73,37 @@ main:				# .globl makes main know to the
 label2:    	
 	li.d $f2, 2.00
 	s.d $f2, -40($fp)
-	li.d $f2, 3.00
-	s.d $f2, -32($fp)
-	l.d $f2, -32($fp)
-	s.d $f2, 0($sp)
-	l.d $f2, -40($fp)
+	li.d $f4, 3.00
+	s.d $f4, -32($fp)
+	s.d $f4, 0($sp)
 	s.d $f2, -8($sp)
 	sub $sp, $sp, 16
 	jal add
 	add $sp, $sp, 16
 	move.d $f2, $f0
 	s.d $f2, -24($fp)
-	l.d $f2, -32($fp)
-	s.d $f2, 0($sp)
-	l.d $f2, -40($fp)
-	s.d $f2, -8($sp)
+	l.d $f4, -32($fp)
+	s.d $f4, 0($sp)
+	l.d $f4, -40($fp)
+	s.d $f4, -8($sp)
 	sub $sp, $sp, 16
 	jal sub
 	add $sp, $sp, 16
 	move.d $f2, $f0
 	s.d $f2, -16($fp)
-	l.d $f2, -32($fp)
-	s.d $f2, 0($sp)
-	l.d $f2, -40($fp)
-	s.d $f2, -8($sp)
+	l.d $f4, -32($fp)
+	s.d $f4, 0($sp)
+	l.d $f4, -40($fp)
+	s.d $f4, -8($sp)
 	sub $sp, $sp, 16
 	jal mul
 	add $sp, $sp, 16
 	move.d $f2, $f0
 	s.d $f2, -8($fp)
-	l.d $f2, -32($fp)
-	s.d $f2, 0($sp)
-	l.d $f2, -40($fp)
-	s.d $f2, -8($sp)
+	l.d $f4, -32($fp)
+	s.d $f4, 0($sp)
+	l.d $f4, -40($fp)
+	s.d $f4, -8($sp)
 	sub $sp, $sp, 16
 	jal div
 	add $sp, $sp, 16
