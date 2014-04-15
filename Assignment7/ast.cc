@@ -1408,6 +1408,7 @@ Code_For_Ast & Function_Call_Ast::compile()
 	list<Icode_Stmt *> & ic_list = *new list<Icode_Stmt *>;
 
 	list<Ast *>::iterator i;
+	int offset = 0;
 	if(input_argument_list != NULL){
 		list<Symbol_Table_Entry *>::iterator j;
 		j = arg.variable_table.end();
@@ -1418,12 +1419,19 @@ Code_For_Ast & Function_Call_Ast::compile()
 			if (arg_stmt.get_icode_list().empty() == false)
 				ic_list.splice(ic_list.end(), arg_stmt.get_icode_list());
 
-			
 				Register_Descriptor * store_register = arg_stmt.get_reg();
 				CHECK_INVARIANT((store_register != NULL), "Store register cannot be null");
 
 				Ics_Opd * register_opd = new Register_Addr_Opd(store_register);
-				Ics_Opd * opd = new Mem_Addr_Opd((**j));
+
+				Ics_Opd * opd = new Mem_Addr_Opd((**j), offset);
+
+				if((*j)->get_data_type() == int_data_type){
+					offset += 4;
+				}
+				else{
+					offset += 8;
+				}
 
 				Register_Descriptor * new_register;
 				new_register = machine_dscr_object.get_new_register();
@@ -1433,10 +1441,25 @@ Code_For_Ast & Function_Call_Ast::compile()
 				ic_list.push_back(store_stmt);
 		}
 	}
+	if(offset > 0){
+		Register_Descriptor * stack_register = machine_dscr_object.spim_register_table[sp];
+		Ics_Opd * stack_opd = new Register_Addr_Opd(stack_register);
+		Ics_Opd * offset_opd = new Const_Opd<int>(offset);
+		Compute_IC_Stmt * stack_sub_stmt = new Compute_IC_Stmt(stack_sub, stack_opd, offset_opd, stack_opd);
+		ic_list.push_back(stack_sub_stmt);
+	}
 
 	//call statement
 	Move_IC_Stmt * funcion_call_stmt = new Move_IC_Stmt(call, func_name);
 	ic_list.push_back(funcion_call_stmt);
+
+	if(offset > 0){
+		Register_Descriptor * stack_register = machine_dscr_object.spim_register_table[sp];
+		Ics_Opd * stack_opd = new Register_Addr_Opd(stack_register);
+		Ics_Opd * offset_opd = new Const_Opd<int>(offset);
+		Compute_IC_Stmt * stack_add_stmt = new Compute_IC_Stmt(stack_add, stack_opd, offset_opd, stack_opd);
+		ic_list.push_back(stack_add_stmt);
+	}
 
 	//move statement
 	Ics_Opd * opd;
@@ -1604,7 +1627,7 @@ Eval_Result & Name_Ast::evaluate(Local_Environment & eval_env, ostream & file_bu
 
 Code_For_Ast & Name_Ast::compile()
 {
-	Ics_Opd * opd = new Mem_Addr_Opd(*variable_symbol_entry);
+	Ics_Opd * opd = new Mem_Addr_Opd(*variable_symbol_entry, -1);
 	Register_Descriptor * result_register;
 	if(variable_symbol_entry->get_data_type() == int_data_type)
 		result_register = machine_dscr_object.get_new_register();
@@ -1628,7 +1651,7 @@ Code_For_Ast & Name_Ast::create_store_stmt(Register_Descriptor * store_register)
 	CHECK_INVARIANT((store_register != NULL), "Store register cannot be null");
 
 	Ics_Opd * register_opd = new Register_Addr_Opd(store_register);
-	Ics_Opd * opd = new Mem_Addr_Opd(*variable_symbol_entry);
+	Ics_Opd * opd = new Mem_Addr_Opd(*variable_symbol_entry, -1);
 
 	Icode_Stmt * store_stmt = new Move_IC_Stmt(store, register_opd, opd);
 
@@ -1655,7 +1678,7 @@ Code_For_Ast & Name_Ast::compile_and_optimize_ast(Lra_Outcome & lra)
 	Icode_Stmt * load_stmt = NULL;
 	if (load_needed)
 	{
-		Ics_Opd * opd = new Mem_Addr_Opd(*variable_symbol_entry);
+		Ics_Opd * opd = new Mem_Addr_Opd(*variable_symbol_entry, -1);
 
 		load_stmt = new Move_IC_Stmt(load, opd, register_opd);
 
@@ -1766,13 +1789,13 @@ Code_For_Ast & Number_Ast<DATA_TYPE>::compile_and_optimize_ast(Lra_Outcome & lra
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Return_Ast::Return_Ast(Ast * to_return, int line)
+Return_Ast::Return_Ast(Ast * to_return, string name, int line)
 {
 	return_Ast = to_return;
 	lineno = line;
 	ast_num_child = zero_arity;
 	successor = -2;
-
+	fn_name = name;
 	if(return_Ast == NULL){
 		node_data_type = void_data_type;
 	}
@@ -1856,7 +1879,7 @@ Code_For_Ast & Return_Ast::compile()
 		Move_IC_Stmt * move_stmt = new Move_IC_Stmt(move_op, register_opd, opd);
 		ic_list.push_back(move_stmt);
 
-		ret_stmt = new Return_IC_Stmt(return_op);
+		ret_stmt = new Return_IC_Stmt(return_op, fn_name);
 		ic_list.push_back(ret_stmt);
 
 		if (ic_list.empty() == false)
@@ -1864,7 +1887,7 @@ Code_For_Ast & Return_Ast::compile()
 		return_value_register->used_for_expr_result = false;
 	}
 	else{
-		ret_stmt = new Return_IC_Stmt(return_op);
+		ret_stmt = new Return_IC_Stmt(return_op, fn_name);
 		ic_list.push_back(ret_stmt);
 		if (ic_list.empty() == false)
 			ret_code = new Code_For_Ast(ic_list, result_register);

@@ -212,6 +212,8 @@ procedure_name:
 			current_procedure = program_object.get_procedure(*$1);
 
 			current_procedure->get_argument_symbol_table().symbol_table_entry_check((*$3).variable_table);
+
+			curr_function_name = *$1;
 		}
 
 	}
@@ -227,6 +229,8 @@ procedure_name:
 			program_object.check_procedure_predefined(*$1);
 			current_procedure = program_object.get_procedure(*$1);
 			current_procedure->get_argument_symbol_table().symbol_table_entry_check((*(new Argument_Table())).variable_table);
+
+			curr_function_name = *$1;
 		}
 	}
 ;
@@ -555,7 +559,7 @@ executable_statement_list:
 			if($3 != NULL){
 				return_statement_used_flag = false;
 			}
-			Ast * ret = new Return_Ast($3, get_line_number());
+			Ast * ret = new Return_Ast($3, curr_function_name, get_line_number());
 
 			if ($1 != NULL)
 				$$ = $1;

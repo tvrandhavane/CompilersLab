@@ -66,10 +66,11 @@ Symbol_Table_Entry & Ics_Opd::get_symbol_entry()
 
 /****************************** Class Mem_Addr_Opd *****************************/
 
-Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se)
+Mem_Addr_Opd::Mem_Addr_Opd(Symbol_Table_Entry & se, int code)
 {
 	symbol_entry = &se;
 	type = memory_addr;
+	print_code = code;
 }
 
 Mem_Addr_Opd & Mem_Addr_Opd::operator=(const Mem_Addr_Opd & rhs)
@@ -101,8 +102,13 @@ void Mem_Addr_Opd::print_asm_opd(ostream & file_buffer)
 
 	if (symbol_scope == local)
 	{
-		int offset = symbol_entry->get_start_offset();
-		file_buffer << offset << "($fp)";
+		if(print_code != -1){
+			file_buffer << -print_code << "($sp)";
+		}
+		else{
+			int offset = symbol_entry->get_start_offset();
+			file_buffer << offset << "($fp)";
+		}
 	}
 	else
 		file_buffer << symbol_entry->get_variable_name();
@@ -362,7 +368,7 @@ void Move_IC_Stmt::print_assembly(ostream & file_buffer)
 
 	case a_op_o1:
 			file_buffer << "\t" << op_name;
-			file_buffer << "\t" << fn_name;
+			file_buffer << " " << fn_name;
 			file_buffer << "\n";
 
 			break;
@@ -373,12 +379,13 @@ void Move_IC_Stmt::print_assembly(ostream & file_buffer)
 }
 /*************************** Class Label_IC_Stmt *****************************/
 
-Return_IC_Stmt::Return_IC_Stmt(Tgt_Op op)
+Return_IC_Stmt::Return_IC_Stmt(Tgt_Op op, string name)
 {
 	CHECK_INVARIANT((machine_dscr_object.spim_instruction_table[op] != NULL),
 			"Instruction description in spim table cannot be null");
 
 	op_desc = *(machine_dscr_object.spim_instruction_table[op]);
+	fn_name = name;
 	result = NULL;
 }
 
@@ -418,8 +425,7 @@ void Return_IC_Stmt::print_assembly(ostream & file_buffer)
 	switch (assem_format)
 	{
 	case a_op:
-			file_buffer << "\n" << op_name;
-			file_buffer << ":    \t\n";
+			file_buffer << "\t" << op_name << fn_name << "\n";
 
 			break;
 
@@ -564,6 +570,8 @@ void Compute_IC_Stmt::print_icode(ostream & file_buffer)
 			file_buffer << "\n";
 
 			break;
+	case i_stack:
+			break;
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH,
 				"Intermediate code format not supported");
 		break;
@@ -604,7 +612,17 @@ void Compute_IC_Stmt::print_assembly(ostream & file_buffer)
 			opd1->print_asm_opd(file_buffer);
 			file_buffer << "\n";
 			break;
-
+	case a_stack:
+			CHECK_INVARIANT (opd2, "Opd2 cannot be NULL for a compute IC Stmt");
+			file_buffer << "\t" << op_name;
+			file_buffer << " ";
+			result->print_asm_opd(file_buffer);
+			file_buffer << ", ";
+			opd1->print_asm_opd(file_buffer);
+			file_buffer << ", ";
+			opd2->print_asm_opd(file_buffer);
+			file_buffer << "\n";
+			break;
 	default: CHECK_INVARIANT(CONTROL_SHOULD_NOT_REACH, "Intermediate code format not supported");
 		break;
 	}

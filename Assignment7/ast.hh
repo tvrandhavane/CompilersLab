@@ -249,9 +249,10 @@ public:
 class Return_Ast:public Ast
 {
 	Ast * return_Ast;
+	string fn_name;
 	int successor;
 public:
-	Return_Ast(Ast *to_return, int line);
+	Return_Ast(Ast *to_return, string name, int line);
 	~Return_Ast();
 
 	int get_successor();

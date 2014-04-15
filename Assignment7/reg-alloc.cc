@@ -342,6 +342,9 @@ void Machine_Description::initialize_instruction_table()
 
 	spim_instruction_table[bne] = new Instruction_Descriptor(bne, "bne", "bne", "", i_r_o1_op_o2, a_op_o1_o2_r);
 
+	spim_instruction_table[stack_add] = new Instruction_Descriptor(stack_add, "add", "add", "", i_stack, a_stack);
+	spim_instruction_table[stack_sub] = new Instruction_Descriptor(stack_sub, "sub", "sub", "", i_stack, a_stack);
+
 	spim_instruction_table[add] = new Instruction_Descriptor(add, "add", "add", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[sub] = new Instruction_Descriptor(sub, "sub", "sub", "", i_r_o1_op_o2, a_op_o1_o2_r);
 	spim_instruction_table[div_op] = new Instruction_Descriptor(div_op, "div", "div", "", i_r_o1_op_o2, a_op_o1_o2_r);
@@ -350,9 +353,9 @@ void Machine_Description::initialize_instruction_table()
 	spim_instruction_table[mtc1] = new Instruction_Descriptor(mtc1, "mtc1", "mtc1", "", i_r_op_o1, a_op_r_o1);
 	spim_instruction_table[uminus] = new Instruction_Descriptor(uminus, "uminus", "neg", "", i_r_op_o1, a_op_r_o1);
 
-	spim_instruction_table[call] = new Instruction_Descriptor(call, "call", "call", "", i_op_o1, a_op_o1);
+	spim_instruction_table[call] = new Instruction_Descriptor(call, "call", "jal", "", i_op_o1, a_op_o1);
 
-	spim_instruction_table[return_op] = new Instruction_Descriptor(return_op, "return", "return", "", i_op, a_op);
+	spim_instruction_table[return_op] = new Instruction_Descriptor(return_op, "return", "j epilogue_", "", i_op, a_op);
 }
 
 void Machine_Description::validate_init_local_register_mapping()

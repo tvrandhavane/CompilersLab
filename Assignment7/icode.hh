@@ -50,6 +50,7 @@ typedef enum
 	a_op_r_r_o1,	/* r <- r op o1 */
 	a_op_r_o1_o2,	/* r <- o1 op o2 */
 	a_op_o1_o2_r,	/* r <- o1 op o2 */
+	a_stack,
 	a_nsy		/* not specified yet */
 } Assembly_Format;
 
@@ -63,6 +64,7 @@ typedef enum
 	i_r_op_o1,	/* r <- o1 */
 	i_r_r_op_o1,	/* r <- r op o1 */
 	i_r_o1_op_o2,	/* r <- o1 op o2 */
+	i_stack,
 	i_nsy		/* not specified yet */
 } Icode_Format;
 
@@ -98,6 +100,8 @@ typedef enum
 	return_op,
 	move_op,
 	call,
+	stack_add,
+	stack_sub,
 	nop
 } Tgt_Op;
 
@@ -158,9 +162,10 @@ public:
 class Mem_Addr_Opd:public Ics_Opd
 {
 	Symbol_Table_Entry * symbol_entry;
+	int print_code;
 
 public:
-	Mem_Addr_Opd(Symbol_Table_Entry & se);
+	Mem_Addr_Opd(Symbol_Table_Entry & se, int code);
 	~Mem_Addr_Opd() {}
 
 	Data_Type get_opd_type();
@@ -280,9 +285,9 @@ public:
 class Return_IC_Stmt: public Icode_Stmt
 {
 	Ics_Opd * result;
-
+	string fn_name;
 public:
-	Return_IC_Stmt(Tgt_Op op);
+	Return_IC_Stmt(Tgt_Op op, string name);
 	~Return_IC_Stmt() {}
 	Return_IC_Stmt & operator=(const Return_IC_Stmt & rhs);
 

@@ -224,7 +224,9 @@ void Symbol_Table::print_assembly(ostream & file_buffer)
 }
 //////////////////////////////////////////////////////////////
 Argument_Table::Argument_Table()
-{}
+{
+	size_in_bytes = 0;
+}
 
 Argument_Table::~Argument_Table()
 {}
@@ -271,22 +273,19 @@ void Argument_Table::assign_offsets()
 	for (i = variable_table.begin(); i != variable_table.end(); i++)
 	{
 		int size = get_size_of_value_type((*i)->get_data_type());
-		temp = temp - size;
-		(*i)->set_start_offset(temp);
-		size_in_bytes += size;
-		(*i)->set_end_offset(temp + size);
-
+		(*i)->set_end_offset(size_in_bytes + temp);
+		size_in_bytes -= size;
+		(*i)->set_start_offset(size_in_bytes + temp);
 	}
 }
 
 void Argument_Table::set_size(int n)
 {
-	size_in_bytes;
 }
 
 int Argument_Table::get_size()
 {
-	return size_in_bytes;
+	return -size_in_bytes;
 }
 
 void Argument_Table::print(ostream & file_buffer)

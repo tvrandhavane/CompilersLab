@@ -336,15 +336,16 @@ void Procedure::print_prologue(ostream & file_buffer)
 
 	prologue << name << ":\t\t\t\t# .globl makes main know to the \n\t\t\t\t# outside of the program.\n\
 # Prologue begins \n\
-	sw $fp, 0($sp)\t\t# Save the frame pointer\n\
-	sub $fp, $sp, 4\t\t# Update the frame pointer\n";
+	sw $ra, 0($sp)\t\t# Save the return address\n\
+	sw $fp, -4($sp)\t\t# Save the frame pointer\n\
+	sub $fp, $sp, 8\t\t# Update the frame pointer\n";
 
 	int size = local_symbol_table.get_size();
 	size = -size;
 	if (size > 0)
-		prologue << "\n\tsub $sp, $sp, " << (size + 4) << "\t\t# Make space for the locals\n";
+		prologue << "\n\tsub $sp, $sp, " << (size + 8) << "\t\t# Make space for the locals\n";
 	else
-		prologue << "\n\tsub $sp, $sp, 4\t\t#Make space for the locals\n";
+		prologue << "\n\tsub $sp, $sp, 8\t\t# Make space for the locals\n";
 
 	prologue << "# Prologue ends\n\n";
 
@@ -357,12 +358,14 @@ void Procedure::print_epilogue(ostream & file_buffer)
 
 	int size = local_symbol_table.get_size();
 	size = -size;
+	epilogue << "\n# Epilogue Begins\n";
+	epilogue << "epilogue_" << name << ":\n";
 	if (size > 0)
-		epilogue << "\n# Epilogue Begins\n\tadd $sp, $sp, " << (size + 4) << "\n";
+		epilogue << "\tadd $sp, $sp, " << (size + 8) << "\n";
 	else
-		epilogue << "\n#Epilogue Begins\n\tadd $sp, $sp, 4\n";
+		epilogue << "\tadd $sp, $sp, 8\n";
 
-	epilogue << "\tlw $fp, 0($sp)  \n\tjr        $31\t\t# Jump back to the operating system.\n# Epilogue Ends\n\n";
+	epilogue << "\tlw $fp, -4($sp)  \n\tlw $ra, 0($sp)   \n\tjr        $31\t\t# Jump back to the called procedure\n# Epilogue Ends\n\n";
 
 	file_buffer << epilogue.str();
 }
