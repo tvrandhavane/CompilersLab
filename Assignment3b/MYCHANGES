@@ -1,0 +1,42 @@
+
+Tanmay Randhavane	110050010
+Alok yadav			110050043
+
+My Changes:
+
+In ast.cc:
+1. 	Added the class for Arithmetic_Expr_Ast
+2.	Modified the printing of Name_ast to accomodate for float numbers
+3.	Modified the set value function in Name_ast to accomodate for float numbers
+4.	Modified the printing of Number_ast to accomodate for float numbers
+5.	Modified the evaluate function in Number_ast to accomodate for float numbers
+
+In ast.hh:
+1.	Added enumerator for Arithmetic operators.
+2.	Added the declaration for Arithmetic_Expr_Ast
+
+In local-environment.cc:
+1.	Changed the return type of get_value function to float
+2.	Added set_value function for float
+3.	Added inherited class Eval_Result_Value_Float for float results
+4.	Modified print function to accomodate for float numbers
+
+In local-environment.hh:
+1.	Added the declaration for Eval_Result_Value_Float
+2.	Added a float variable result
+3.	Added declarations of functions set_value and get_value for float
+
+In parser.yy:
+
+1.	Uncommented all of C code.
+2.	Added declarations of double variables
+3.	Tweaked the rule for relational_expression to ensure proper parsing
+4.	Modified the rule for arithmetic_expression to ensure proper parsing
+5.	Added a rule for typecasted variables or constant
+6. 	Added a rule for float numbers
+
+In scanner.ll:
+1.	Added a rule for keyword double
+
+In symbol-table.hh:
+1.	Added a data_type for float
