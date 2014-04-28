@@ -1,6 +1,0 @@
-Line: 2 	Ignored NEWLINE character
-Line: 2 	Token Name: INTEGER 	Token: int 	Token Code: 262
-Line: 2 	Ignored lexeme: ' '
-Line: 2 	Token Name: NAME 	Token: a 	Token Code: 260
-Line: 2 	Ignored lexeme: ' '
-Line: 2 	Token Name: ASSIGN_OP 	Token: = 	Token Code: 266

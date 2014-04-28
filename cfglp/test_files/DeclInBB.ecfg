@@ -1,9 +1,0 @@
-main()
-{
-	int a;
-
-<bb 3>:
-	a = 3;
-	int b;
-	return;
-}
